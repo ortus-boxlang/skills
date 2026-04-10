@@ -26,7 +26,7 @@ Requires [Node.js](https://nodejs.org) — no installation needed, just `npx`:
 
 ```bash
 # Install ALL BoxLang skills (both categories)
-npx skills add ortus-boxlang/boxlang-skills
+npx skills add ortus-boxlang/skills
 ```
 
 That's it. Your AI agent now has BoxLang expertise.
@@ -41,7 +41,7 @@ For developers writing BoxLang applications: web apps, APIs, database access,
 async pipelines, caching, Java interop, module usage, and deployment.
 
 ```bash
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer
+npx skills add ortus-boxlang/skills/boxlang-developer
 ```
 
 | Skill | What It Covers |
@@ -63,7 +63,7 @@ For developers building BoxLang modules, contributing to the core runtime, and
 creating custom built-in functions, interceptors, and components.
 
 ```bash
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development
+npx skills add ortus-boxlang/skills/boxlang-core-development
 ```
 
 | Skill | What It Covers |
@@ -80,23 +80,23 @@ npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development
 
 ```bash
 # Single skill from boxlang-developer
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/language-fundamentals
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/async-programming
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/web-development
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/database-access
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/caching
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/java-integration
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/modules-and-packages
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/deployment
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/classes-and-oop
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/functional-programming
+npx skills add ortus-boxlang/skills/boxlang-developer/language-fundamentals
+npx skills add ortus-boxlang/skills/boxlang-developer/async-programming
+npx skills add ortus-boxlang/skills/boxlang-developer/web-development
+npx skills add ortus-boxlang/skills/boxlang-developer/database-access
+npx skills add ortus-boxlang/skills/boxlang-developer/caching
+npx skills add ortus-boxlang/skills/boxlang-developer/java-integration
+npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages
+npx skills add ortus-boxlang/skills/boxlang-developer/deployment
+npx skills add ortus-boxlang/skills/boxlang-developer/classes-and-oop
+npx skills add ortus-boxlang/skills/boxlang-developer/functional-programming
 
 # Single skill from boxlang-core-development
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/module-development
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/bif-development
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/interceptors
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/component-development
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/runtime-architecture
+npx skills add ortus-boxlang/skills/boxlang-core-development/module-development
+npx skills add ortus-boxlang/skills/boxlang-core-development/bif-development
+npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors
+npx skills add ortus-boxlang/skills/boxlang-core-development/component-development
+npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture
 ```
 
 ---
@@ -119,9 +119,61 @@ npx skills find boxlang
 
 ---
 
+## Direct / Manual Installation
+
+If you prefer not to use the `npx skills` CLI — or if you are adding skills to a tool that supports its own marketplace or custom knowledge files — you can download individual `SKILL.md` files directly from this repository and place them wherever your tool expects them.
+
+### Claude Projects (Support Files)
+
+[Claude Projects](https://support.anthropic.com/en/articles/9517075-what-are-projects) let you attach files as **project knowledge** that Claude reads at the start of every conversation. Add any `SKILL.md` from this repo as a support file to give Claude deep BoxLang expertise without any CLI tooling.
+
+1. Open the Project in Claude.ai → **Project Knowledge** → **Add content**
+2. Paste the raw content of the skill file you want, e.g.:
+   - `boxlang-developer/language-fundamentals/SKILL.md`
+   - `boxlang-developer/web-development/SKILL.md`
+   - `boxlang-core-development/module-development/SKILL.md`
+
+Raw file URLs follow this pattern:
+
+```
+https://raw.githubusercontent.com/ortus-boxlang/skills/main/<category>/<skill>/SKILL.md
+```
+
+Example:
+
+```
+https://raw.githubusercontent.com/ortus-boxlang/skills/main/boxlang-developer/language-fundamentals/SKILL.md
+```
+
+### Claude Code (`.claude/` directory)
+
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) automatically picks up Markdown files placed in `.claude/skills/` inside your project. Copy any `SKILL.md` directly:
+
+```bash
+# Add a single skill manually
+mkdir -p .claude/skills
+curl -o .claude/skills/boxlang-language-fundamentals.md \
+  https://raw.githubusercontent.com/ortus-boxlang/skills/main/boxlang-developer/language-fundamentals/SKILL.md
+```
+
+Or use the `npx skills` CLI which handles this automatically (see **Quick Install** above).
+
+### Other Marketplaces & Manual Placement
+
+| Tool | Where to place the skill file |
+|------|-------------------------------|
+| Claude Code | `.claude/skills/<name>.md` (project) or `~/.claude/skills/<name>.md` (global) |
+| Cursor | `.cursor/rules/<name>.mdc` |
+| GitHub Copilot | append to `.github/copilot-instructions.md` |
+| OpenHands | `.openhands/instructions.md` |
+| Codex | `.codex/<name>.md` |
+| Windsurf | `.windsurf/rules/<name>.md` |
+
+---
+
 ## Supported Agents
 
-Skills are automatically installed to whichever agents you have configured:
+The `npx skills` CLI detects which agents you have installed and places skills in the right location automatically:
 
 | Agent | Skills Location |
 |-------|----------------|
@@ -132,7 +184,7 @@ Skills are automatically installed to whichever agents you have configured:
 | Codex | `.codex/` |
 | Windsurf | `.windsurf/rules/` |
 
-The `npx skills` CLI detects which agents you have installed and places skills in the right location automatically.
+For manual placement and Claude Project support files, see **Direct / Manual Installation** above.
 
 ---
 

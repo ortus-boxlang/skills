@@ -7,18 +7,18 @@ Java integration, and deployment.
 Install all developer skills:
 
 ```bash
-npx skills add ortus-boxlang/boxlang-skills/boxlang-developer
+npx skills add ortus-boxlang/skills/boxlang-developer
 ```
 
 | Skill | Install |
 |-------|---------|
-| `language-fundamentals` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/language-fundamentals` |
-| `classes-and-oop` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/classes-and-oop` |
-| `functional-programming` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/functional-programming` |
-| `async-programming` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/async-programming` |
-| `web-development` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/web-development` |
-| `database-access` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/database-access` |
-| `caching` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/caching` |
-| `java-integration` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/java-integration` |
-| `modules-and-packages` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/modules-and-packages` |
-| `deployment` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-developer/deployment` |
+| `language-fundamentals` | `npx skills add ortus-boxlang/skills/boxlang-developer/language-fundamentals` |
+| `classes-and-oop` | `npx skills add ortus-boxlang/skills/boxlang-developer/classes-and-oop` |
+| `functional-programming` | `npx skills add ortus-boxlang/skills/boxlang-developer/functional-programming` |
+| `async-programming` | `npx skills add ortus-boxlang/skills/boxlang-developer/async-programming` |
+| `web-development` | `npx skills add ortus-boxlang/skills/boxlang-developer/web-development` |
+| `database-access` | `npx skills add ortus-boxlang/skills/boxlang-developer/database-access` |
+| `caching` | `npx skills add ortus-boxlang/skills/boxlang-developer/caching` |
+| `java-integration` | `npx skills add ortus-boxlang/skills/boxlang-developer/java-integration` |
+| `modules-and-packages` | `npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages` |
+| `deployment` | `npx skills add ortus-boxlang/skills/boxlang-developer/deployment` |

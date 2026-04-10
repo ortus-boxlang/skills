@@ -7,16 +7,16 @@ components/tags, and understanding the runtime architecture.
 Install all core development skills:
 
 ```bash
-npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development
+npx skills add ortus-boxlang/skills/boxlang-core-development
 ```
 
 | Skill | Install |
 |-------|---------|
-| `module-development` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/module-development` |
-| `bif-development` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/bif-development` |
-| `interceptors` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/interceptors` |
-| `component-development` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/component-development` |
-| `runtime-architecture` | `npx skills add ortus-boxlang/boxlang-skills/boxlang-core-development/runtime-architecture` |
+| `module-development` | `npx skills add ortus-boxlang/skills/boxlang-core-development/module-development` |
+| `bif-development` | `npx skills add ortus-boxlang/skills/boxlang-core-development/bif-development` |
+| `interceptors` | `npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors` |
+| `component-development` | `npx skills add ortus-boxlang/skills/boxlang-core-development/component-development` |
+| `runtime-architecture` | `npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture` |
 
 ## Useful Resources
 
