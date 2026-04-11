@@ -15,32 +15,32 @@ and reading individual entries without full extraction.
 
 ```boxlang
 // Create from directory
-zip action="zip"
+bx:zip action="zip"
     file="#expandPath( '/temp/archive.zip' )#"
     source="#expandPath( '/files/documents' )#"
 
 // Overwrite existing
-zip action="zip"
+bx:zip action="zip"
     file="#expandPath( '/temp/archive.zip' )#"
     source="#expandPath( '/files' )#"
     overwrite="true"
 
 // Multiple sources with prefixes
-zip action="zip" file="#expandPath( '/temp/backup.zip' )#" {
-    zipparam source="#expandPath( '/app' )#"    prefix="app"
-    zipparam source="#expandPath( '/config' )#" prefix="config"
-    zipparam source="#expandPath( '/uploads' )#" prefix="uploads"
+bx:zip action="zip" file="#expandPath( '/temp/backup.zip' )#" {
+    bx:zipparam source="#expandPath( '/app' )#"    prefix="app"
+    bx:zipparam source="#expandPath( '/config' )#" prefix="config"
+    bx:zipparam source="#expandPath( '/uploads' )#" prefix="uploads"
 }
 
 // Filter by pattern
-zip action="zip"
+bx:zip action="zip"
     file="#expandPath( '/temp/pdfs.zip' )#"
     source="#expandPath( '/documents' )#"
     filter="*.pdf"
     recurse="true"
 
 // Compression level (0 = store, 9 = maximum)
-zip action="zip"
+bx:zip action="zip"
     file="#expandPath( '/temp/compressed.zip' )#"
     source="#expandPath( '/files' )#"
     compressionLevel="9"
@@ -50,19 +50,19 @@ zip action="zip"
 
 ```boxlang
 // Extract all
-zip action="unzip"
+bx:zip action="unzip"
     file="#expandPath( '/temp/archive.zip' )#"
     destination="#expandPath( '/extracted' )#"
     overwrite="true"
 
 // Extract specific entry
-zip action="unzip"
+bx:zip action="unzip"
     file="#expandPath( '/temp/archive.zip' )#"
     destination="#expandPath( '/extracted' )#"
     entryPath="docs/report.pdf"
 
 // Extract filtered subset
-zip action="unzip"
+bx:zip action="unzip"
     file="#expandPath( '/temp/archive.zip' )#"
     destination="#expandPath( '/pdfs' )#"
     filter="*.pdf"
@@ -72,7 +72,7 @@ zip action="unzip"
 
 ```boxlang
 // List all entries into a query
-zip action="list"
+bx:zip action="list"
     file="#expandPath( '/temp/archive.zip' )#"
     name="local.zipContents"
 
@@ -81,7 +81,7 @@ for ( var row in zipContents ) {
 }
 
 // Read a single file without extracting
-zip action="read"
+bx:zip action="read"
     file="#expandPath( '/temp/archive.zip' )#"
     entryPath="config.json"
     variable="local.configContent"
@@ -93,19 +93,19 @@ var config = deserializeJSON( configContent )
 
 ```boxlang
 // Append file to existing archive
-zip action="zip" file="#expandPath( '/temp/archive.zip' )#" {
-    zipparam source="#expandPath( '/newfile.txt' )#"
+bx:zip action="zip" file="#expandPath( '/temp/archive.zip' )#" {
+    bx:zipparam source="#expandPath( '/newfile.txt' )#"
 }
 
 // Delete entry
-zip action="delete"
+bx:zip action="delete"
     file="#expandPath( '/temp/archive.zip' )#"
     entryPath="oldfile.txt"
 
 // Delete multiple entries
-zip action="delete" file="#expandPath( '/temp/archive.zip' )#" {
-    zipparam entryPath="temp/*"
-    zipparam entryPath="logs/*.log"
+bx:zip action="delete" file="#expandPath( '/temp/archive.zip' )#" {
+    bx:zipparam entryPath="temp/*"
+    bx:zipparam entryPath="logs/*.log"
 }
 ```
 
@@ -113,13 +113,13 @@ zip action="delete" file="#expandPath( '/temp/archive.zip' )#" {
 
 ```boxlang
 // Create encrypted archive
-zip action="zip"
+bx:zip action="zip"
     file="#expandPath( '/temp/secure.zip' )#"
     source="#expandPath( '/sensitive' )#"
     password="SecurePassword123"
 
 // Extract encrypted archive
-zip action="unzip"
+bx:zip action="unzip"
     file="#expandPath( '/temp/secure.zip' )#"
     destination="#expandPath( '/extracted' )#"
     password="SecurePassword123"
@@ -134,7 +134,7 @@ class singleton {
         if ( !overwrite && fileExists( zipFile ) ) {
             throw( "ZIP file already exists: #zipFile#" )
         }
-        zip action="zip" file="#zipFile#" source="#source#" overwrite="#overwrite#" filter="#filter#"
+        bx:zip action="zip" file="#zipFile#" source="#source#" overwrite="#overwrite#" filter="#filter#"
         return getFileInfo( zipFile )
     }
 
@@ -145,11 +145,11 @@ class singleton {
         if ( !directoryExists( destination ) ) {
             directoryCreate( destination, createPath: true )
         }
-        zip action="unzip" file="#zipFile#" destination="#destination#" overwrite="#overwrite#"
+        bx:zip action="unzip" file="#zipFile#" destination="#destination#" overwrite="#overwrite#"
     }
 
     function list( required zipFile, filter = "*" ) {
-        zip action="list" file="#zipFile#" filter="#filter#" name="local.contents"
+        bx:zip action="list" file="#zipFile#" filter="#filter#" name="local.contents"
         var files = []
         for ( var row in contents ) {
             files.append( { name: row.name, size: row.size, modified: row.dateLastModified } )
@@ -158,7 +158,7 @@ class singleton {
     }
 
     function readEntry( required zipFile, required entryPath ) {
-        zip action="read" file="#zipFile#" entryPath="#entryPath#" variable="local.content"
+        bx:zip action="read" file="#zipFile#" entryPath="#entryPath#" variable="local.content"
         return content
     }
 
@@ -180,10 +180,10 @@ function createBackup() {
         directoryCreate( backupDir )
     }
 
-    zip action="zip" file="#backupFile#" {
-        zipparam source="#expandPath( '/app' )#"    prefix="app"
-        zipparam source="#expandPath( '/config' )#" prefix="config"
-        zipparam source="#expandPath( '/uploads' )#" prefix="uploads"
+    bx:zip action="zip" file="#backupFile#" {
+        bx:zipparam source="#expandPath( '/app' )#"    prefix="app"
+        bx:zipparam source="#expandPath( '/config' )#" prefix="config"
+        bx:zipparam source="#expandPath( '/uploads' )#" prefix="uploads"
     }
 
     return { file: backupFile, size: getFileInfo( backupFile ).size, created: now() }
@@ -203,7 +203,7 @@ function createBackup() {
 // ✅ Cleanup pattern
 var tempZip = getTempFile( getTempDirectory(), "archive" ) & ".zip"
 try {
-    zip action="zip" file="#tempZip#" source="#source#"
+    bx:zip action="zip" file="#tempZip#" source="#source#"
     // use tempZip...
 } catch ( any e ) {
     writeLog( "ZIP failed: #e.message#" )
