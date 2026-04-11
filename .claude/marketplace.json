@@ -1,0 +1,9 @@
+{
+  "name": "boxlang-agent-skills",
+  "displayName": "BoxLang Agent Skills",
+  "version": "1.0.0",
+  "author": "Ortus Solutions",
+  "description": "Production-ready Claude skills for BoxLang development — language fundamentals, OOP, async programming, web, database, caching, Java integration, deployment, and runtime extension",
+  "repository": "https://github.com/Ortus-Solutions/skills",
+  "pluginManifest": "../.claude-plugin/plugin.json"
+}

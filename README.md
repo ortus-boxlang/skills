@@ -94,55 +94,23 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 ## Install Individual Skills
 
 ```bash
-# boxlang-developer skills
-npx skills add ortus-boxlang/skills/boxlang-developer/async-programming
-npx skills add ortus-boxlang/skills/boxlang-developer/best-practices
-npx skills add ortus-boxlang/skills/boxlang-developer/caching
-npx skills add ortus-boxlang/skills/boxlang-developer/cfml-migration
-npx skills add ortus-boxlang/skills/boxlang-developer/classes-and-oop
-npx skills add ortus-boxlang/skills/boxlang-developer/code-documenter
-npx skills add ortus-boxlang/skills/boxlang-developer/code-reviewer
-npx skills add ortus-boxlang/skills/boxlang-developer/configuration
-npx skills add ortus-boxlang/skills/boxlang-developer/database-access
-npx skills add ortus-boxlang/skills/boxlang-developer/deployment
-npx skills add ortus-boxlang/skills/boxlang-developer/docbox
-npx skills add ortus-boxlang/skills/boxlang-developer/file-handling
-npx skills add ortus-boxlang/skills/boxlang-developer/functional-programming
-npx skills add ortus-boxlang/skills/boxlang-developer/interceptors
-npx skills add ortus-boxlang/skills/boxlang-developer/java-integration
+# Single skill from boxlang-developer
 npx skills add ortus-boxlang/skills/boxlang-developer/language-fundamentals
-npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages
-npx skills add ortus-boxlang/skills/boxlang-developer/security
-npx skills add ortus-boxlang/skills/boxlang-developer/templating
-npx skills add ortus-boxlang/skills/boxlang-developer/testing
+npx skills add ortus-boxlang/skills/boxlang-developer/async-programming
 npx skills add ortus-boxlang/skills/boxlang-developer/web-development
-npx skills add ortus-boxlang/skills/boxlang-developer/zip
+npx skills add ortus-boxlang/skills/boxlang-developer/database-access
+npx skills add ortus-boxlang/skills/boxlang-developer/caching
+npx skills add ortus-boxlang/skills/boxlang-developer/java-integration
+npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages
+npx skills add ortus-boxlang/skills/boxlang-developer/deployment
+npx skills add ortus-boxlang/skills/boxlang-developer/classes-and-oop
+npx skills add ortus-boxlang/skills/boxlang-developer/functional-programming
 
-# running-boxlang sub-skills
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/aws-lambda
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/chromebook
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/cli-scripting
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/commandbox
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/compiled-native-binaries
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/digitalocean-app
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/docker
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/esp32
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/github-actions
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/google-cloud-functions
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/jsr-223
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/matchbox
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/miniserver
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/spring-boot
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/wasm-container
-npx skills add ortus-boxlang/skills/boxlang-developer/running-boxlang/wasm-in-the-browser
-
-# boxlang-core-development skills
-npx skills add ortus-boxlang/skills/boxlang-core-development/async-tasks
-npx skills add ortus-boxlang/skills/boxlang-core-development/bif-development
-npx skills add ortus-boxlang/skills/boxlang-core-development/component-development
-npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors
-npx skills add ortus-boxlang/skills/boxlang-core-development/logging
+# Single skill from boxlang-core-development
 npx skills add ortus-boxlang/skills/boxlang-core-development/module-development
+npx skills add ortus-boxlang/skills/boxlang-core-development/bif-development
+npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors
+npx skills add ortus-boxlang/skills/boxlang-core-development/component-development
 npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture
 ```
 
