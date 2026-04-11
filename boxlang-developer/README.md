@@ -23,3 +23,4 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | `modules-and-packages` | `npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages` |
 | `deployment` | `npx skills add ortus-boxlang/skills/boxlang-developer/deployment` |
 | `cfml-migration` | `npx skills add ortus-boxlang/skills/boxlang-developer/cfml-migration` |
+| `testing` | `npx skills add ortus-boxlang/skills/boxlang-developer/testing` |

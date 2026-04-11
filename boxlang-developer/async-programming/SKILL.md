@@ -1,6 +1,6 @@
 ---
 name: boxlang-async-programming
-description: Use this skill when writing BoxLang asynchronous code: BoxFuture, runAsync, asyncAll, executors, schedulers, thread components, parallel pipelines, file watchers, or distributed locking with bx:lock.
+description: Use this skill when writing BoxLang asynchronous code: BoxFuture, futureNew, asyncRun, asyncAll, asyncAny, asyncAllApply, executors, schedulers, thread components, parallel pipelines, file watchers, or distributed locking with bx:lock.
 ---
 
 # BoxLang Async Programming
@@ -11,16 +11,34 @@ BoxLang provides a comprehensive async framework built on Java's CompletableFutu
 and Project Loom virtual threads. The `AsyncService` manages executors, schedulers,
 and futures. All async primitives integrate seamlessly with the BoxLang runtime.
 
-## BoxFuture Basics
+## Creating BoxFutures
 
-`BoxFuture` extends `CompletableFuture` with BoxLang-friendly chaining:
+`BoxFuture` extends `CompletableFuture` with BoxLang-friendly chaining.
+
+### `futureNew()` — Primary BIF (v1.4.0+)
 
 ```boxlang
-// Run code asynchronously
-var future = runAsync( () -> {
-    // Runs in a virtual thread by default
-    return fetchDataFromAPI()
-})
+// Create a future from a function (runs asynchronously)
+var future = futureNew( () => fetchDataFromAPI() )
+
+// Create a completed future with a value
+var future = futureNew( "Hello World" )
+
+// Create an empty future (complete later)
+var future = futureNew()
+
+// Create with a specific executor
+var future = futureNew( () => heavyCalculation(), "cpu-tasks" )
+```
+
+### `asyncRun()` — Simplified Async Execution
+
+```boxlang
+// Run a function asynchronously on the default io-tasks executor
+var future = asyncRun( () => fetchDataFromAPI() )
+
+// Run with specific executor
+var future = asyncRun( () => processCPUWork(), "cpu-tasks" )
 
 // Get the result (blocks until complete)
 var result = future.get()
@@ -29,95 +47,193 @@ var result = future.get()
 var result = future.get( 5, "seconds" )
 ```
 
-## Chaining with `then` and `onError`
+## Chaining with `then`, `thenAsync`, and `onError`
+
+- `then()` — runs the transformation on the **same thread** (fast, lightweight transforms)
+- `thenAsync()` — runs the transformation on an **executor thread** (for heavy/I/O work)
 
 ```boxlang
-runAsync( () -> fetchUser( userId ) )
-    .then( (user) -> enrichWithProfile( user ) )
-    .then( (user) -> {
-        sendWelcomeEmail( user )
-        return user
-    })
-    .onError( (error) -> {
+asyncRun( () => fetchUser( userId ) )
+    .then( (user) => enrichWithProfile( user ) )          // same thread
+    .thenAsync( (user) => sendWelcomeEmail( user ) )      // executor thread
+    .then( (user) => user )
+    .onError( (error) => {
         logError( error.message )
         return getDefaultUser()
     })
     .get()
 ```
 
-## Parallel Execution with `asyncAll`
-
-Run multiple futures in parallel and wait for all to complete:
+## Core Result Methods
 
 ```boxlang
-var futures = asyncAll([
-    () -> fetchOrders( userId ),
-    () -> fetchProfile( userId ),
-    () -> fetchPreferences( userId )
-])
+// Blocking retrieval
+var result = future.get()
+var result = future.get( 5000 )              // timeout in ms
+var result = future.get( 5, "seconds" )      // timeout with unit
 
-// futures is an array of BoxFutures
-var [orders, profile, prefs] = futures.map( (f) -> f.get() )
+// Safe retrieval with defaults
+var result = future.getOrDefault( "fallback" )
+var result = future.joinOrDefault( 0 )       // join() variant with default
+
+// Get as Attempt object (functional error handling)
+var attempt = future.getAsAttempt()
+if ( attempt.isPresent() ) {
+    doSomething( attempt.get() )
+}
+```
+
+## Parallel Execution with `asyncAll`
+
+`asyncAll()` runs multiple operations concurrently and returns a `BoxFuture<Array>` —
+call `.get()` once to receive all results in order:
+
+```boxlang
+// Returns BoxFuture<Array> — .get() resolves to [result1, result2, result3]
+var results = asyncAll([
+    () => fetchOrders( userId ),
+    () => fetchProfile( userId ),
+    () => fetchPreferences( userId )
+]).get()
+
+var [orders, profile, prefs] = results
+
+// Mix lambdas, closures, and pre-created futures
+var results = asyncAll([
+    () => fetchOrders( userId ),           // function
+    futureNew( () => fetchProfile( id ) ), // pre-created future
+    () => fetchPreferences( userId )       // function
+]).get()
+```
+
+## Race to the Finish with `asyncAny`
+
+`asyncAny()` returns the result of whichever future completes **first** (v1.4.0+):
+
+```boxlang
+var fastestResult = asyncAny([
+    () => fetchFromPrimaryDB(),
+    () => fetchFromReplicaDB(),
+    () => fetchFromCache()
+]).get()
+```
+
+## Parallel Collection Processing with `asyncAllApply`
+
+Apply a function to every element of an array or struct **in parallel** (v1.4.0+):
+
+```boxlang
+// Array processing in parallel
+var userIds = [ 1, 2, 3, 4, 5 ]
+var profiles = asyncAllApply(
+    userIds,
+    ( id ) => fetchUserProfile( id )  // each item processed in parallel
+)
+// profiles = [ profile1, profile2, profile3, profile4, profile5 ]
+
+// Struct processing in parallel
+var config = { db: "prod-db", cache: "redis", queue: "rabbit" }
+var validated = asyncAllApply(
+    config,
+    ( item ) => validateConfig( item.key, item.value )  // item = { key, value }
+)
 ```
 
 ## Named Executors
 
 ```boxlang
-// Built-in executor types
-// "virtual"  — virtual threads (default, best for I/O-bound work)
-// "fixed"    — fixed thread pool (best for CPU-bound work)
-// "cached"   — cached pool (elastic, for bursty workloads)
-// "scheduled" — for cron/scheduled tasks
+// Three pre-configured runtime executors:
+// "io-tasks"        — virtual threads (default, best for I/O-bound work)
+// "cpu-tasks"       — scheduled pool, 20 threads (best for CPU-bound work)
+// "scheduled-tasks" — scheduled pool, 20 threads (for cron/periodic tasks)
 
-// Run on a specific executor
-runAsync( () -> cpuIntensiveWork(), "fixed" )
+// Pass executor name as second arg to asyncRun / futureNew
+asyncRun( () => cpuIntensiveWork(), "cpu-tasks" )
+futureNew( () => fetchData(), "io-tasks" )
 
-// Access the AsyncService directly
-var asyncService = getBoxService( "AsyncService" )
-var executor = asyncService.newExecutor( "myPool", "fixed", 4 )  // 4 threads
+// Access an executor by name
+var executor = executorGet( "io-tasks" )
 ```
 
 ## Async Pipelines
 
 ```boxlang
 // Sequential pipeline
-var result = runAsync( () -> loadRawData() )
-    .then( (data) -> parseData( data ) )
-    .then( (parsed) -> validate( parsed ) )
-    .then( (valid) -> persist( valid ) )
-    .onError( (e) -> rollback() )
+var result = futureNew( () => loadRawData() )
+    .then( (data) => parseData( data ) )
+    .then( (parsed) => validate( parsed ) )
+    .then( (valid) => persist( valid ) )
+    .onError( (e) => rollback() )
     .get()
 
 // Mix sequential and parallel stages
-var pipeline = runAsync( () -> fetchConfig() )
-    .then( (config) -> {
+var pipeline = asyncRun( () => fetchConfig() )
+    .then( (config) => {
         // Fan out: run two tasks in parallel with the config
-        var futures = asyncAll([
-            () -> buildReport( config ),
-            () -> sendNotifications( config )
-        ])
-        return futures.map( (f) -> f.get() )
+        var results = asyncAll([
+            () => buildReport( config ),
+            () => sendNotifications( config )
+        ]).get()
+        return results
     })
     .get()
 ```
 
 ## Scheduled Tasks
 
+Create a BoxLang Scheduler class (`Scheduler.bx`) and register it in `boxlang.json`:
+
 ```boxlang
-// In Application.bx or a dedicated scheduler component
+// schedulers/MyScheduler.bx
 class {
+
+    property name="scheduler"
+    property name="logger"
+
     function configure() {
-        // Register a scheduled task
-        task( "cleanupExpiredSessions" )
-            .call( () -> sessionService.cleanup() )
+        scheduler.setSchedulerName( "MyApp-Scheduler" )
+        scheduler.setTimezone( "UTC" )
+
+        // Register tasks with fluent DSL
+        scheduler.task( "cleanupExpiredSessions" )
+            .call( () => sessionService.cleanup() )
             .every( 15, "minutes" )
-            .onFailure( (task, error) -> logError( error.message ) )
+            .onFailure( (task, error) => logError( error.message ) )
+
+        scheduler.task( "dailyReport" )
+            .call( () => reportService.generate() )
+            .every( 1, "day" )
+            .startOn( "00:00" )
+    }
+
+    void function onStartup() {
+        logger.info( "Scheduler started: #scheduler.getSchedulerName()#" )
+    }
+
+    void function onShutdown() {
+        logger.info( "Scheduler shutting down" )
+    }
+
+    void function onAnyTaskError( required task, required exception ) {
+        logger.error( "Task '#task.getName()#' failed: #exception.message#" )
     }
 }
+```
 
-// One-off delayed execution
-runAsync( () -> sendReminderEmail( userId ), "scheduled" )
-    .delay( 24, "hours" )
+Register in `boxlang.json`:
+
+```json
+{
+    "scheduler": {
+        "schedulers": [ "/path/to/schedulers/MyScheduler.bx" ]
+    }
+}
+```
+
+Or run from CLI:
+
+```bash
+boxlang schedule /path/to/schedulers/MyScheduler.bx
 ```
 
 ## The `thread` Component
@@ -200,17 +316,17 @@ watcher.stop()
 
 ```boxlang
 // onError continues the chain with a recovery value
-var result = runAsync( () -> flakyOperation() )
-    .onError( (err) -> {
+var result = asyncRun( () => flakyOperation() )
+    .onError( (err) => {
         logError( err.message )
         return defaultValue   // chain continues with this
     })
-    .then( (val) -> process( val ) )
+    .then( (val) => process( val ) )
     .get()
 
 // exceptionally (Java-style)
-var future = runAsync( () -> riskyWork() )
-future.exceptionally( (err) -> fallback )
+var future = asyncRun( () => riskyWork() )
+future.exceptionally( (err) => fallback )
 
 // Check completion state
 if ( future.isDone() ) { ... }
@@ -224,38 +340,30 @@ future.cancel( true )
 ## Async with Timeout and Fallback
 
 ```boxlang
-var result = runAsync( () -> slowExternalAPI() )
+// orTimeout — throws TimeoutException after delay
+var result = asyncRun( () => slowExternalAPI() )
     .orTimeout( 3, "seconds" )
-    .onError( (err) -> getCachedResult() )
+    .onError( (err) => getCachedResult() )
     .get()
-```
 
-## Combining Multiple Futures
-
-```boxlang
-// anyOf — complete when any one finishes
-var fastest = BoxFuture.anyOf([
-    runAsync( () -> fetchFromCDN() ),
-    runAsync( () -> fetchFromOrigin() )
-]).get()
-
-// allOf — wait for all (returns void; use get() on each future separately)
-var futures = [f1, f2, f3]
-BoxFuture.allOf( futures ).get()
-var results = futures.map( (f) -> f.get() )
+// completeOnTimeout — resolves with default value instead of throwing
+var result = asyncRun( () => slowExternalAPI() )
+    .completeOnTimeout( getDefaultData(), 3, "seconds" )
+    .get()
 ```
 
 ## Virtual Threads Best Practices
 
 ```boxlang
-// Virtual threads (default) — ideal for:
+// Virtual threads (io-tasks, default) — ideal for:
 // - HTTP calls, database queries, file I/O, any blocking I/O
-runAsync( () -> httpClient.get( url ) )           // good
-runAsync( () -> queryExecute( sql ) )              // good
+asyncRun( () => httpClient.get( url ) )             // good — io-tasks
+asyncRun( () => queryExecute( sql ) )               // good — io-tasks
 
-// Fixed pool — ideal for CPU-intensive work:
+// CPU pool — ideal for CPU-intensive work:
 // - Image processing, encryption, data transformation
-runAsync( () -> encryptLargeFile( path ), "fixed" )
+asyncRun( () => encryptLargeFile( path ), "cpu-tasks" )
+futureNew( () => processLargeDataset( data ), "cpu-tasks" )
 ```
 
 ## Executor Types and Runtime Configuration

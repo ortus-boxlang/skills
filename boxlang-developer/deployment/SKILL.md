@@ -315,13 +315,19 @@ curl -fsSl https://downloads.ortussolutions.com/boxlang/install.sh | bash
         }
     },
     "executors": {
-        "boxlang-tasks": {
+        "io-tasks": {
             "type": "virtual",
-            "maxThreads": 100
+            "description": "Unlimited IO bound tasks using Java Virtual Threads"
         },
-        "cpu-intensive": {
-            "type": "fixed",
-            "maxThreads": 4
+        "cpu-tasks": {
+            "type": "scheduled",
+            "threads": 20,
+            "description": "CPU bound tasks using a fixed thread pool with scheduling"
+        },
+        "scheduled-tasks": {
+            "type": "scheduled",
+            "threads": 20,
+            "description": "Scheduled tasks using a fixed thread pool"
         }
     },
     "datasources": {

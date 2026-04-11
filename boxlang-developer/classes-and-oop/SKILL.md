@@ -239,27 +239,68 @@ class accessors="true" {
 
 ## Annotations
 
-```boxlang
-/**
- * User service for managing user accounts.
- *
- * @singleton
- * @author Ada Lovelace
- * @version 2.0
- */
-class {
+BoxLang supports two annotation syntaxes: standalone `@` style and inline/Javadoc style.
 
-    /**
-     * Find a user by their email address.
-     *
-     * @param email The user's email
-     * @return User struct or null
-     * @throws UserNotFoundException
-     */
-    any function findByEmail( required string email ) {
-        // ...
+```boxlang
+// Standalone @ syntax (preferred for framework metadata)
+@singleton
+@cacheName( "users" )
+class UserService {
+
+    @inject( "UserRepository" )
+    property userRepository
+
+    @cached
+    @timeout( 300 )
+    array function getAll() {
+        return queryExecute( "SELECT * FROM users" ).toArray()
     }
 
+}
+
+// Inline annotation style (class attribute)
+class singleton {
+    // ...
+}
+
+// Javadoc-style (compatible, used for documentation generators)
+/**
+ * User service.
+ * @singleton
+ * @author Ada Lovelace
+ */
+class {
+    // ...
+}
+```
+
+## Final Constructs
+
+`final` prevents extension, overriding, or reassignment:
+
+```boxlang
+// Final class — cannot be extended
+final class CryptoUtil {
+    // ...
+}
+
+// Final method — cannot be overridden by subclasses
+class BaseService {
+    final function getConfig() {
+        return variables.config
+    }
+}
+
+// Final variable — constant (cannot be reassigned after construction)
+class {
+    final static CACHE_PREFIX = "app_"
+    final MAX_RETRIES = 3
+
+    // variables.MAX_RETRIES = 5  → throws exception
+    // References inside final objects CAN be mutated:
+    final config = { debug: false }
+    config[ "debug" ] = true  // ✅ allowed (mutating contents)
+    config = {}               // ❌ throws final variable exception
 }
 ```
 
