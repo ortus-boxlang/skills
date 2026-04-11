@@ -1,0 +1,20 @@
+{
+  "name": "boxlang-agent-skills",
+  "version": "1.0.0",
+  "description": "BoxLang skills for Claude Code — language fundamentals, OOP, async, web, DB, caching, Java integration, deployment, and runtime extension",
+  "author": {
+    "name": "Ortus Solutions",
+    "email": "info@ortussolutions.com",
+    "url": "https://www.ortussolutions.com"
+  },
+  "homepage": "https://boxlang.io/",
+  "repository": "https://github.com/ortus-boxlang/skills",
+  "license": "Apache-2.0",
+  "keywords": ["boxlang", "jvm", "java","lambda", "serverless", "desktop", "web", "ortus" ],
+  "skills": [
+    "./boxlang-developer/",
+    "./boxlang-core-development/"
+  ],
+  "commands": "./commands/",
+  "mcpServers": "./.mcp.json"
+}

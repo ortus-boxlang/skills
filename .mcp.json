@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "boxlang-docs": {
+      "type": "sse",
+      "url": "https://boxlang.ortusbooks.com/~gitbook/mcp"
+    },
+    "boxlang-ide-docs": {
+      "type": "sse",
+      "url": "https://boxlang-ide.ortusbooks.com/~gitbook/mcp"
+    },
+    "boxlang-ai-docs": {
+      "type": "sse",
+      "url": "https://ai.ortusbooks.com/~gitbook/mcp"
+    },
+    "bxorm-docs": {
+      "type": "sse",
+      "url": "https://bxorm.ortusbooks.com/~gitbook/mcp"
+    }
+  }
+}
