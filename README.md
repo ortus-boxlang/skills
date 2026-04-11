@@ -46,16 +46,29 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 
 | Skill | What It Covers |
 |-------|----------------|
-| [`language-fundamentals`](./boxlang-developer/language-fundamentals/SKILL.md) | File types (`.bx`/`.bxs`/`.bxm`), variables, scopes, operators, control flow, exception handling, type system, destructuring, spread syntax |
-| [`classes-and-oop`](./boxlang-developer/classes-and-oop/SKILL.md) | Classes, inheritance, interfaces, abstract classes, properties, constructors, static members, annotations, method chaining |
-| [`functional-programming`](./boxlang-developer/functional-programming/SKILL.md) | Lambdas, closures, arrow functions, higher-order functions, map/filter/reduce/groupBy/flatMap/zip/chunk/unique and more |
-| [`async-programming`](./boxlang-developer/async-programming/SKILL.md) | BoxFuture, `runAsync`, `asyncAll`, executors (virtual/fixed/cached), schedulers, `thread` component, `bx:lock`, file watchers |
-| [`web-development`](./boxlang-developer/web-development/SKILL.md) | Application.bx lifecycle, request/response, forms, sessions, REST APIs, HTTP client, CSRF, Server-Sent Events, MiniServer config |
-| [`database-access`](./boxlang-developer/database-access/SKILL.md) | `queryExecute`, datasource configuration, parameterized queries, SQL injection prevention, transactions, stored procedures |
+| [`async-programming`](./boxlang-developer/async-programming/SKILL.md) | `BoxFuture`, `futureNew`, `asyncRun`, `asyncAll`, `asyncAny`, `asyncAllApply`, executors (`io-tasks`/`cpu-tasks`/`scheduled-tasks`), schedulers, `thread` component, `bx:lock` |
+| [`best-practices`](./boxlang-developer/best-practices/SKILL.md) | Naming conventions, scoping, function structure, error handling, performance, and maintainability guidelines |
 | [`caching`](./boxlang-developer/caching/SKILL.md) | Cache providers, named regions, `cachePut`/`cacheGet`, output caching, Redis, Couchbase, TTL policies, distributed locking |
-| [`java-integration`](./boxlang-developer/java-integration/SKILL.md) | `createObject`, imports, static methods, type conversion, closures as functional interfaces, including JARs, JSR-223 scripting |
-| [`modules-and-packages`](./boxlang-developer/modules-and-packages/SKILL.md) | `box install`, module configuration, BoxLang+ premium modules (bx-pdf, bx-csv, bx-spreadsheet, bx-redis), ORM, mail |
+| [`cfml-migration`](./boxlang-developer/cfml-migration/SKILL.md) | Key syntax and behavioral differences, `bx-compat-cfml` module, converting file types, fixing common migration issues |
+| [`classes-and-oop`](./boxlang-developer/classes-and-oop/SKILL.md) | Classes, inheritance, interfaces, abstract classes, properties, constructors, static members, annotations, `final` constructs, method chaining |
+| [`code-documenter`](./boxlang-developer/code-documenter/SKILL.md) | Javadoc-style function/class comments, argument and return-type docs, DocBox-compatible annotations |
+| [`code-reviewer`](./boxlang-developer/code-reviewer/SKILL.md) | Code quality, correctness, security vulnerabilities, performance, style — structured review feedback |
+| [`configuration`](./boxlang-developer/configuration/SKILL.md) | `boxlang.json` runtime settings, datasources, caches, executors, modules, logging, security, schedulers |
+| [`database-access`](./boxlang-developer/database-access/SKILL.md) | `queryExecute`, `bx:query`, datasource config, parameterized queries, transactions, stored procedures, SQL injection prevention |
 | [`deployment`](./boxlang-developer/deployment/SKILL.md) | CommandBox, Docker, AWS Lambda, GitHub Actions CI/CD, BVM, `boxlang.json` runtime config, environment variable overrides |
+| [`docbox`](./boxlang-developer/docbox/SKILL.md) | API documentation generation: CLI, HTML/JSON/UML/CommandBox strategies, themes, multiple sources, custom strategies |
+| [`file-handling`](./boxlang-developer/file-handling/SKILL.md) | `fileRead`/`fileWrite`/`fileCopy`/`fileMove`, directory operations, streaming large files, file uploads, CSV/JSON from disk |
+| [`functional-programming`](./boxlang-developer/functional-programming/SKILL.md) | Closures (`=>`) vs lambdas (`->`), higher-order functions, `map`/`filter`/`reduce`/`flatMap`/`groupBy`, destructuring, spread |
+| [`interceptors`](./boxlang-developer/interceptors/SKILL.md) | Interceptor/event system, `announce()`/`announceAsync()`, pre/post hooks, security guards, `BoxRegisterInterceptor()` |
+| [`java-integration`](./boxlang-developer/java-integration/SKILL.md) | `createObject`, static method calls, type conversion, closures as functional interfaces, JARs, JSR-223 scripting |
+| [`language-fundamentals`](./boxlang-developer/language-fundamentals/SKILL.md) | File types (`.bx`/`.bxs`/`.bxm`), variables, scopes, operators, control flow, exception handling, type system, destructuring, spread |
+| [`modules-and-packages`](./boxlang-developer/modules-and-packages/SKILL.md) | `box install`, module config, BoxLang+ premium modules (`bx-pdf`, `bx-redis`, `bx-csv`, `bx-spreadsheet`), ORM, mail |
+| [`running-boxlang`](./boxlang-developer/running-boxlang/README.md) | 16 deployment-target sub-skills: CLI scripting, MiniServer, CommandBox, Docker, AWS Lambda, GCF, Spring Boot, WASM, MatchBox, native binaries, and more |
+| [`security`](./boxlang-developer/security/SKILL.md) | OWASP Top 10, injection prevention, file upload safety, secret management, secure coding patterns |
+| [`templating`](./boxlang-developer/templating/SKILL.md) | `.bxm` markup files, output expressions, `bx:output`/`bx:loop`/`bx:if`/`bx:include`/`bx:script`, building views |
+| [`testing`](./boxlang-developer/testing/SKILL.md) | TestBox BDD (`describe`/`it`), xUnit, expectations, `$assert`, life-cycle hooks, MockBox, mock data, async/exception testing |
+| [`web-development`](./boxlang-developer/web-development/SKILL.md) | `Application.bx` lifecycle, request/response, sessions, forms, REST APIs, HTTP client, CSRF, Server-Sent Events, MiniServer config |
+| [`zip`](./boxlang-developer/zip/SKILL.md) | `bx:zip` component: creating/extracting/listing/modifying archives, compression levels, encryption, backup workflows |
 
 ### `boxlang-core-development` — Extending the BoxLang Runtime
 
@@ -68,11 +81,13 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 
 | Skill | What It Covers |
 |-------|----------------|
-| [`module-development`](./boxlang-core-development/module-development/SKILL.md) | Module directory structure, `ModuleConfig.bx` lifecycle (`configure`/`onLoad`/`onUnload`), settings, Gradle build, ForgeBox publishing |
+| [`async-tasks`](./boxlang-core-development/async-tasks/SKILL.md) | `BoxFuture`, `AsyncService`, executor types, `BaseScheduler`, `ScheduledTask` fluent API, cron constraints, task lifecycle callbacks, registering schedulers via `ModuleConfig.bx` |
 | [`bif-development`](./boxlang-core-development/bif-development/SKILL.md) | `@BoxBIF` annotation, `invoke()` method, argument typing, `@BoxMember` for member functions, Java BIF classes, runtime service access |
+| [`component-development`](./boxlang-core-development/component-development/SKILL.md) | Custom tags/components, `onStartTag`/`onEndTag`, body content, attribute declarations, registering component paths in modules |
 | [`interceptors`](./boxlang-core-development/interceptors/SKILL.md) | Observer/Intercepting Filter patterns, 3 interceptor pools, BoxLang/Java/lambda interceptors, registration, interception points, custom events |
-| [`component-development`](./boxlang-core-development/component-development/SKILL.md) | Custom tags/components, `onStartTag`/`onEndTag`, body content, attribute validation, registering component paths in modules |
-| [`runtime-architecture`](./boxlang-core-development/runtime-architecture/SKILL.md) | BoxRuntime service locator, IBoxContext hierarchy, scope chain, DynamicObject, type system, parsing pipeline (source → AST → bytecode), virtual threads |
+| [`logging`](./boxlang-core-development/logging/SKILL.md) | `LoggingService`, `BoxLangLogger` (trace/debug/info/warn/error), pre-configured loggers, named loggers, parameterized messages, `boxlang.json` logging config |
+| [`module-development`](./boxlang-core-development/module-development/SKILL.md) | `ModuleConfig.bx` lifecycle (`configure`/`onLoad`/`onUnload`), settings, Gradle build, ForgeBox publishing |
+| [`runtime-architecture`](./boxlang-core-development/runtime-architecture/SKILL.md) | `BoxRuntime` services, `IBoxContext` hierarchy, scope chain, `DynamicObject`, type system, parsing pipeline (source → AST → bytecode), virtual threads |
 
 ---
 
