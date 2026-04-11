@@ -219,34 +219,177 @@ service.register(
 
 ## Common Interception Points
 
+All canonical event names are defined in the `BoxEvent` enum:
+`ortus.boxlang.runtime.events.BoxEvent`
+
+Use `BoxEvent.ON_REQUEST_START.key()` in Java, or the string name in BoxLang.
+
 ### Runtime Events
 
 | Event | When | Payload Keys |
 |---|---|---|
-| `afterRuntimeStart` | Runtime fully started | `runtime` |
-| `beforeRuntimeShutdown` | Before shutdown | `runtime` |
-| `afterModuleLoad` | After a module loads | `moduleName`, `moduleRecord` |
-| `beforeModuleUnload` | Before a module unloads | `moduleName` |
+| `onRuntimeStart` | Runtime fully started | `runtime` |
+| `onRuntimeShutdown` | Before shutdown | `runtime` |
+| `onRuntimeConfigurationLoad` | Config loaded | `config` |
+| `onRuntimeBoxContextStartup` | First context created | `context` |
+| `onServerScopeCreation` | Server scope initialized | `serverScope` |
+| `onConfigurationLoad` | Config file loaded | `config` |
+| `onConfigurationOverrideLoad` | Override config loaded | `config` |
 | `onParse` | Before source is parsed | `source`, `result` |
-| `afterParse` | After source is parsed | `source`, `AST` |
+| `onMissingMapping` | Mapping cannot be resolved | `mapping` |
+| `onPreSourceInvoke` | Before any source file runs | `context`, `source` |
+| `onPostSourceInvoke` | After any source file runs | `context`, `source` |
 
-### Request Events (Web Context)
+### Module Events
+
+| Event | When |
+|---|---|
+| `onModuleServiceStartup` | Module service starts |
+| `onModuleServiceShutdown` | Module service stops |
+| `afterModuleRegistrations` | All modules registered |
+| `preModuleRegistration` | Before a module is registered |
+| `postModuleRegistration` | After a module is registered |
+| `afterModuleActivations` | All modules activated |
+| `preModuleLoad` | Before a module is loaded |
+| `postModuleLoad` | After a module is loaded |
+| `preModuleUnload` | Before a module is unloaded |
+| `postModuleUnload` | After a module is unloaded |
+
+### Application / Request Events (Web Context)
 
 | Event | When | Notes |
 |---|---|---|
-| `onRequestStart` | Before application `onRequestStart` | v1.11+: fires before Application.bx lifecycle |
-| `onHTTPRequest` | For every HTTP request | Includes request metadata |
-| `onRequestEnd` | After request completes | Includes timing info |
-| `onException` | Unhandled exception | Includes exception struct |
+| `onApplicationStart` | Application started | |
+| `onApplicationEnd` | Application ended | |
+| `onApplicationRestart` | Application restarted | |
+| `onApplicationDefined` | Application.bx found | |
+| `beforeApplicationListenerLoad` | Before Application.bx loads | |
+| `afterApplicationListenerLoad` | After Application.bx loads | |
+| `onRequestStart` | Before request starts | Fires before Application.bx lifecycle |
+| `onRequest` | Main request handling | |
+| `onRequestEnd` | After request completes | |
+| `onClassRequest` | Class/component requested | |
+| `onRequestFlushBuffer` | Output buffer flushed | |
 | `onSessionStart` | New session created | Session struct available |
-| `onSessionEnd` | Session expires or invalidated | Session data available |
+| `onSessionEnd` | Session expires or is invalidated | Session data available |
+| `onSessionCreated` | Session object created | |
+| `onSessionDestroyed` | Session object destroyed | |
+| `onError` | Unhandled exception | |
+| `onMissingTemplate` | Template not found | |
+| `onAbort` | Execution aborted | |
+| `onRequestContextConfig` | Request context configured | |
 
-### Function Events
+### HTTP Events
+
+| Event | When |
+|---|---|
+| `onHTTPRequest` | Every HTTP request |
+| `onHTTPRawResponse` | Before raw HTTP response sent |
+| `onHTTPResponse` | Before HTTP response sent |
+| `onWebExecutorRequest` | Web executor request (route modification) |
+
+### BIF / Component Lifecycle Events
+
+| Event | When |
+|---|---|
+| `onBIFInstance` | BIF instantiated |
+| `onBIFInvocation` | Before BIF invoked |
+| `postBIFInvocation` | After BIF invoked |
+| `onComponentInstance` | Component instantiated |
+| `onComponentInvocation` | Component invoked |
+| `onCacheComponentAction` | Cache component action |
+| `onFileComponentAction` | File component action |
+| `onCreateObjectRequest` | `createObject()` called |
+| `afterDynamicObjectCreation` | Java object wrapped in DynamicObject |
+
+### Template / Function Events
 
 | Event | When | Payload |
 |---|---|---|
+| `preTemplateInvoke` | Before template executes | `template`, `context` |
+| `postTemplateInvoke` | After template executes | `template`, `context` |
 | `preFunctionInvoke` | Before any function call | `functionName`, `arguments`, `context` |
 | `postFunctionInvoke` | After any function call | `functionName`, `result` |
+| `onFunctionException` | Function throws exception | `functionName`, `exception` |
+
+### Query / Transaction Events
+
+| Event | When |
+|---|---|
+| `onQueryBuild` | Before query is built |
+| `preQueryExecute` | Before query executes |
+| `postQueryExecute` | After query executes |
+| `queryAddRow` | Row added to query |
+| `onTransactionBegin` | Transaction started |
+| `onTransactionEnd` | Transaction ended |
+| `onTransactionAcquire` | Connection acquired |
+| `onTransactionRelease` | Connection released |
+| `onTransactionCommit` | Transaction committed |
+| `onTransactionRollback` | Transaction rolled back |
+| `onTransactionSetSavepoint` | Savepoint created |
+
+### Cache Events
+
+| Event | When |
+|---|---|
+| `afterCacheElementInsert` | Item inserted |
+| `beforeCacheElementRemoved` | Before item removed |
+| `afterCacheElementRemoved` | After item removed |
+| `afterCacheElementUpdated` | Item updated |
+| `afterCacheClearAll` | Cache cleared |
+| `afterCacheRegistration` | Cache provider registered |
+| `afterCacheRemoval` | Cache provider removed |
+| `beforeCacheRemoval` | Before cache provider removed |
+| `beforeCacheReplacement` | Before cache entry replaced |
+| `beforeCacheShutdown` | Before cache shuts down |
+| `afterCacheShutdown` | After cache shuts down |
+| `afterCacheServiceStartup` | CacheService started |
+| `beforeCacheServiceShutdown` | Before CacheService shuts down |
+| `afterCacheServiceShutdown` | After CacheService shuts down |
+
+### Scheduler Events
+
+| Event | When |
+|---|---|
+| `onSchedulerStartup` | Scheduler started |
+| `onSchedulerShutdown` | Scheduler stopped |
+| `onSchedulerRestart` | Scheduler restarted |
+| `schedulerBeforeAnyTask` | Before any task runs |
+| `schedulerAfterAnyTask` | After any task runs |
+| `schedulerOnAnyTaskSuccess` | Task succeeded |
+| `schedulerOnAnyTaskError` | Task threw an error |
+| `onSchedulerServiceStartup` | SchedulerService started |
+| `onSchedulerServiceShutdown` | SchedulerService stopped |
+| `onAllSchedulersStarted` | All schedulers running |
+| `onSchedulerRemoval` | Scheduler removed |
+| `onSchedulerRegistration` | Scheduler registered |
+
+### Datasource Events
+
+| Event | When |
+|---|---|
+| `onDatasourceConfigLoad` | Datasource config loaded |
+| `onDatasourceServiceStartup` | DatasourceService started |
+| `onDatasourceServiceShutdown` | DatasourceService stopped |
+| `onDatasourceStartup` | Datasource initialized |
+
+### Object Marshaller Events
+
+| Event | When |
+|---|---|
+| `beforeObjectMarshallSerialize` | Before serialization |
+| `afterObjectMarshallSerialize` | After serialization |
+| `beforeObjectMarshallDeserialize` | Before deserialization |
+| `afterObjectMarshallDeserialize` | After deserialization |
+| `onJSONQuerySerialize` | Query serialized to JSON |
+
+### Dump / Other Events
+
+| Event | When |
+|---|---|
+| `onBXDump` | `writeDump()` called |
+| `onMissingDumpOutput` | No dump output handler found |
+| `logMessage` | Log message emitted |
 
 ## Announcing Custom Events
 

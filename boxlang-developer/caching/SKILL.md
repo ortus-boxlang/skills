@@ -290,6 +290,83 @@ function invalidateVersion( required string base ) {
 }
 ```
 
+## `cacheGetOrSet` — Atomic Get-or-Load
+
+`cacheGetOrSet()` atomically returns a cached value or executes a loader closure
+and stores the result if no entry exists:
+
+```boxlang
+// Signature: cacheGetOrSet( key, valueFunction, timeout, cacheName )
+var settings = cacheGetOrSet(
+    "appSettings",
+    () => settingService.loadAll(),
+    60  // minutes
+)
+
+// With named cache region
+var product = cacheGetOrSet(
+    "product_#id#",
+    () => queryExecute( "SELECT * FROM products WHERE id = :id", { id: id }, { returntype: "struct" } ),
+    createTimeSpan( 0, 1, 0, 0 ),
+    "products"
+)
+```
+
+## Query Caching via `cachedWithin`
+
+Cache query results directly in `queryExecute()` options:
+
+```boxlang
+// Cache for 1 hour — result is reused on subsequent calls
+var users = queryExecute(
+    "SELECT * FROM users WHERE isActive = 1",
+    {},
+    { cachedWithin: createTimeSpan( 0, 1, 0, 0 ) }
+)
+
+// Cache with a named key (use cacheRemove() to invalidate)
+var products = queryExecute(
+    "SELECT * FROM products ORDER BY name",
+    {},
+    {
+        cacheName    : "productList",
+        cachedWithin : createTimeSpan( 0, 0, 30, 0 )
+    }
+)
+
+// Invalidate manually when data changes
+function updateProduct( required numeric id, required struct data ) {
+    queryExecute( "UPDATE products SET name = :name WHERE id = :id",
+                  { name: data.name, id: id } )
+    cacheRemove( "productList" )
+}
+```
+
+## Function-Level Memoization
+
+Use the `cachedWithin` function attribute to cache a function's return value
+based on its arguments:
+
+```boxlang
+// Method result cached per unique argument set for 1 hour
+function fibonacci( required numeric n ) cachedWithin=createTimeSpan( 0, 1, 0, 0 ) {
+    if ( n <= 1 ) return n
+    return fibonacci( n - 1 ) + fibonacci( n - 2 )
+}
+
+// Manual in-memory memoization (no TTL)
+class ExpensiveService {
+    variables.memo = {}
+
+    function compute( required numeric id ) {
+        if ( memo.keyExists( id ) ) return memo[ id ]
+        var result = runExpensiveCalculation( id )
+        memo[ id ] = result
+        return result
+    }
+}
+```
+
 ## References
 
 - [Caching Framework](https://boxlang.ortusbooks.com/boxlang-framework/caching)

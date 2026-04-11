@@ -307,6 +307,85 @@ Configure modules loaded at startup and module-specific settings:
 
 ---
 
+## Watcher
+
+Configure the built-in `WatcherService` for filesystem monitoring. Watchers react to file/directory changes and can trigger hot-reload, asset builds, or custom automation.
+
+```json5
+{
+    "watcher": {
+        // Recurse into subdirectories by default
+        "recursive": true,
+        // Hold events until no new event arrives within this window (ms); 0 = off
+        "debounce": 300,
+        // Emit at most one event per window and drop the rest (ms); 0 = off
+        "throttle": 0,
+        // Suppress noisy intermediate events from atomic save patterns (temp + rename)
+        "atomicWrites": true,
+        // Startup delay before watchers begin processing events (ms)
+        "delay": 0,
+        // Auto-stop watcher after this many consecutive listener errors (0 = disabled)
+        "errorThreshold": 10,
+        // Named watcher definitions auto-started at runtime startup
+        "definitions": {
+            "hot-reload": {
+                "paths":    "${user-dir}/src",
+                "listener": "app.listeners.HotReloadListener"
+            },
+            "assets": {
+                "paths":     [ "${user-dir}/resources/css", "${user-dir}/resources/js" ],
+                "recursive": false,
+                "throttle":  500,
+                "listener":  "app.listeners.AssetPipelineListener"
+            }
+        }
+    }
+}
+```
+
+### Watcher Definition Properties
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `paths` | Yes | Directory path or array of paths to watch |
+| `listener` | Yes | BoxLang class path with listener behavior |
+| `recursive` | No | Override global recursive setting |
+| `debounce` | No | Per-watcher debounce override (ms) |
+| `throttle` | No | Per-watcher throttle override (ms) |
+| `atomicWrites` | No | Per-watcher atomic write filtering override |
+| `delay` | No | Per-watcher startup delay override (ms) |
+| `errorThreshold` | No | Per-watcher error threshold override |
+
+> For closures and struct-based listeners, create watchers programmatically with `watcherNew()` at runtime instead of in `boxlang.json`.
+
+### Runtime Watcher BIFs
+
+`watcherNew()`, `watcherStart()`, `watcherStop()`, `watcherRestart()`, `watcherList()`, `watcherGet()`, `watcherExists()`, `watcherShutdown()`, `watcherStopAll()`, `watcherShutdownAll()`
+
+---
+
+## Experimental
+
+Feature flags for in-progress BoxLang capabilities. These settings may change or be removed.
+
+```json5
+{
+    "experimental": {
+        // Compiler backend: "asm" (default, direct bytecode) or "java" (transpile to Java first)
+        "compiler": "asm",
+        // Capture AST JSON to /grapher/data on each parse (for tooling/debugging only)
+        "ASTCapture": false
+    }
+}
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `compiler` | `"asm"` | `"asm"` compiles directly to bytecode (production default); `"java"` transpiles to Java source first |
+| `ASTCapture` | `false` | Writes AST JSON to `/grapher/data` on every parse — for tooling and debugging only, never production |
+
+---
+
 ## Application-Level Configuration (`Application.bx`)
 
 Application-level settings override the runtime config for a specific app:

@@ -266,6 +266,54 @@ writeDump( myVar )          // alias for dump
 abort                       // stop execution
 ```
 
+## Modern Function Syntax
+
+### Method Declaration Without `function` Keyword
+
+Inside a `class` body, the `function` keyword is optional. BoxLang supports a
+concise declaration style with optional colon-based return type annotations:
+
+```boxlang
+class MathService {
+
+    // Concise declaration — no "function" keyword
+    add( numeric a, numeric b ) {
+        return a + b
+    }
+
+    // With return-type annotation (colon syntax)
+    multiply( required numeric a, required numeric b ):numeric {
+        return a * b
+    }
+
+    // With default parameter value and return type
+    power( required numeric base, numeric exponent = 2 ):numeric {
+        return base ^ exponent
+    }
+
+    // Void-like — no return type declared
+    logOperation( required string operation ) {
+        writeLog( "Operation: #operation#" )
+    }
+}
+```
+
+Available return types: `string`, `numeric`, `boolean`, `array`, `struct`, `query`,
+`date`, `void`, `any`, or a fully-qualified class name.
+
+### Traditional `function` Keyword (Still Valid)
+
+```boxlang
+class Service {
+    function calculate( required numeric value ):numeric {
+        return value * 2
+    }
+}
+```
+
+Both styles are equivalent. Prefer the concise style inside classes; use the
+`function` keyword for standalone script-level functions and closures.
+
 ## References
 
 - [BoxLang Syntax Docs](https://boxlang.ortusbooks.com/boxlang-language/syntax)

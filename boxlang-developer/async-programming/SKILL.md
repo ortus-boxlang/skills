@@ -258,6 +258,107 @@ runAsync( () -> queryExecute( sql ) )              // good
 runAsync( () -> encryptLargeFile( path ), "fixed" )
 ```
 
+## Executor Types and Runtime Configuration
+
+### Pre-Configured Runtime Executors
+
+BoxLang provides three pre-configured executors accessible via `executorGet()`:
+
+```boxlang
+// Access pre-configured runtime executors
+var ioExecutor        = executorGet( "io-tasks" )        // Virtual threads for I/O
+var cpuExecutor       = executorGet( "cpu-tasks" )       // Scheduled pool for CPU work
+var scheduledExecutor = executorGet( "scheduled-tasks" ) // For scheduled tasks
+
+// Use directly
+var future = ioExecutor.submit( () => fetchFromAPI( url ) )
+var result = future.get()
+```
+
+**Runtime Executor Configuration** (`boxlang.json`):
+
+```json
+{
+    "executors": {
+        "io-tasks":        { "type": "virtual" },
+        "cpu-tasks":       { "type": "scheduled", "threads": 10 },
+        "scheduled-tasks": { "type": "scheduled", "threads": 10 }
+    }
+}
+```
+
+### Creating Custom Executors
+
+BoxLang supports seven executor types via `executorNew()`:
+
+```boxlang
+// Virtual threads — best for I/O-bound tasks (default, JVM 21+)
+var ioPool = executorNew( "virtual", "my-io-pool" )
+
+// Fixed thread pool — CPU-bound tasks with predictable concurrency
+var cpuPool = executorNew( type="fixed", name="cpu-pool", threads=8 )
+
+// Cached pool — grows/shrinks dynamically for bursty workloads
+var dynPool = executorNew( "cached", "burst-pool" )
+
+// Single thread — sequential guaranteed-order execution
+var seqPool = executorNew( "single", "sequential-processor" )
+
+// Fork-join — recursive divide-and-conquer algorithms
+var fjPool = executorNew( type="fork_join", name="fj-pool", parallelism=8 )
+
+// Work-stealing — auto load-balancing across threads
+var wsPool = executorNew( type="work_stealing", name="load-balanced", parallelism=8 )
+```
+
+### Scheduled Execution API
+
+The `scheduled` executor type provides `scheduleOnce`, `scheduleAtFixedRate`, and `scheduleWithFixedDelay`:
+
+```boxlang
+var executor = executorNew( type="scheduled", name="scheduler", threads=5 )
+
+// Run once after a delay
+var future = executor.scheduleOnce(
+    () => performMaintenance(),
+    5,        // delay value
+    "seconds" // time unit
+)
+
+// Run at a fixed rate (regardless of task duration)
+var future = executor.scheduleAtFixedRate(
+    () => healthCheck(),
+    0,        // initial delay
+    30,       // period
+    "seconds"
+)
+
+// Run with fixed delay BETWEEN executions (waits for task to finish first)
+var future = executor.scheduleWithFixedDelay(
+    () => processQueue(),
+    10,       // initial delay
+    5,        // delay between completions
+    "seconds"
+)
+
+// Submit a callable and get result
+var resultFuture = executor.submit( () => complexCalculation() )
+var result = resultFuture.get()
+
+// Shutdown executor when done
+executor.shutdown()
+```
+
+### Executor Statistics
+
+```boxlang
+var stats = executor.getStatistics()
+writeOutput( "Active threads:   #stats.activeCount#" )
+writeOutput( "Completed tasks:  #stats.completedTaskCount#" )
+writeOutput( "Pool size:        #stats.poolSize#" )
+writeOutput( "Is shutdown:      #executor.isShutdown()#" )
+```
+
 ## References
 
 - [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/async-programming)

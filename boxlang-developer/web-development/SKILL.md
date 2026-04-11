@@ -354,6 +354,84 @@ box server start
 }
 ```
 
+## SOAP Web Services
+
+BoxLang 1.8.0+ provides the `soap()` BIF for consuming SOAP 1.1/1.2 web services.
+It automatically parses WSDL documents and converts SOAP XML responses to BoxLang
+native types.
+
+### Basic SOAP Client
+
+```boxlang
+// Create client from WSDL URL
+var ws = soap( "http://example.com/service.wsdl" )
+
+// Invoke an operation with named parameters
+var result = ws.invoke( "getCustomer", { customerId: 12345 } )
+writeOutput( "Name: #result.customerName#" )
+```
+
+### Client with Authentication and Timeout
+
+```boxlang
+var ws = soap( "http://example.com/service.wsdl" )
+    .withBasicAuth( "apiUser", "secret" )
+    .timeout( 30 )
+
+var customer = ws.invoke( "getCustomer", { customerId: 42 } )
+```
+
+### Custom Headers
+
+```boxlang
+var ws = soap( "http://secure.example.com/service.wsdl" )
+    .header( "X-API-Key", "abc123" )
+    .header( "X-Tenant-ID", "tenant001" )
+    .timeout( 45 )
+
+var result = ws.invoke( "getData" )
+```
+
+### Service Inspection (Discover Operations)
+
+```boxlang
+var ws = soap( "http://example.com/service.wsdl" )
+
+// List all available operations
+var operations = ws.getOperations()
+operations.each( ( op ) -> writeOutput( op & "<br>" ) )
+
+// Get input parameter details for an operation
+var info = ws.getOperationInfo( "createOrder" )
+info.inputParameters.each( ( param ) -> {
+    writeOutput( "#param.name# (#param.type#)<br>" )
+})
+```
+
+### Error Handling (SOAP Faults → BoxLang Exceptions)
+
+```boxlang
+try {
+    var ws = soap( "http://example.com/service.wsdl" )
+    var result = ws.invoke( "processOrder", { orderId: orderId } )
+} catch ( "soap.Fault" e ) {
+    writeOutput( "SOAP fault: #e.message#" )
+} catch ( "soap.ConnectionError" e ) {
+    writeOutput( "Connection failed: #e.message#" )
+} catch ( any e ) {
+    writeOutput( "Unexpected error: #e.message#" )
+}
+```
+
+**When to use `soap()` vs `bx:http`:**
+
+| Use `soap()`       | Use `bx:http` / `httpGet()` |
+|--------------------|------------------------------|
+| Enterprise/legacy SOAP services | Modern REST/JSON APIs |
+| WSDL-defined contracts | Lightweight, fast communication |
+| WS-Security required | JSON preferred |
+| Complex type mapping | Simple HTTP calls |
+
 ## References
 
 - [Application.bx](https://boxlang.ortusbooks.com/boxlang-framework/applications)

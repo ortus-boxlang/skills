@@ -293,6 +293,113 @@ var expensiveCalc = memoize( (n) -> {
 })
 ```
 
+## Java Streams Integration
+
+BoxLang collections expose a `.stream()` method that returns a lazy Java Stream,
+enabling functional-style pipelines with deferred evaluation.
+
+### Creating Streams
+
+```boxlang
+// From array (lazy — nothing computed yet)
+var stream = [ 1, 2, 3, 4, 5 ].stream()
+
+// From query
+var users = queryExecute( "SELECT * FROM users" )
+var userStream = users.stream()
+
+// From struct
+var structStream = { name: "Ada", age: 36 }.stream()
+
+// From numeric range
+var rangeStream = range( 1, 100 ).stream()
+
+// Infinite stream (always use .limit() before collecting)
+import java.util.stream.Stream
+var infinite = Stream.iterate( 0, ( n ) => n + 1 )
+```
+
+### Intermediate Operations (Lazy)
+
+These operations build the pipeline but do NOT execute until a terminal operation is called:
+
+```boxlang
+var result = [ 1, 2, 3, 4, 5, 6 ]
+    .stream()
+    .filter( ( n ) => n % 2 == 0 )        // keep even numbers
+    .map( ( n ) => n * 2 )                 // double each
+    .distinct()                            // remove duplicates
+    .sorted()                              // sort ascending
+    .sorted( ( a, b ) => b - a )           // sort descending
+    .limit( 3 )                            // take first 3
+    .skip( 1 )                             // skip first 1
+    .peek( ( n ) => log.debug( n ) )       // side-effect without modifying
+    .flatMap( ( arr ) => arr.stream() )    // flatten nested arrays
+    .collect()
+```
+
+### Terminal Operations (Execute the Pipeline)
+
+```boxlang
+var numbers = [ 1, 2, 3, 4, 5 ]
+
+// collect() — materialize to array
+var evens = numbers.stream().filter( ( n ) => n % 2 == 0 ).collect()
+// Result: [ 2, 4 ]
+
+// count()
+var count = numbers.stream().filter( ( n ) => n > 3 ).count()  // 2
+
+// reduce() — fold into a single value
+var sum = numbers.stream().reduce( 0, ( acc, n ) => acc + n )  // 15
+
+// forEach() — side effects
+numbers.stream().forEach( ( n ) => writeOutput( n ) )
+
+// anyMatch / allMatch / noneMatch
+var hasEven    = numbers.stream().anyMatch( ( n ) => n % 2 == 0 )   // true
+var allPositive = numbers.stream().allMatch( ( n ) => n > 0 )        // true
+var noNeg      = numbers.stream().noneMatch( ( n ) => n < 0 )       // true
+
+// findFirst()
+var first = numbers.stream().filter( ( n ) => n > 3 ).findFirst()
+// Returns an Optional — use .get() or .orElse( default )
+var value = first.isPresent() ? first.get() : 0
+```
+
+### Practical Stream Pipeline
+
+```boxlang
+// Extract active user names, sorted, uppercased
+var activeNames = queryExecute( "SELECT * FROM users" )
+    .stream()
+    .filter( ( user ) => user.active )
+    .map( ( user ) => "#user.firstName# #user.lastName#" )
+    .map( ( name ) => name.uCase() )
+    .sorted()
+    .collect()
+
+// Summary struct via reduce
+var summary = orders
+    .stream()
+    .reduce(
+        { total: 0, count: 0 },
+        ( acc, order ) => ({ total: acc.total + order.amount, count: acc.count + 1 })
+    )
+```
+
+### Parallel Streams
+
+```boxlang
+// parallelStream() — processes elements concurrently
+var results = largeDataset
+    .parallelStream()
+    .filter( ( item ) => item.active )
+    .map( ( item ) => expensiveTransform( item ) )
+    .collect()
+// ⚠️ Only use for CPU-bound, stateless operations on large datasets
+```
+
 ## References
 
 - [Closures & Lambdas](https://boxlang.ortusbooks.com/boxlang-language/closures-lambdas)

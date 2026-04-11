@@ -357,10 +357,184 @@ runtime.executeTemplate( "/path/to/script.bxs", context );
 runtime.shutdown();
 ```
 
+## Attempt — Null-Safe Value Wrapper
+
+`Attempt<T>` is a fluent, immutable wrapper for values that may be null or invalid.
+It is analogous to Java's `Optional` but with built-in BoxLang validation support.
+Used extensively in BIFs and services, especially for optional argument handling.
+
+```java
+import ortus.boxlang.runtime.dynamic.Attempt;
+
+// Create an attempt from any value (including null)
+Attempt<String> attempt = Attempt.of( arguments.get( Key.of("name") ) );
+Attempt<Integer> empty  = Attempt.empty();
+
+// Basic presence checks
+if ( attempt.isPresent() ) { ... }
+if ( attempt.isEmpty() )   { ... }
+
+// Get value (throws NoElementException if empty)
+String value = attempt.get();
+
+// Get with default
+String value = attempt.orElse( "default" );
+String value = attempt.orElseGet( () -> computeDefault() );
+
+// Throw a specific exception if empty
+Attempt.of( null ).orThrow( "mymodule.NotFound", "Value not found" );
+
+// Map and filter
+Attempt<Integer> len = attempt.map( s -> s.length() );
+Attempt<String> filtered = attempt.filter( s -> s.length() > 3 );
+
+// Build a stream
+attempt.stream().forEach( v -> process(v) );
+```
+
+### Attempt with Validation
+
+```java
+// Validate type (uses BoxLang's isValid() function)
+Attempt.of( value ).toBeType( "email" ).isValid();  // true/false
+
+// Range validation (inclusive)
+Attempt.of( 42 ).toBeBetween( 1.0, 100.0 ).isValid();
+
+// Regex pattern
+Attempt.of( "hello" ).toMatchRegex( "^[a-z]+$" ).isValid();
+Attempt.of( "HELLO" ).toMatchRegex( "^[a-z]+$", false ).isValid(); // case-insensitive
+
+// Custom predicate
+Attempt.of( user ).toSatisfy( u -> u.isActive() ).isValid();
+```
+
+### Using Attempt in BIF Argument Handling
+
+```java
+@Override
+public Object invoke( IBoxContext context, ArgumentsScope arguments ) {
+    // getAsAttempt returns Attempt<T> — safe for optional params
+    String name    = arguments.getAsAttempt( Key.of("name"), String.class ).orElse( "World" );
+    Integer timeout = arguments.getAsAttempt( Key.of("timeout"), Integer.class ).orElse( 30 );
+
+    return "Hello, " + name + "!";
+}
+```
+
+## Type Casters
+
+BoxLang provides a rich set of type casters in `ortus.boxlang.runtime.dynamic.casters`.
+Each returns a `CastAttempt<T>` (similar to `Attempt`) with `.wasSuccessful()` and `.get()`.
+
+```java
+import ortus.boxlang.runtime.dynamic.casters.*;
+
+// Safe casting — returns CastAttempt
+CastAttempt<String>  strAttempt  = StringCaster.attempt( value );
+CastAttempt<Integer> intAttempt  = IntegerCaster.attempt( value );
+CastAttempt<Long>    longAttempt = LongCaster.attempt( value );
+CastAttempt<Double>  dblAttempt  = DoubleCaster.attempt( value );
+CastAttempt<Boolean> boolAttempt = BooleanCaster.attempt( value );
+
+if ( intAttempt.wasSuccessful() ) {
+    int n = intAttempt.get();
+}
+
+// Direct casting (throws if fails)
+String  str  = StringCaster.cast( value );
+Integer num  = IntegerCaster.cast( value );
+Boolean bool = BooleanCaster.cast( value );
+Array   arr  = ArrayCaster.cast( value );
+IStruct strc = StructCaster.cast( value );
+
+// Specific casters available:
+// ArrayCaster, BooleanCaster, DateTimeCaster, DoubleCaster,
+// FloatCaster, IntegerCaster, KeyCaster, LongCaster,
+// NumberCaster, QueryCaster, StringCaster, StructCaster,
+// UUIDCaster, XMLCaster, ThrowableCaster, FunctionCaster
+```
+
+## IService — Creating Custom Runtime Services
+
+Implement `IService` to create a service that's lifecycle-managed by the BoxLang runtime.
+The runtime discovers and calls lifecycle methods automatically.
+
+```java
+import ortus.boxlang.runtime.services.IService;
+import ortus.boxlang.runtime.scopes.Key;
+
+public class MyCustomService implements IService {
+
+    private static final Key SERVICE_NAME = Key.of( "MyCustomService" );
+    private BoxLangLogger     logger;
+
+    @Override
+    public Key getName() {
+        return SERVICE_NAME;
+    }
+
+    @Override
+    public void onConfigurationLoad() {
+        // Called when boxlang.json is loaded; access config here
+        this.logger = BoxRuntime.getInstance().getLoggingService().getLogger( "mycustomservice" );
+        logger.debug( "Configuration loaded" );
+    }
+
+    @Override
+    public void onStartup() {
+        logger.info( "MyCustomService started" );
+        // Initialize resources, open connections, warm up caches, etc.
+    }
+
+    @Override
+    public void onShutdown( Boolean force ) {
+        logger.info( "MyCustomService shutting down (force={})", force );
+        // Release resources, close connections, flush buffers
+    }
+
+    // Add your service-specific methods:
+    public String doSomething( String input ) {
+        return input.toUpperCase();
+    }
+}
+```
+
+### Registering a Service in a Module
+
+```java
+// ModuleConfig.bx (via Java in onLoad)
+// or register directly from Java:
+BoxRuntime.getInstance().registerService( new MyCustomService() );
+```
+
+```boxlang
+// ModuleConfig.bx
+class {
+    function onLoad() {
+        var svc = createObject( "java", "com.example.services.MyCustomService" ).init()
+        boxRuntime.registerService( svc )
+        log.info( "MyCustomService registered" )
+    }
+}
+```
+
+### Accessing a Registered Service
+
+```java
+// Retrieve by name
+MyCustomService svc = (MyCustomService) BoxRuntime.getInstance()
+    .getService( Key.of("MyCustomService") );
+
+svc.doSomething( "hello" );
+```
+
 ## References
 
 - [BoxLang Source](https://github.com/ortus-boxlang/BoxLang)
 - [BoxRuntime.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/BoxRuntime.java)
 - [IBoxContext](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/context/IBoxContext.java)
+- [Attempt.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/dynamic/Attempt.java)
+- [IService.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/services/IService.java)
 - [BoxLang Overview](https://boxlang.ortusbooks.com/getting-started/overview)
 - [JEP 444 — Virtual Threads](https://openjdk.org/jeps/444)

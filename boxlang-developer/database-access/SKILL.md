@@ -321,6 +321,87 @@ var analyticsData = queryExecute(
 )
 ```
 
+## Query of Queries (QoQ)
+
+Run SQL against in-memory query objects without touching the database by passing
+`{ dbtype: "query" }` as the options argument. Local query variables become table
+sources.
+
+### Basic QoQ
+
+```boxlang
+// Load data from the database once
+var users = queryExecute( "SELECT * FROM users" )
+
+// Now query the in-memory result — no DB roundtrip
+var activeUsers = queryExecute(
+    "SELECT * FROM users WHERE active = :active ORDER BY lastName",
+    { active: true },
+    { dbtype: "query" }
+)
+```
+
+### JOIN Across Multiple In-Memory Queries
+
+```boxlang
+var users  = queryExecute( "SELECT * FROM users" )
+var orders = queryExecute( "SELECT * FROM orders" )
+
+// Join two in-memory queries
+var report = queryExecute(
+    "
+        SELECT u.firstName, u.lastName, COUNT(o.id) AS orderCount
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.userId
+        GROUP BY u.firstName, u.lastName
+        ORDER BY orderCount DESC
+    ",
+    {},
+    { dbtype: "query" }
+)
+```
+
+### QoQ Aggregates
+
+```boxlang
+var orders = queryExecute( "SELECT * FROM orders" )
+
+var summary = queryExecute(
+    "
+        SELECT
+            COUNT(*)   AS totalOrders,
+            SUM(total) AS totalRevenue,
+            AVG(total) AS avgValue,
+            MIN(total) AS minOrder,
+            MAX(total) AS maxOrder
+        FROM orders
+    ",
+    {},
+    { dbtype: "query" }
+)
+writeOutput( "Revenue: #summary.totalRevenue#" )
+```
+
+### Complex Filtering Without Extra DB Calls
+
+```boxlang
+var allProducts = queryExecute( "SELECT * FROM products" )
+
+// Apply user-controlled search in memory — safe from SQL injection
+// because we're not hitting the DB, and params are still typed
+var filtered = queryExecute(
+    "SELECT * FROM products WHERE category = :cat AND price < :maxPrice ORDER BY name",
+    { cat: url.category, maxPrice: url.maxPrice },
+    { dbtype: "query" }
+)
+```
+
+**When to use QoQ:**
+- Filtering or sorting an already-loaded dataset without another DB round-trip
+- Joining two result sets from different datasources
+- Applying aggregate functions (COUNT, SUM, AVG) on in-memory data
+- Paging through results that are already in memory
+
 ## References
 
 - [Database / JDBC](https://boxlang.ortusbooks.com/boxlang-framework/database)

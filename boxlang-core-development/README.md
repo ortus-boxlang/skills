@@ -2,7 +2,8 @@
 
 Skills for developers extending the BoxLang runtime: building modules, creating
 custom built-in functions (BIFs), writing interceptors, developing custom
-components/tags, and understanding the runtime architecture.
+components/tags, understanding the runtime architecture, async/scheduled tasks,
+and logging.
 
 Install all core development skills:
 
@@ -17,6 +18,8 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 | `interceptors` | `npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors` |
 | `component-development` | `npx skills add ortus-boxlang/skills/boxlang-core-development/component-development` |
 | `runtime-architecture` | `npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture` |
+| `logging` | `npx skills add ortus-boxlang/skills/boxlang-core-development/logging` |
+| `async-tasks` | `npx skills add ortus-boxlang/skills/boxlang-core-development/async-tasks` |
 
 ## Useful Resources
 
@@ -25,3 +28,4 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 - [BoxLang Docs](https://boxlang.ortusbooks.com/)
 - [Interceptors](https://boxlang.ortusbooks.com/boxlang-framework/interceptors)
 - [Modularity](https://boxlang.ortusbooks.com/boxlang-framework/modularity)
+- [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/async-programming)
