@@ -13,6 +13,7 @@ Skills inject BoxLang domain knowledge directly into your AI agent so it can wri
 Skills are Markdown files (`SKILL.md`) that give your AI agent expert-level context on a specific topic. They are discovered and loaded automatically by the agent when relevant — a query about async programming loads the async skill, a question about deployment loads the deployment skill, and so on.
 
 Each skill in this repo contains:
+
 - Language syntax and idioms with working code examples
 - API references and BIF signatures
 - Configuration patterns
@@ -30,6 +31,21 @@ npx skills add ortus-boxlang/skills
 ```
 
 That's it. Your AI agent now has BoxLang expertise.
+
+## Claude Plugin Install
+
+Install this repository as a Claude plugin:
+
+```bash
+claude plugin install https://github.com/ortus-boxlang/skills
+```
+
+If you use plugin marketplace commands:
+
+```bash
+/plugin marketplace add ortus-boxlang/skills
+/plugin install boxlang-agent-skills@ortus-boxlang
+```
 
 ---
 
