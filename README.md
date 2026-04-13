@@ -216,8 +216,14 @@ https://raw.githubusercontent.com/ortus-boxlang/skills/main/boxlang-developer/la
 
 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) automatically picks up Markdown files placed in `.claude/skills/` inside your project. Copy any `SKILL.md` directly:
 
-This repo also includes a prebuilt Claude marketplace catalog file at `.claude/skills/boxlang-marketplace.md`.
-For marketplace-style JSON manifests, use `.claude/marketplace.json`.
+To install this repo as a Claude Code plugin marketplace, use the `/plugin` command:
+
+```bash
+/plugin marketplace add ortus-boxlang/skills
+/plugin install boxlang-agent-skills@boxlang-agent-skills
+```
+
+Or add a single skill file manually:
 
 ```bash
 # Add a single skill manually

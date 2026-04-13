@@ -33,3 +33,22 @@ Skills for working with official BoxLang modules. Each module has its own subdir
 ## Usage
 
 Load a skill when the task involves the corresponding module. Multiple skills can be combined — e.g., load both `bx-ai-agents` and `bx-ai-tools` when building an agent that uses function calling.
+
+## Install
+
+```bash
+# All BoxLang module skills
+npx skills add ortus-boxlang/skills/boxlang-modules
+
+# Individual modules
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-ai
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-orm
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-mail
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-pdf
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-jdbc
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-compat-cfml
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-esapi
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-password-encrypt
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-image
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-web-support
+```
