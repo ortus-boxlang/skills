@@ -26,11 +26,11 @@ Each skill in this repo contains:
 Requires [Node.js](https://nodejs.org) — no installation needed, just `npx`:
 
 ```bash
-# Install ALL BoxLang skills (both categories)
+# Install ALL BoxLang skills (all categories)
 npx skills add ortus-boxlang/skills
 ```
 
-That's it. Your AI agent now has BoxLang expertise.
+That's it. Your AI agent now has BoxLang and CommandBox expertise.
 
 ## Claude Plugin Install
 
@@ -107,6 +107,29 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 
 ---
 
+### `commandbox` — CommandBox CLI, Package Manager & Embedded Server
+
+For developers using [CommandBox](https://www.ortussolutions.com/products/commandbox) — the CFML/BoxLang CLI, package manager,
+and embedded Undertow server from Ortus Solutions.
+
+```bash
+npx skills add ortus-boxlang/skills/commandbox
+```
+
+| Skill | What It Covers |
+|-------|----------------|
+| [`commandbox-setup`](./commandbox/commandbox-setup/SKILL.md) | Installation (macOS/Linux/Windows/Homebrew), upgrading, Java configuration, `commandbox.properties`, light vs thin binaries |
+| [`commandbox-usage`](./commandbox/commandbox-usage/SKILL.md) | CLI commands, named/positional parameters, flags, system settings (`${VAR:default}`), env vars, backtick expressions, piping, recipes, REPL, aliases, exit codes, `watch` |
+| [`commandbox-package-management`](./commandbox/commandbox-package-management/SKILL.md) | `box.json` schema, ForgeBox / Git / HTTP / folder / S3 / Gist / Java endpoints, semver ranges, dependencies vs devDependencies, lock files, package scripts, artifacts cache, publishing |
+| [`commandbox-embedded-server`](./commandbox/commandbox-embedded-server/SKILL.md) | Undertow server configuration via `server.json`, server profiles, JVM/heap settings, SSL/TLS, URL rewrites, server rules, multi-site support, basic auth, aliases, OS service, server scripts |
+| [`commandbox-task-runners`](./commandbox/commandbox-task-runners/SKILL.md) | Task CFC anatomy, lifecycle events, interactive jobs DSL, progress bars, ANSI print helpers, threading/async, file watching, running sub-commands, property files, ad-hoc JARs/modules |
+| [`commandbox-developing`](./commandbox/commandbox-developing/SKILL.md) | Custom commands, namespace conventions, parameter annotations, WireBox DI, module structure, `ModuleConfig.cfc`, interceptors, core interception points, injection DSL, sharing/publishing |
+| [`commandbox-config-settings`](./commandbox/commandbox-config-settings/SKILL.md) | Global config management, `config set/show/clear`, server defaults, ForgeBox API token, custom endpoints, proxy settings, env var overrides (`box_config_*`), setting sync |
+| [`commandbox-deploying`](./commandbox/commandbox-deploying/SKILL.md) | Production `server.json`, Docker (`ortussolutions/commandbox`), GitHub Actions (`setup-commandbox`), Heroku/Dokku buildpack, Amazon Lightsail/VPS, systemd service, CFConfig integration |
+| [`commandbox-testing`](./commandbox/commandbox-testing/SKILL.md) | `testbox run` flags, `box.json` testbox config, test watcher, CI integration, output formats, code coverage, TestBox CLI patterns |
+
+---
+
 ## Install Individual Skills
 
 ```bash
@@ -128,6 +151,17 @@ npx skills add ortus-boxlang/skills/boxlang-core-development/bif-development
 npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors
 npx skills add ortus-boxlang/skills/boxlang-core-development/component-development
 npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture
+
+# Single skill from commandbox
+npx skills add ortus-boxlang/skills/commandbox/commandbox-setup
+npx skills add ortus-boxlang/skills/commandbox/commandbox-usage
+npx skills add ortus-boxlang/skills/commandbox/commandbox-package-management
+npx skills add ortus-boxlang/skills/commandbox/commandbox-embedded-server
+npx skills add ortus-boxlang/skills/commandbox/commandbox-task-runners
+npx skills add ortus-boxlang/skills/commandbox/commandbox-developing
+npx skills add ortus-boxlang/skills/commandbox/commandbox-config-settings
+npx skills add ortus-boxlang/skills/commandbox/commandbox-deploying
+npx skills add ortus-boxlang/skills/commandbox/commandbox-testing
 ```
 
 ---
@@ -163,6 +197,8 @@ If you prefer not to use the `npx skills` CLI — or if you are adding skills to
    - `boxlang-developer/language-fundamentals/SKILL.md`
    - `boxlang-developer/web-development/SKILL.md`
    - `boxlang-core-development/module-development/SKILL.md`
+   - `commandbox/commandbox-embedded-server/SKILL.md`
+   - `commandbox/commandbox-package-management/SKILL.md`
 
 Raw file URLs follow this pattern:
 
@@ -241,6 +277,8 @@ For manual placement and Claude Project support files, see **Direct / Manual Ins
 |----------|------|
 | BoxLang Documentation | https://boxlang.ortusbooks.com/ |
 | BoxLang GitHub | https://github.com/ortus-boxlang/BoxLang |
+| CommandBox Documentation | https://commandbox.ortusbooks.com/ |
+| CommandBox GitHub | https://github.com/Ortus-Solutions/commandbox |
 | Module Template | https://github.com/ortus-boxlang/boxlang-module-template |
 | ForgeBox (packages) | https://forgebox.io |
 | Ortus Community | https://community.ortussolutions.com/ |

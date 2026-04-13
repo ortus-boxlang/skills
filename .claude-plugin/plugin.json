@@ -1,7 +1,7 @@
 {
   "name": "boxlang-agent-skills",
   "version": "1.0.0",
-  "description": "BoxLang skills for Claude Code — language fundamentals, OOP, async, web, DB, caching, Java integration, deployment, and runtime extension",
+  "description": "BoxLang and CommandBox skills for Claude Code — language fundamentals, OOP, async, web, DB, caching, Java integration, modules, deployment, runtime extension, CLI, package management, embedded server, and task runners",
   "author": {
     "name": "Ortus Solutions",
     "email": "info@ortussolutions.com",
@@ -10,10 +10,12 @@
   "homepage": "https://boxlang.io/",
   "repository": "https://github.com/ortus-boxlang/skills",
   "license": "Apache-2.0",
-  "keywords": ["boxlang", "jvm", "java","lambda", "serverless", "desktop", "web", "ortus" ],
+  "keywords": ["boxlang", "commandbox", "jvm", "java", "cfml", "coldfusion", "lucee", "lambda", "serverless", "desktop", "web", "forgebox", "package-manager", "embedded-server", "task-runner", "ortus"],
   "skills": [
     "./boxlang-developer/",
-    "./boxlang-core-development/"
+    "./boxlang-core-development/",
+    "./boxlang-modules/",
+    "./commandbox/"
   ],
   "commands": "./commands/",
   "mcpServers": "./.mcp.json"
