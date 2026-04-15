@@ -1,6 +1,6 @@
 ---
 name: boxlang-docbox
-description: Use this skill when generating API documentation for BoxLang or CFML projects with DocBox, including installation, CLI usage, programmatic configuration, HTML/JSON/UML/CommandBox output strategies, HTML themes, multiple sources, excludes patterns, and creating custom strategies. DocBox reads JavaDoc-style comments from your source code — see the code-documenter skill for annotation conventions.
+description: "Use this skill when generating API documentation for BoxLang or CFML projects with DocBox, including installation, CLI usage, programmatic configuration, HTML/JSON/UML/CommandBox output strategies, HTML themes, multiple sources, excludes patterns, and creating custom strategies. DocBox reads JavaDoc-style comments from your source code — see the code-documenter skill for annotation conventions."
 ---
 
 # DocBox — API Documentation Generator

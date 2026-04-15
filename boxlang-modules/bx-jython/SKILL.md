@@ -1,6 +1,6 @@
 ---
 name: bx-jython
-description: Use this skill when executing Python code inside BoxLang with the bx-jython module: jythonEval(), jythonEvalFile(), the bx:jython component, variable bindings from the BoxLang variables scope, and inter-language result handling.
+description: "Use this skill when executing Python code inside BoxLang with the bx-jython module: jythonEval(), jythonEvalFile(), the bx:jython component, variable bindings from the BoxLang variables scope, and inter-language result handling."
 ---
 
 # bx-jython: Execute Python in BoxLang

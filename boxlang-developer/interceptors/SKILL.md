@@ -1,6 +1,6 @@
 ---
 name: boxlang-interceptors
-description: Use this skill when working with BoxLang's interceptor/event system: creating interceptors, registering announcement points, announcing custom events with announce() or announceAsync(), building pre/post operation hooks, validation interceptors, security guards, or leveraging BoxRegisterInterceptor() BIF for standalone and module-based interception.
+description: "Use this skill when working with BoxLang's interceptor/event system: creating interceptors, registering announcement points, announcing custom events with announce() or announceAsync(), building pre/post operation hooks, validation interceptors, security guards, or leveraging BoxRegisterInterceptor() BIF for standalone and module-based interception."
 ---
 
 # BoxLang Interceptors

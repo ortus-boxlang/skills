@@ -1,6 +1,6 @@
 ---
 name: bx-ini
-description: Use this skill when reading or writing INI configuration files in BoxLang with the bx-ini module: getIniFile(), getProfileString(), setProfileString(), getProfileSections(), removeProfileSection(), and fluent IniFile object methods.
+description: "Use this skill when reading or writing INI configuration files in BoxLang with the bx-ini module: getIniFile(), getProfileString(), setProfileString(), getProfileSections(), removeProfileSection(), and fluent IniFile object methods."
 ---
 
 # bx-ini: INI File Handling

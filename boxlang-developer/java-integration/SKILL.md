@@ -1,6 +1,6 @@
 ---
 name: boxlang-java-integration
-description: Use this skill when integrating BoxLang with Java: createObject, static method calls, type conversion, importing classes, passing closures as functional interfaces, including JARs, JSR-223 scripting, or using Java libraries from BoxLang code.
+description: "Use this skill when integrating BoxLang with Java: createObject, static method calls, type conversion, importing classes, passing closures as functional interfaces, including JARs, JSR-223 scripting, or using Java libraries from BoxLang code."
 ---
 
 # BoxLang Java Integration

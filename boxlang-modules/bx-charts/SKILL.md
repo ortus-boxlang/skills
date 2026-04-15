@@ -1,6 +1,6 @@
 ---
 name: bx-charts
-description: Use this skill to create charts and graphs in BoxLang with the bx-charts module: bx:chart, bx:chartseries, bx:chartdata, chart types (bar, line, pie, doughnut, radar, polarArea, area, horizontalbar, scatter, bubble), responsive charts, custom colors, legends, and axis configuration.
+description: "Use this skill to create charts and graphs in BoxLang with the bx-charts module: bx:chart, bx:chartseries, bx:chartdata, chart types (bar, line, pie, doughnut, radar, polarArea, area, horizontalbar, scatter, bubble), responsive charts, custom colors, legends, and axis configuration."
 ---
 
 # bx-charts: Charts & Graphs

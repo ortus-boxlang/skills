@@ -1,6 +1,6 @@
 ---
 name: boxlang-miniserver
-description: Use this skill when running BoxLang as a lightweight web server using the BoxLang MiniServer (Undertow-based), configuring miniserver.json, using the .boxlang.json project convention, enabling health checks, warmup URLs, environment variable overrides, and tuning for development and production.
+description: "Use this skill when running BoxLang as a lightweight web server using the BoxLang MiniServer (Undertow-based), configuring miniserver.json, using the .boxlang.json project convention, enabling health checks, warmup URLs, environment variable overrides, and tuning for development and production."
 ---
 
 # BoxLang MiniServer

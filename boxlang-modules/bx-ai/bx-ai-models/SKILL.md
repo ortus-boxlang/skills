@@ -1,6 +1,6 @@
 ---
 name: bx-ai-models
-description: Use this skill when configuring AI models with aiModel(): selecting providers, setting default parameters, structured output schemas, working with the service BIF aiService(), and pre-configuring providers in module settings.
+description: "Use this skill when configuring AI models with aiModel(): selecting providers, setting default parameters, structured output schemas, working with the service BIF aiService(), and pre-configuring providers in module settings."
 ---
 
 # bx-ai: Models & Providers

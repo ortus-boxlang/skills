@@ -1,6 +1,6 @@
 ---
 name: boxlang-interceptors
-description: Use this skill when creating BoxLang interceptors: Observer/Intercepting Filter patterns, interceptor pools, BoxLang class vs Java interceptors, lambda interceptors, registration via BIFs/InterceptorService/ModuleConfig, interception points, and announcing custom events.
+description: "Use this skill when creating BoxLang interceptors: Observer/Intercepting Filter patterns, interceptor pools, BoxLang class vs Java interceptors, lambda interceptors, registration via BIFs/InterceptorService/ModuleConfig, interception points, and announcing custom events."
 ---
 
 # BoxLang Interceptors

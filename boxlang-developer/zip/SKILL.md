@@ -1,6 +1,6 @@
 ---
 name: boxlang-zip
-description: Use this skill when creating, extracting, listing, or modifying ZIP archives in BoxLang using the bx:zip component: compressing directories or files, filtering entries, reading archive contents, downloading files as a ZIP, or building backup/restore workflows.
+description: "Use this skill when creating, extracting, listing, or modifying ZIP archives in BoxLang using the bx:zip component: compressing directories or files, filtering entries, reading archive contents, downloading files as a ZIP, or building backup/restore workflows."
 ---
 
 # BoxLang ZIP Archives

@@ -1,6 +1,6 @@
 ---
 name: boxlang-spring-boot
-description: Use this skill when integrating BoxLang with Spring Boot applications, including the starter dependency, MVC view resolution, template structure, accessing Spring Model attributes, configuration via application.properties, and returning BoxLang views from Spring controllers.
+description: "Use this skill when integrating BoxLang with Spring Boot applications, including the starter dependency, MVC view resolution, template structure, accessing Spring Model attributes, configuration via application.properties, and returning BoxLang views from Spring controllers."
 ---
 
 # BoxLang with Spring Boot

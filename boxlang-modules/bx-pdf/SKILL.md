@@ -1,6 +1,6 @@
 ---
 name: bx-pdf
-description: Use this skill when generating PDF documents in BoxLang with the bx-pdf module: bx:document component, headers/footers with bx:documentitem, multi-section PDFs with bx:documentsection, saving to file, capturing PDF as binary variable, encryption, and page settings.
+description: "Use this skill when generating PDF documents in BoxLang with the bx-pdf module: bx:document component, headers/footers with bx:documentitem, multi-section PDFs with bx:documentsection, saving to file, capturing PDF as binary variable, encryption, and page settings."
 ---
 
 # bx-pdf: PDF Generation

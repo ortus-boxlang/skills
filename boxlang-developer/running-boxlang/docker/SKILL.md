@@ -1,6 +1,6 @@
 ---
 name: boxlang-docker
-description: Use this skill when containerizing BoxLang applications with Docker, including choosing the right image variant, running scripts, the MiniServer web runtime, environment variables, health checks, volume mounts, Docker Compose, and production deployment patterns.
+description: "Use this skill when containerizing BoxLang applications with Docker, including choosing the right image variant, running scripts, the MiniServer web runtime, environment variables, health checks, volume mounts, Docker Compose, and production deployment patterns."
 ---
 
 # BoxLang with Docker

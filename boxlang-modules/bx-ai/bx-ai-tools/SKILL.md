@@ -1,6 +1,6 @@
 ---
 name: bx-ai-tools
-description: Use this skill when creating AI tools (function calling) with aiTool(): parameter descriptions, tool registries, using tools with aiChat() and agents, the aiToolRegistry() BIF, global skills with aiglobalSkills(), and best practices for tool design.
+description: "Use this skill when creating AI tools (function calling) with aiTool(): parameter descriptions, tool registries, using tools with aiChat() and agents, the aiToolRegistry() BIF, global skills with aiglobalSkills(), and best practices for tool design."
 ---
 
 # bx-ai: AI Tools (Function Calling)

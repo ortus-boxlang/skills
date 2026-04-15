@@ -1,6 +1,6 @@
 ---
 name: bx-esapi
-description: Use this skill for OWASP ESAPI encoding, decoding, and HTML sanitization in BoxLang: encodeFor(), encodeForHTML(), encodeForJavaScript(), encodeForSQL(), encodeForURL(), decodeFrom(), htmlSanitize() with AntiSamy, and context-aware output encoding to prevent XSS/injection.
+description: "Use this skill for OWASP ESAPI encoding, decoding, and HTML sanitization in BoxLang: encodeFor(), encodeForHTML(), encodeForJavaScript(), encodeForSQL(), encodeForURL(), decodeFrom(), htmlSanitize() with AntiSamy, and context-aware output encoding to prevent XSS/injection."
 ---
 
 # bx-esapi: OWASP ESAPI Security Module

@@ -1,6 +1,6 @@
 ---
 name: boxlang-best-practices
-description: Use this skill when writing, reviewing, or improving BoxLang code to ensure it follows community best practices for naming, structure, scoping, error handling, performance, and maintainability.
+description: "Use this skill when writing, reviewing, or improving BoxLang code to ensure it follows community best practices for naming, structure, scoping, error handling, performance, and maintainability."
 ---
 
 # BoxLang Best Practices

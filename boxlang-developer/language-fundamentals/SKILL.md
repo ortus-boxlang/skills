@@ -1,6 +1,6 @@
 ---
 name: boxlang-language-fundamentals
-description: Use this skill when writing or reviewing BoxLang code covering syntax, file types, variables, scopes, operators, control flow, exception handling, type system, and modern language features like destructuring and spread syntax.
+description: "Use this skill when writing or reviewing BoxLang code covering syntax, file types, variables, scopes, operators, control flow, exception handling, type system, and modern language features like destructuring and spread syntax."
 ---
 
 # BoxLang Language Fundamentals

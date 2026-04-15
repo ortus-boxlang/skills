@@ -1,6 +1,6 @@
 ---
 name: boxlang-database-access
-description: Use this skill when writing BoxLang database code: queryExecute, bx:query, datasource configuration, parameterized queries, transactions, stored procedures, query manipulation, or preventing SQL injection.
+description: "Use this skill when writing BoxLang database code: queryExecute, bx:query, datasource configuration, parameterized queries, transactions, stored procedures, query manipulation, or preventing SQL injection."
 ---
 
 # BoxLang Database Access

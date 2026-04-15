@@ -1,6 +1,6 @@
 ---
 name: bx-ai-chatting
-description: Use this skill when writing BoxLang AI chat code: aiChat(), aiChatAsync(), aiChatStream(), parameters (temperature, max_tokens, model), provider selection, API keys, return formats, multi-turn conversations, and error handling.
+description: "Use this skill when writing BoxLang AI chat code: aiChat(), aiChatAsync(), aiChatStream(), parameters (temperature, max_tokens, model), provider selection, API keys, return formats, multi-turn conversations, and error handling."
 ---
 
 # bx-ai: Chatting with AI

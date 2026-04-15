@@ -1,6 +1,6 @@
 ---
 name: bx-orm-querying
-description: Use this skill when querying ORM entities: EntityLoad(), EntityLoadByPK(), EntityLoadByExample(), ORMExecuteQuery(), HQL queries, filtering, sorting, pagination, caching query results, and entity lifecycle BIFs (EntitySave, EntityDelete, EntityNew, EntityMerge).
+description: "Use this skill when querying ORM entities: EntityLoad(), EntityLoadByPK(), EntityLoadByExample(), ORMExecuteQuery(), HQL queries, filtering, sorting, pagination, caching query results, and entity lifecycle BIFs (EntitySave, EntityDelete, EntityNew, EntityMerge)."
 ---
 
 # bx-orm: Querying & Entity BIFs

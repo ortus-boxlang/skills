@@ -1,6 +1,6 @@
 ---
 name: boxlang-esp32
-description: Use this skill when deploying BoxLang to ESP32 microcontrollers using MatchBox's --target esp32 flag, flashing firmware (full-flash vs fast-deploy), using watch mode for rapid iteration, accessing hardware via BoxLang BIFs, detecting the ESP32 runtime, and understanding FreeRTOS task constraints.
+description: "Use this skill when deploying BoxLang to ESP32 microcontrollers using MatchBox's --target esp32 flag, flashing firmware (full-flash vs fast-deploy), using watch mode for rapid iteration, accessing hardware via BoxLang BIFs, detecting the ESP32 runtime, and understanding FreeRTOS task constraints."
 ---
 
 # BoxLang on ESP32

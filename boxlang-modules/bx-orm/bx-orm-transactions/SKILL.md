@@ -1,6 +1,6 @@
 ---
 name: bx-orm-transactions
-description: Use this skill for ORM transactions and session management in BoxLang: transaction{} blocks, automatic flush/rollback, transactionCommit(), transactionRollback(), savepoints, ORMFlush(), ORMClearSession(), multi-entity saves, error handling within transactions.
+description: "Use this skill for ORM transactions and session management in BoxLang: transaction{} blocks, automatic flush/rollback, transactionCommit(), transactionRollback(), savepoints, ORMFlush(), ORMClearSession(), multi-entity saves, error handling within transactions."
 ---
 
 # bx-orm: Transactions & Session Management

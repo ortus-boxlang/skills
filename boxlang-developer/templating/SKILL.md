@@ -1,6 +1,6 @@
 ---
 name: boxlang-templating
-description: Use this skill when writing BoxLang markup templates (.bxm files), mixing HTML with BoxLang output expressions, using template components like bx:output, bx:loop, bx:if, bx:include, bx:script, building views, or creating any HTML-generating template files.
+description: "Use this skill when writing BoxLang markup templates (.bxm files), mixing HTML with BoxLang output expressions, using template components like bx:output, bx:loop, bx:if, bx:include, bx:script, building views, or creating any HTML-generating template files."
 ---
 
 # BoxLang Templating Language

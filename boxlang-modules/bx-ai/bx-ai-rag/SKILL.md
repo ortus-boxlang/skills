@@ -1,6 +1,6 @@
 ---
 name: bx-ai-rag
-description: Use this skill when building RAG (Retrieval-Augmented Generation) systems with BoxLang AI: aiDocuments() for loading and chunking documents, aiEmbed() for embeddings, vector memory providers, ingesting documents into vector stores, and wiring RAG into agents.
+description: "Use this skill when building RAG (Retrieval-Augmented Generation) systems with BoxLang AI: aiDocuments() for loading and chunking documents, aiEmbed() for embeddings, vector memory providers, ingesting documents into vector stores, and wiring RAG into agents."
 ---
 
 # bx-ai: RAG (Retrieval-Augmented Generation)

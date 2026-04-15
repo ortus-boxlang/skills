@@ -1,6 +1,6 @@
 ---
 name: bx-password-encrypt
-description: Use this skill for secure password hashing and verification in BoxLang with the bx-password-encrypt module: BCryptHash/BCryptVerify, ArgonHash/ArgonVerify, SCryptHash/SCryptVerify, PBKDF2Hash/PBKDF2Verify, and choosing the right algorithm for your use case.
+description: "Use this skill for secure password hashing and verification in BoxLang with the bx-password-encrypt module: BCryptHash/BCryptVerify, ArgonHash/ArgonVerify, SCryptHash/SCryptVerify, PBKDF2Hash/PBKDF2Verify, and choosing the right algorithm for your use case."
 ---
 
 # bx-password-encrypt: Secure Password Hashing

@@ -1,6 +1,6 @@
 ---
 name: boxlang-code-reviewer
-description: Use this skill when reviewing BoxLang code for quality, correctness, security vulnerabilities, performance issues, style violations, or when providing structured code review feedback following BoxLang best practices and security guidelines.
+description: "Use this skill when reviewing BoxLang code for quality, correctness, security vulnerabilities, performance issues, style violations, or when providing structured code review feedback following BoxLang best practices and security guidelines."
 ---
 
 # BoxLang Code Reviewer

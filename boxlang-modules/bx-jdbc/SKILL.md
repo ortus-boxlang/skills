@@ -1,6 +1,6 @@
 ---
 name: bx-jdbc
-description: Use this skill when selecting and installing JDBC driver modules for BoxLang database connectivity: bx-derby, bx-mysql, bx-mariadb, bx-mssql, bx-postgresql, bx-sqlite, bx-oracle, bx-hypersql. Each module packages the appropriate JDBC driver.
+description: "Use this skill when selecting and installing JDBC driver modules for BoxLang database connectivity: bx-derby, bx-mysql, bx-mariadb, bx-mssql, bx-postgresql, bx-sqlite, bx-oracle, bx-hypersql. Each module packages the appropriate JDBC driver."
 ---
 
 # bx-jdbc: JDBC Driver Modules

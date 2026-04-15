@@ -1,6 +1,6 @@
 ---
 name: boxlang-functional-programming
-description: Use this skill when working with BoxLang lambdas, closures, arrow functions, higher-order functions, functional array/struct pipelines (map, filter, reduce, flatMap, groupBy, etc.), destructuring, or spread syntax.
+description: "Use this skill when working with BoxLang lambdas, closures, arrow functions, higher-order functions, functional array/struct pipelines (map, filter, reduce, flatMap, groupBy, etc.), destructuring, or spread syntax."
 ---
 
 # BoxLang Functional Programming

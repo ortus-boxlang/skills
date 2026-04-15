@@ -1,6 +1,6 @@
 ---
 name: boxlang-deployment
-description: Use this skill when deploying BoxLang applications: CommandBox server setup, Docker containers, AWS Lambda, GitHub Actions CI/CD, BoxLang Version Manager (BVM), boxlang.json runtime config, environment variables, or Spring Boot integration.
+description: "Use this skill when deploying BoxLang applications: CommandBox server setup, Docker containers, AWS Lambda, GitHub Actions CI/CD, BoxLang Version Manager (BVM), boxlang.json runtime config, environment variables, or Spring Boot integration."
 ---
 
 # BoxLang Deployment

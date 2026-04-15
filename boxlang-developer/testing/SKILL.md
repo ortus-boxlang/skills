@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, and running tests via the BoxLang CLI runner.
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, and running tests via the BoxLang CLI runner."
 ---
 
 # BoxLang Testing with TestBox

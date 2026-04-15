@@ -1,6 +1,6 @@
 ---
 name: bx-jsoup
-description: Use this skill when parsing, querying, or sanitizing HTML in BoxLang with the bx-jsoup module: htmlParse(), htmlClean(), CSS selectors, XSS protection, HTML to JSON/XML conversion, and safe HTML allowlisting.
+description: "Use this skill when parsing, querying, or sanitizing HTML in BoxLang with the bx-jsoup module: htmlParse(), htmlClean(), CSS selectors, XSS protection, HTML to JSON/XML conversion, and safe HTML allowlisting."
 ---
 
 # bx-jsoup: HTML Parsing & Sanitization

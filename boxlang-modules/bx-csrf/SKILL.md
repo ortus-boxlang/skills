@@ -1,6 +1,6 @@
 ---
 name: bx-csrf
-description: Use this skill for CSRF (Cross-Site Request Forgery) protection in BoxLang web apps: CSRFGenerateToken(), CSRFVerifyToken(), CSRFHiddenField(), CSRFRotate(), token scoping with keys, auto-verification, token expiration, and boxlang.json configuration.
+description: "Use this skill for CSRF (Cross-Site Request Forgery) protection in BoxLang web apps: CSRFGenerateToken(), CSRFVerifyToken(), CSRFHiddenField(), CSRFRotate(), token scoping with keys, auto-verification, token expiration, and boxlang.json configuration."
 ---
 
 # bx-csrf: CSRF Protection

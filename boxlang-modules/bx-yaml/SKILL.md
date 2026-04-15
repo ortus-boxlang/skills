@@ -1,6 +1,6 @@
 ---
 name: bx-yaml
-description: Use this skill when serializing or deserializing YAML in BoxLang with the bx-yaml module: yamlSerialize(), yamlDeserialize(), yamlDeserializeFile(), serializing BoxLang classes to YAML, and custom toYAML() methods.
+description: "Use this skill when serializing or deserializing YAML in BoxLang with the bx-yaml module: yamlSerialize(), yamlDeserialize(), yamlDeserializeFile(), serializing BoxLang classes to YAML, and custom toYAML() methods."
 ---
 
 # bx-yaml: YAML Serialization

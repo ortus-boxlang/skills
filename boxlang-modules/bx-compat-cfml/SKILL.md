@@ -1,6 +1,6 @@
 ---
 name: bx-compat-cfml
-description: Use this skill to migrate ColdFusion (Adobe CF) or Lucee CFML applications to BoxLang using the bx-compat-cfml module: zero-code migration, engine configuration, null handling differences, type coercion modes, server scope population, JSON parsing behavior, and identifying incompatibilities.
+description: "Use this skill to migrate ColdFusion (Adobe CF) or Lucee CFML applications to BoxLang using the bx-compat-cfml module: zero-code migration, engine configuration, null handling differences, type coercion modes, server scope population, JSON parsing behavior, and identifying incompatibilities."
 ---
 
 # bx-compat-cfml: CFML Compatibility Layer
