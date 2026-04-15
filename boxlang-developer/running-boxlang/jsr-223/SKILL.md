@@ -1,6 +1,6 @@
 ---
 name: boxlang-jsr-223
-description: Use this skill when embedding BoxLang into Java applications via the JSR-223 scripting API, evaluating BoxLang code from Java, sharing data between Java and BoxLang via Bindings, building rules engines, template processors, or configurable logic using BoxLang as a scripting engine inside a JVM application.
+description: "Use this skill when embedding BoxLang into Java applications via the JSR-223 scripting API, evaluating BoxLang code from Java, sharing data between Java and BoxLang via Bindings, building rules engines, template processors, or configurable logic using BoxLang as a scripting engine inside a JVM application."
 ---
 
 # BoxLang JSR-223 Scripting

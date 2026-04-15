@@ -1,6 +1,6 @@
 ---
 name: bx-orm-relationships
-description: Use this skill when defining relationships between ORM entities: one-to-one, one-to-many, many-to-one, many-to-many, lazy loading, cascade options, foreign keys, link tables, singular names, and inverse relationships.
+description: "Use this skill when defining relationships between ORM entities: one-to-one, one-to-many, many-to-one, many-to-many, lazy loading, cascade options, foreign keys, link tables, singular names, and inverse relationships."
 ---
 
 # bx-orm: Entity Relationships

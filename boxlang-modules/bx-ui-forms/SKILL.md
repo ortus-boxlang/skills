@@ -1,6 +1,6 @@
 ---
 name: bx-ui-forms
-description: Use this skill to render HTML forms in BoxLang using the bx-ui-forms module: bx:form, bx:input, bx:select, bx:slider, bx:textarea components, form actions and methods, preservedata for sticky forms, input types and labels, and styling considerations.
+description: "Use this skill to render HTML forms in BoxLang using the bx-ui-forms module: bx:form, bx:input, bx:select, bx:slider, bx:textarea components, form actions and methods, preservedata for sticky forms, input types and labels, and styling considerations."
 ---
 
 # bx-ui-forms: HTML Form Components

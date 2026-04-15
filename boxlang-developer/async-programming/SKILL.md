@@ -1,6 +1,6 @@
 ---
 name: boxlang-async-programming
-description: Use this skill when writing BoxLang asynchronous code: BoxFuture, futureNew, asyncRun, asyncAll, asyncAny, asyncAllApply, executors, schedulers, thread components, parallel pipelines, file watchers, or distributed locking with bx:lock.
+description: "Use this skill when writing BoxLang asynchronous code: BoxFuture, futureNew, asyncRun, asyncAll, asyncAny, asyncAllApply, executors, schedulers, thread components, parallel pipelines, file watchers, or distributed locking with bx:lock."
 ---
 
 # BoxLang Async Programming

@@ -1,6 +1,6 @@
 ---
 name: bx-ai-pipelines
-description: Use this skill when building AI pipelines with BoxLang AI: aiMessage() templates, aiModel() in pipelines, aiTransform() steps, chaining with .to() and .transform(), the _input system variable, multi-model pipelines, streaming pipelines, and structured output in pipelines.
+description: "Use this skill when building AI pipelines with BoxLang AI: aiMessage() templates, aiModel() in pipelines, aiTransform() steps, chaining with .to() and .transform(), the _input system variable, multi-model pipelines, streaming pipelines, and structured output in pipelines."
 ---
 
 # bx-ai: AI Pipelines

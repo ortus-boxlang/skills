@@ -1,6 +1,6 @@
 ---
 name: bx-unsafe-evaluate
-description: Use this skill when you need the evaluate() BIF in BoxLang for legacy CFML migration or dynamic expression evaluation. This module is explicitly opt-in due to security risks and should be avoided in new code.
+description: "Use this skill when you need the evaluate() BIF in BoxLang for legacy CFML migration or dynamic expression evaluation. This module is explicitly opt-in due to security risks and should be avoided in new code."
 ---
 
 # bx-unsafe-evaluate: Dynamic Code Evaluation

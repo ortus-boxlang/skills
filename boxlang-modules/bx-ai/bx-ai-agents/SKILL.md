@@ -1,6 +1,6 @@
 ---
 name: bx-ai-agents
-description: Use this skill when building AI agents with aiAgent(): instructions, custom models, tools, skills (always-on and lazy), MCP servers, memory, fluent configuration, multi-agent hierarchies, streaming, and agent middleware.
+description: "Use this skill when building AI agents with aiAgent(): instructions, custom models, tools, skills (always-on and lazy), MCP servers, memory, fluent configuration, multi-agent hierarchies, streaming, and agent middleware."
 ---
 
 # bx-ai: AI Agents

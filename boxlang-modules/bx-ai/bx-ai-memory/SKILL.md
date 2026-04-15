@@ -1,6 +1,6 @@
 ---
 name: bx-ai-memory
-description: Use this skill when implementing memory in BoxLang AI: aiMemory() types (windowed, summary, session, file, cache, JDBC, vector), multi-tenant isolation with userId and conversationId, using memory with agents and pipelines, and choosing the right memory type.
+description: "Use this skill when implementing memory in BoxLang AI: aiMemory() types (windowed, summary, session, file, cache, JDBC, vector), multi-tenant isolation with userId and conversationId, using memory with agents and pipelines, and choosing the right memory type."
 ---
 
 # bx-ai: Memory Systems

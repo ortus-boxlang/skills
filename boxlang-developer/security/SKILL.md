@@ -1,6 +1,6 @@
 ---
 name: boxlang-security
-description: Use this skill when reviewing BoxLang code or applications for security vulnerabilities, configuring security settings, preventing injection attacks, handling file uploads safely, managing secrets, or applying secure coding patterns drawn from OWASP Top 10 and CFML/Java security history.
+description: "Use this skill when reviewing BoxLang code or applications for security vulnerabilities, configuring security settings, preventing injection attacks, handling file uploads safely, managing secrets, or applying secure coding patterns drawn from OWASP Top 10 and CFML/Java security history."
 ---
 
 # BoxLang Security

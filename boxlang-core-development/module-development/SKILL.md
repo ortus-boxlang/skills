@@ -1,6 +1,6 @@
 ---
 name: boxlang-module-development
-description: Use this skill when creating a BoxLang module: ModuleConfig.bx structure, lifecycle methods (configure/onLoad/onUnload), module metadata, registering interceptors and BIFs, Gradle build setup, publishing to ForgeBox, or using the official module template.
+description: "Use this skill when creating a BoxLang module: ModuleConfig.bx structure, lifecycle methods (configure/onLoad/onUnload), module metadata, registering interceptors and BIFs, Gradle build setup, publishing to ForgeBox, or using the official module template."
 ---
 
 # BoxLang Module Development

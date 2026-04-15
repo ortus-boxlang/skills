@@ -1,6 +1,6 @@
 ---
 name: boxlang-google-cloud-functions
-description: Use this skill when building, testing, or deploying BoxLang applications on Google Cloud Functions Gen 2, including handler structure, FunctionRunner entry point, URI routing, environment variables, local development with the GCF invoker, and debugging.
+description: "Use this skill when building, testing, or deploying BoxLang applications on Google Cloud Functions Gen 2, including handler structure, FunctionRunner entry point, URI routing, environment variables, local development with the GCF invoker, and debugging."
 ---
 
 # BoxLang on Google Cloud Functions

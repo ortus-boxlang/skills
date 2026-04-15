@@ -1,6 +1,6 @@
 ---
 name: boxlang-modules-and-packages
-description: Use this skill when installing, configuring, or using BoxLang modules: box install, boxlang.json module settings, BoxLang+ premium modules (bx-pdf, bx-redis, bx-csv, bx-spreadsheet), CFML compatibility, ORM, mail, and module introspection.
+description: "Use this skill when installing, configuring, or using BoxLang modules: box install, boxlang.json module settings, BoxLang+ premium modules (bx-pdf, bx-redis, bx-csv, bx-spreadsheet), CFML compatibility, ORM, mail, and module introspection."
 ---
 
 # BoxLang Modules and Packages

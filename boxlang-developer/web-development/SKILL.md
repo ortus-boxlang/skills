@@ -1,6 +1,6 @@
 ---
 name: boxlang-web-development
-description: Use this skill when building BoxLang web applications: Application.bx lifecycle, request/response handling, sessions, forms, REST APIs, HTTP clients, routing, CSRF protection, Server-Sent Events, or configuring CommandBox/MiniServer.
+description: "Use this skill when building BoxLang web applications: Application.bx lifecycle, request/response handling, sessions, forms, REST APIs, HTTP clients, routing, CSRF protection, Server-Sent Events, or configuring CommandBox/MiniServer."
 ---
 
 # BoxLang Web Development

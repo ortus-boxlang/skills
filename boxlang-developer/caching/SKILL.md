@@ -1,6 +1,6 @@
 ---
 name: boxlang-caching
-description: Use this skill when implementing caching in BoxLang applications: cache providers, cachePut/cacheGet BIFs, output caching, cache regions, distributed caching with Redis or Couchbase, TTL policies, and distributed locking.
+description: "Use this skill when implementing caching in BoxLang applications: cache providers, cachePut/cacheGet BIFs, output caching, cache regions, distributed caching with Redis or Couchbase, TTL policies, and distributed locking."
 ---
 
 # BoxLang Caching

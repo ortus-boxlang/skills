@@ -1,6 +1,6 @@
 ---
 name: bx-rss
-description: Use this skill to parse and create RSS/Atom feeds in BoxLang with the bx-rss module: rss() BIF to fetch feeds, bx:feed component with action read/create, filtering items, limiting results, creating RSS 2.0 and Atom feeds, and handling iTunes podcast extensions.
+description: "Use this skill to parse and create RSS/Atom feeds in BoxLang with the bx-rss module: rss() BIF to fetch feeds, bx:feed component with action read/create, filtering items, limiting results, creating RSS 2.0 and Atom feeds, and handling iTunes podcast extensions."
 ---
 
 # bx-rss: RSS / Atom Feed Processing

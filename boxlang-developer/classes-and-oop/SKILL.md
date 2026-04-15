@@ -1,6 +1,6 @@
 ---
 name: boxlang-classes-and-oop
-description: Use this skill when writing BoxLang classes, components, interfaces, inheritance hierarchies, annotations, properties, constructors, or applying object-oriented design patterns in BoxLang.
+description: "Use this skill when writing BoxLang classes, components, interfaces, inheritance hierarchies, annotations, properties, constructors, or applying object-oriented design patterns in BoxLang."
 ---
 
 # BoxLang Classes and Object-Oriented Programming

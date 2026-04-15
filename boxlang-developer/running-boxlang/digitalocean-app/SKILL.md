@@ -1,6 +1,6 @@
 ---
 name: boxlang-digitalocean-app
-description: Use this skill when deploying BoxLang applications to DigitalOcean App Platform using the official BoxLang starter kit, setting up auto-deployment from GitHub, and understanding the MiniServer + multi-stage Docker build architecture used in the starter.
+description: "Use this skill when deploying BoxLang applications to DigitalOcean App Platform using the official BoxLang starter kit, setting up auto-deployment from GitHub, and understanding the MiniServer + multi-stage Docker build architecture used in the starter."
 ---
 
 # BoxLang on DigitalOcean App Platform

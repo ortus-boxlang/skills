@@ -1,6 +1,6 @@
 ---
 name: bx-web-support
-description: Use this skill for testing web-context code outside a web server in BoxLang with bx-web-support: mockServerGet/Post/Put/Delete/Patch, mockRequestNew, mockRequestRun, setting request headers/body/path, and testing handlers that depend on getHTTPRequestData(), form scope, URL scope, and other web BIFs.
+description: "Use this skill for testing web-context code outside a web server in BoxLang with bx-web-support: mockServerGet/Post/Put/Delete/Patch, mockRequestNew, mockRequestRun, setting request headers/body/path, and testing handlers that depend on getHTTPRequestData(), form scope, URL scope, and other web BIFs."
 ---
 
 # bx-web-support: Web Context Mocking for Testing

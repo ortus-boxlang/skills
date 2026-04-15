@@ -1,6 +1,6 @@
 ---
 name: bx-docbox
-description: Use this skill to generate API documentation from BoxLang source code using DocBox: CLI usage, programmatic DocBox.addStrategy().generate(), HTML themes (default SPA and frames), JSON output, UML/XMI output, project title configuration, source exclusions, and commandbox integration.
+description: "Use this skill to generate API documentation from BoxLang source code using DocBox: CLI usage, programmatic DocBox.addStrategy().generate(), HTML themes (default SPA and frames), JSON output, UML/XMI output, project title configuration, source exclusions, and commandbox integration."
 ---
 
 # bx-docbox: API Documentation Generator

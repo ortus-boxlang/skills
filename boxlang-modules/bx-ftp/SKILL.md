@@ -1,6 +1,6 @@
 ---
 name: bx-ftp
-description: Use this skill when working with FTP, FTPS, or SFTP operations in BoxLang: connecting to servers, uploading/downloading files, managing remote directories, listing contents, SSH key authentication, named connection pooling, and using the bx:ftp component.
+description: "Use this skill when working with FTP, FTPS, or SFTP operations in BoxLang: connecting to servers, uploading/downloading files, managing remote directories, listing contents, SSH key authentication, named connection pooling, and using the bx:ftp component."
 ---
 
 # bx-ftp: FTP / SFTP Module

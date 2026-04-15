@@ -1,6 +1,6 @@
 ---
 name: bx-oshi
-description: Use this skill when accessing OS and hardware information in BoxLang with the bx-oshi module: CPU usage, memory stats, disk space, network info, battery status, process info, and sensor data using getSystemInfo(), getOperatingSystem(), getHardware(), and convenience BIFs.
+description: "Use this skill when accessing OS and hardware information in BoxLang with the bx-oshi module: CPU usage, memory stats, disk space, network info, battery status, process info, and sensor data using getSystemInfo(), getOperatingSystem(), getHardware(), and convenience BIFs."
 ---
 
 # bx-oshi: OS & Hardware Information

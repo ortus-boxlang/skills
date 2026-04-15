@@ -1,6 +1,6 @@
 ---
 name: boxlang-code-documenter
-description: Use this skill when adding documentation comments to BoxLang code: writing function/class Javadoc-style comments, documenting arguments, return types, exceptions, examples, or generating structured API reference documentation for BoxLang classes and BIFs. Comments written with these conventions are compatible with DocBox API documentation generation.
+description: "Use this skill when adding documentation comments to BoxLang code: writing function/class Javadoc-style comments, documenting arguments, return types, exceptions, examples, or generating structured API reference documentation for BoxLang classes and BIFs. Comments written with these conventions are compatible with DocBox API documentation generation."
 ---
 
 # BoxLang Code Documenter

@@ -1,6 +1,6 @@
 ---
 name: boxlang-chromebook
-description: Use this skill when setting up or developing BoxLang on a Chromebook, including enabling Linux development environment, installing Java 21, installing BoxLang, setting up VS Code with the BoxLang extension, and troubleshooting ARM/Intel Chromebook issues.
+description: "Use this skill when setting up or developing BoxLang on a Chromebook, including enabling Linux development environment, installing Java 21, installing BoxLang, setting up VS Code with the BoxLang extension, and troubleshooting ARM/Intel Chromebook issues."
 ---
 
 # BoxLang on Chromebooks

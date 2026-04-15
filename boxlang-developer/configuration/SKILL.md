@@ -1,6 +1,6 @@
 ---
 name: boxlang-configuration
-description: Use this skill when configuring BoxLang runtime settings via boxlang.json, setting environment variables for config overrides, configuring datasources, caches, executors, modules, logging, security, or schedulers — or when helping someone understand the BoxLang configuration system.
+description: "Use this skill when configuring BoxLang runtime settings via boxlang.json, setting environment variables for config overrides, configuring datasources, caches, executors, modules, logging, security, or schedulers — or when helping someone understand the BoxLang configuration system."
 ---
 
 # BoxLang Configuration

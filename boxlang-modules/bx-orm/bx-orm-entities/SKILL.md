@@ -1,6 +1,6 @@
 ---
 name: bx-orm-entities
-description: Use this skill when defining BoxLang ORM entities: the persistent annotation, entity names, table mapping, property annotations, fieldtype, ormType, identifiers/primary keys, composite keys, version fields, and entity inheritance.
+description: "Use this skill when defining BoxLang ORM entities: the persistent annotation, entity names, table mapping, property annotations, fieldtype, ormType, identifiers/primary keys, composite keys, version fields, and entity inheritance."
 ---
 
 # bx-orm: Entities & Properties

@@ -1,6 +1,6 @@
 ---
 name: boxlang-bif-development
-description: Use this skill when creating custom BoxLang built-in functions (BIFs): @BoxBIF annotation, invoke() method, argument handling, accessing BoxRuntime and services, BoxLang vs Java BIF implementations, member functions, and registering BIFs via modules.
+description: "Use this skill when creating custom BoxLang built-in functions (BIFs): @BoxBIF annotation, invoke() method, argument handling, accessing BoxRuntime and services, BoxLang vs Java BIF implementations, member functions, and registering BIFs via modules."
 ---
 
 # BoxLang BIF Development

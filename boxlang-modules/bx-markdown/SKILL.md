@@ -1,6 +1,6 @@
 ---
 name: bx-markdown
-description: Use this skill when converting Markdown to HTML or HTML to Markdown in BoxLang using the bx-markdown module. Covers markdown() and HtmlToMarkdown() BIFs.
+description: "Use this skill when converting Markdown to HTML or HTML to Markdown in BoxLang using the bx-markdown module. Covers markdown() and HtmlToMarkdown() BIFs."
 ---
 
 # bx-markdown: Markdown Support

@@ -1,6 +1,6 @@
 ---
 name: bx-image
-description: Use this skill for image manipulation in BoxLang with the bx-image module: ImageNew, ImageRead, ImageWrite, ImageResize, ImageScaleToFit, ImageCrop, ImageRotate, ImageFlip, ImageGrayScale, ImageBlur, ImageSharpen, imageAddBorder, imageDrawText, the fluent BoxImage builder API, and the bx:image component.
+description: "Use this skill for image manipulation in BoxLang with the bx-image module: ImageNew, ImageRead, ImageWrite, ImageResize, ImageScaleToFit, ImageCrop, ImageRotate, ImageFlip, ImageGrayScale, ImageBlur, ImageSharpen, imageAddBorder, imageDrawText, the fluent BoxImage builder API, and the bx:image component."
 ---
 
 # bx-image: Image Manipulation

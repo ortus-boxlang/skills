@@ -1,6 +1,6 @@
 ---
 name: bx-orm-configuration
-description: Use this skill when configuring bx-orm in BoxLang: Application.bx ormSettings, enabling the ORM, datasource setup, dbcreate options, dialect selection, entity paths, event handling, session management settings, and secondary cache configuration.
+description: "Use this skill when configuring bx-orm in BoxLang: Application.bx ormSettings, enabling the ORM, datasource setup, dbcreate options, dialect selection, entity paths, event handling, session management settings, and secondary cache configuration."
 ---
 
 # bx-orm: Configuration

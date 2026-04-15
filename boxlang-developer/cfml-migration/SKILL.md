@@ -1,6 +1,6 @@
 ---
 name: boxlang-cfml-migration
-description: Use this skill when helping developers migrate from CFML (Adobe ColdFusion or Lucee) to BoxLang, understanding key syntax and behavioral differences, using the bx-compat-cfml compatibility module, converting CFML file types, fixing common migration issues (scopes, annotations, query params, date handling), and writing code that works on both runtimes.
+description: "Use this skill when helping developers migrate from CFML (Adobe ColdFusion or Lucee) to BoxLang, understanding key syntax and behavioral differences, using the bx-compat-cfml compatibility module, converting CFML file types, fixing common migration issues (scopes, annotations, query params, date handling), and writing code that works on both runtimes."
 ---
 
 # BoxLang for CFML Developers

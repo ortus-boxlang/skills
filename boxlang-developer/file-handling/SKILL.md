@@ -1,6 +1,6 @@
 ---
 name: boxlang-file-handling
-description: Use this skill when reading, writing, copying, moving, or deleting files and directories in BoxLang: fileRead, fileWrite, fileCopy, fileMove, directoryList, directoryCreate, fileUpload, streaming large files, or processing CSV/JSON files from disk.
+description: "Use this skill when reading, writing, copying, moving, or deleting files and directories in BoxLang: fileRead, fileWrite, fileCopy, fileMove, directoryList, directoryCreate, fileUpload, streaming large files, or processing CSV/JSON files from disk."
 ---
 
 # BoxLang File Handling

@@ -1,6 +1,6 @@
 ---
 name: bx-mail
-description: Use this skill when sending email in BoxLang with the bx-mail module: bx:mail component, attachments with bx:mailparam, multipart emails with bx:mailpart, SMTP configuration in boxlang.json, S/MIME signing and encryption, and server-level mail settings.
+description: "Use this skill when sending email in BoxLang with the bx-mail module: bx:mail component, attachments with bx:mailparam, multipart emails with bx:mailpart, SMTP configuration in boxlang.json, S/MIME signing and encryption, and server-level mail settings."
 ---
 
 # bx-mail: Email Sending
