@@ -79,7 +79,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | [`java-integration`](./boxlang-developer/java-integration/SKILL.md) | `createObject`, static method calls, type conversion, closures as functional interfaces, JARs, JSR-223 scripting |
 | [`language-fundamentals`](./boxlang-developer/language-fundamentals/SKILL.md) | File types (`.bx`/`.bxs`/`.bxm`), variables, scopes, operators, control flow, exception handling, type system, destructuring, spread |
 | [`modules-and-packages`](./boxlang-developer/modules-and-packages/SKILL.md) | `box install`, module config, BoxLang+ premium modules (`bx-pdf`, `bx-redis`, `bx-csv`, `bx-spreadsheet`), ORM, mail |
-| [`running-boxlang`](./boxlang-developer/running-boxlang/README.md) | 16 deployment-target sub-skills: CLI scripting, MiniServer, CommandBox, Docker, AWS Lambda, GCF, Spring Boot, WASM, MatchBox, native binaries, and more |
+| `runtime-*` | Runtime/deployment targets are individual skills under `boxlang-developer` such as `runtime-miniserver`, `runtime-commandbox`, `runtime-docker`, `runtime-aws-lambda`, and more |
 | [`security`](./boxlang-developer/security/SKILL.md) | OWASP Top 10, injection prevention, file upload safety, secret management, secure coding patterns |
 | [`templating`](./boxlang-developer/templating/SKILL.md) | `.bxm` markup files, output expressions, `bx:output`/`bx:loop`/`bx:if`/`bx:include`/`bx:script`, building views |
 | [`testing`](./boxlang-developer/testing/SKILL.md) | TestBox BDD (`describe`/`it`), xUnit, expectations, `$assert`, life-cycle hooks, MockBox, mock data, async/exception testing |
