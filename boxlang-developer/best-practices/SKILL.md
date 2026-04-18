@@ -327,3 +327,62 @@ handle unrelated concerns. Split into service, repository, and model layers.
 | Direct SQL in handlers | No reuse, SQL injection risk | Use repository classes with parameterized queries |
 | Storing secrets in code | Security risk | Use environment variables via `${env.VAR_NAME}` in config |
 | Overusing `application` scope | Concurrency bugs | Use proper locking (`bx:lock`) for writes |
+| `arr[ 0 ]` (zero-based index) | ArrayIndexOutOfBoundsException | BoxLang arrays are **1-indexed**: use `arr[ 1 ]` or `arr.first()` |
+| Trailing `;` on statements | Noisy / inconsistent style | Semicolons are optional on statements — omit them |
+| `cfheader()` / `<cfabort>` | CFML syntax, not BoxLang | Use `bx:header`, `bx:abort`, etc. |
+| Named args on Java objects | Not supported, throws runtime error | Always use positional arguments for Java method calls |
+| `createObject("java","path")` per call | Verbose, repeated boilerplate | `import java:fully.qualified.Class` once, then use the class name directly |
+
+---
+
+## BoxLang vs CFML Quick-Reference
+
+BoxLang evolved from CFML but uses different syntax for many constructs. Do NOT
+use `cf`-prefixed tags or functions in BoxLang source files.
+
+| CFML | BoxLang Equivalent |
+|------|--------------------|
+| `cfheader(name="X", value="Y")` | `bx:header name="X" value="Y";` |
+| `cflocation(url="...")` | `bx:location url="...";` |
+| `cfabort` | `bx:abort;` |
+| `cfparam name="x" default=""` | `bx:param name="x" default="";` |
+| `cfinclude template="f.cfm"` | `bx:include template="f.bxm";` |
+| `<cfsilent>` | `bx:silent { ... }` |
+| `createObject("java","path.Class")` | `import java:path.Class` then `new java:path.Class()` |
+
+---
+
+## Array Best Practices
+
+BoxLang arrays are **1-indexed**. This is a common source of bugs for developers
+coming from Java/JavaScript backgrounds.
+
+```boxlang
+var items = [ "a", "b", "c" ]
+
+// CORRECT
+var first = items[ 1 ]          // "a"
+var last  = items[ items.len() ] // "c"
+var first = items.first()        // preferred — more readable
+var last  = items.last()         // preferred
+
+// WRONG (throws ArrayIndexOutOfBoundsException)
+var first = items[ 0 ]
+
+// Looping — i starts at 1
+for ( var i = 1; i <= items.len(); i++ ) {
+    process( items[ i ] )
+}
+```
+
+### Passing Single Values to Java Varargs
+
+Java varargs methods require a BoxLang **array**, not a bare scalar value:
+
+```boxlang
+// CORRECT — wrap in array
+storage.query( "SELECT * FROM t WHERE id = ?", [ requestId ] )
+
+// WRONG — bare value is not accepted by Java varargs
+storage.query( "SELECT * FROM t WHERE id = ?", requestId )    // throws
+```

@@ -14,51 +14,107 @@ in most cases.
 
 ## Creating Java Objects
 
+Prefer `new java:fully.qualified.ClassName()` over `createObject()`. Both work,
+but the `new java:` syntax is more concise and idiomatic BoxLang.
+
 ```boxlang
-// createObject("java", "fully.qualified.ClassName")
-var list   = createObject( "java", "java.util.ArrayList" )
-var map    = createObject( "java", "java.util.HashMap" )
-var date   = createObject( "java", "java.util.Date" )
-var sb     = createObject( "java", "java.lang.StringBuilder" )
+// PREFERRED — new java: syntax
+var list = new java:java.util.ArrayList()
+var map  = new java:java.util.HashMap()
+var sb   = new java:java.lang.StringBuilder()
 
-// Initialize with constructor arguments
-var uuid   = createObject( "java", "java.util.UUID" ).randomUUID()
+// Also valid — createObject (verbose, legacy style)
+var list = createObject( "java", "java.util.ArrayList" ).init()
+var map  = createObject( "java", "java.util.HashMap" ).init()
 
-// Using new() shorthand
-var list   = new java.util.ArrayList()
-var map    = new java.util.HashMap()
+// With constructor args
+var list = new java:java.util.ArrayList( 100 )  // initialCapacity
+var sb   = new java:java.lang.StringBuilder( "Hello" )
 ```
+
+> **Tip:** When you need a class frequently in a file, use `import java:` at the
+> top (see below) so you can refer to it by short name.
 
 ## Static Methods and Fields
 
-```boxlang
-// Static method call: ClassName.method()
-var uuid      = createObject( "java", "java.util.UUID" ).randomUUID()
-var maxInt    = createObject( "java", "java.lang.Integer" ).MAX_VALUE
-var sysProps  = createObject( "java", "java.lang.System" ).getProperties()
+**Best practice: import the class, then call statics directly.**
+Avoid repeating `createObject()` on every call — it creates a new wrapper each time.
 
-// Java Math
-var pi      = createObject( "java", "java.lang.Math" ).PI
-var sqrt2   = createObject( "java", "java.lang.Math" ).sqrt( 2 )
-var abs     = createObject( "java", "java.lang.Math" ).abs( -42 )
+```boxlang
+// PREFERRED — import once, call freely
+import java:java.util.UUID
+import java:java.lang.Math
+import java:java.lang.System
+
+var id       = UUID.randomUUID().toString()
+var pi       = Math.PI
+var sqrt2    = Math.sqrt( 2 )
+var abs      = Math.abs( -42 )
+var sysProps = System.getProperties()
+
+// AVOID — verbose, allocates a wrapper on every call
+var id = createObject( "java", "java.util.UUID" ).randomUUID()
+var pi = createObject( "java", "java.lang.Math" ).PI
+```
+
+### Named Arguments Are NOT Supported on Java Objects
+
+**CRITICAL:** BoxLang cannot call Java methods with named arguments.
+Always use **positional arguments** when calling Java methods:
+
+```boxlang
+// WRONG — will throw "Methods on Java objects cannot be called with named arguments"
+emitter.send( data="hello", event="msg" )
+
+// CORRECT — positional only
+emitter.send( "hello", "msg" )
 ```
 
 ## Importing Java Classes
 
-```boxlang
-// Import for shorthand use
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.concurrent.ConcurrentHashMap
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+Import at the top of a class, template, or script — then reference the class
+directly by its short name. This is the **preferred** approach for static calls
+and repeated instantiation.
 
-// After import, use short name
-var list    = new ArrayList()
-var map     = new ConcurrentHashMap()
-var now     = LocalDateTime.now()
-var fmt     = DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm:ss" )
-var dateStr = now.format( fmt )
+```boxlang
+// Standard library classes
+import java:java.util.ArrayList
+import java:java.util.HashMap
+import java:java.util.concurrent.ConcurrentHashMap
+import java:java.time.LocalDateTime
+import java:java.time.format.DateTimeFormatter
+
+// After import, use the short class name directly
+var list = new ArrayList()
+var map  = new ConcurrentHashMap()
+var now  = LocalDateTime.now()            // static method call
+var fmt  = DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm:ss" )
+var str  = now.format( fmt )
+```
+
+### Module-Scoped Classes (`@moduleAlias`)
+
+When a class lives inside a BoxLang module's classloader (not the system
+classloader), append `@moduleAlias` to route through the correct loader:
+
+```boxlang
+// Import a class from the "bxinsights" module classloader
+import java:ortus.boxlang.insights.InsightsStorage@bxinsights
+import java:ortus.boxlang.insights.InsightsContext@bxinsights
+
+// Now use the short name directly — no createObject needed
+var storage = InsightsStorage.getInstance()
+var events  = InsightsContext.drainSince( lastId )
+```
+
+> Without `@moduleAlias` the runtime would search the system classloader and
+> fail to find module-private classes.
+
+### Old Style (still valid, but avoid for repeated use)
+
+```boxlang
+// Verbose — ok for a single one-off call
+var props = createObject( "java", "java.lang.System" ).getProperties()
 ```
 
 ## Working with Java Objects

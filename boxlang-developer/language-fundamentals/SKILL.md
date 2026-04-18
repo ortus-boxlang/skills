@@ -174,6 +174,96 @@ listToArray( str, delimiter )
 str.contains( "foo" )   // member function syntax
 ```
 
+## Arrays
+
+**CRITICAL: BoxLang arrays are 1-indexed (not 0-indexed like Java).**
+The first element is always at index `1`.
+
+```boxlang
+var fruits = [ "apple", "banana", "cherry" ]
+
+// Access by index — starts at 1
+fruits[ 1 ]   // "apple"  ✅
+fruits[ 0 ]   // null / out-of-bounds  ❌  WRONG
+
+// Preferred: use named accessors instead of numeric index
+fruits.first()   // "apple"   — first element
+fruits.last()    // "cherry"  — last element
+
+// Common array operations
+fruits.len()               // 3
+fruits.append( "date" )    // adds to end
+fruits.prepend( "avocado" ) // adds to front
+fruits.isEmpty()           // false
+fruits.contains( "banana" ) // true
+fruits.find( "cherry" )    // 3 (1-based index, 0 if not found)
+fruits.each( (f) -> println(f) )
+fruits.map( (f) -> uCase(f) )
+fruits.filter( (f) -> f.startsWith("a") )
+fruits.reduce( (acc, f) -> acc & "," & f, "" )
+
+// Inline array literal
+var nums = [ 1, 2, 3, 4, 5 ]
+
+// Spread (v1.12+)
+var more = [ ...nums, 6, 7 ]
+```
+
+### Varargs / Positional Java Calls Must Use Arrays
+
+When calling a Java method that accepts `Object... args` (varargs), you **must**
+pass a BoxLang array — a bare single value will not work:
+
+```boxlang
+// WRONG — bare value
+storage.query( "SELECT * FROM users WHERE id = ?", userId )
+
+// CORRECT — wrapped in an array
+storage.query( "SELECT * FROM users WHERE id = ?", [userId] )
+
+// Multiple params
+storage.query( "SELECT * FROM users WHERE role = ? AND active = ?", [role, active] )
+```
+
+---
+
+## Semicolons
+
+Semicolons are **optional** at the end of statements and are considered noisy.
+Do **not** add them to variable declarations, function calls, return statements,
+or control-flow blocks.
+
+```boxlang
+// BAD — noisy semicolons
+var name = "BoxLang";
+var total = items.len();
+return total;
+
+// GOOD — clean, no semicolons
+var name = "BoxLang"
+var total = items.len()
+return total
+```
+
+Semicolons ARE required (or conventional) in two places:
+
+1. **Self-closing component tags** — terminate the tag invocation:
+   ```boxlang
+   bx:header name="Content-Type" value="application/json";
+   bx:location url="/login" addToken=false;
+   bx:abort;
+   ```
+
+2. **Property declarations** inside a class:
+   ```boxlang
+   class MyComponent {
+       bx:property name="title" type="string" default="";
+       bx:property name="count" type="numeric" default=0;
+   }
+   ```
+
+---
+
 ## Type System
 
 BoxLang is dynamically typed with optional type enforcement:
@@ -313,6 +403,16 @@ class Service {
 
 Both styles are equivalent. Prefer the concise style inside classes; use the
 `function` keyword for standalone script-level functions and closures.
+
+## Quick-Reference: Common Pitfalls
+
+| Pitfall | Wrong | Correct |
+|---------|-------|--------|
+| Array indexing | `arr[ 0 ]` | `arr[ 1 ]` or `arr.first()` |
+| Trailing semicolons | `var x = 1;` | `var x = 1` |
+| Varargs calls | `query( sql, singleVal )` | `query( sql, [singleVal] )` |
+| CFML functions in BoxLang | `cfheader( ... )` | `bx:header name=... value=...;` |
+| Java-style `//` not needed | n/a | Both `//` and `/* */` work |
 
 ## References
 

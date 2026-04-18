@@ -12,6 +12,56 @@ units invoked with tag-like syntax in `.bxm` templates. Unlike classes, componen
 are designed for output generation and template composition. They live in the
 `components/` directory of a module and are registered globally when the module loads.
 
+## BoxLang Component Syntax — NOT CFML
+
+All built-in and custom components in BoxLang use the `bx:` prefix.
+**Never use `cf`-prefixed functions or tags** — those are CFML, not BoxLang.
+
+```boxlang
+// CORRECT BoxLang component syntax
+bx:header name="Content-Type" value="application/json";
+bx:location url="/dashboard" addToken=false;
+bx:abort;
+bx:include template="partials/nav.bxm";
+
+// Paired component with body
+bx:transaction {
+    // body
+}
+
+// WRONG \u2014 these are CFML, not BoxLang
+cfheader( name="Content-Type", value="application/json" )   // \u274c CFML function
+<cfabort>                                                    // \u274c CFML tag
+<cflocation url="/dashboard">                               // \u274c CFML tag
+```
+
+### Calling Components in Script
+
+Self-closing components end with a **semicolon** to terminate the invocation:
+
+```boxlang
+// Self-closing \u2014 semicolon required in script
+bx:header name="X-Custom" value="hello";
+bx:setting showdebugoutput=false;
+
+// Paired \u2014 body in braces (no trailing semicolon on the closing brace)
+bx:savecontent variable="local.output" {
+    writeOutput( "captured content" )
+}
+```
+
+### Property Declarations (class body)
+
+In a class or component body, `bx:property` declarations also end with a semicolon:
+
+```boxlang
+class {
+    bx:property name="title"  type="string"  default="";
+    bx:property name="count"  type="numeric" default=0;
+    bx:property name="active" type="boolean" default=true;
+}
+```
+
 ## Component vs Class
 
 | | Component (`.bx` in `components/`) | Class (`.bx` anywhere) |
