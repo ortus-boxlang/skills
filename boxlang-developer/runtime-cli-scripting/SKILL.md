@@ -1,5 +1,5 @@
 ---
-name: boxlang-cli-scripting
+name: runtime-cli-scripting
 description: "Use this skill when writing BoxLang CLI scripts and classes, handling command-line arguments, using the BoxLang REPL, running action commands (compile, cftranspile, featureaudit), detecting runtime context, and leveraging CLI-specific built-in functions."
 ---
 

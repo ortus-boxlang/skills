@@ -1,5 +1,5 @@
 ---
-name: boxlang-wasm-in-the-browser
+name: runtime-wasm-in-the-browser
 description: "Use this skill when compiling BoxLang to WebAssembly or JavaScript ES modules for use in web browsers and Node.js using MatchBox's --target js or --target wasm flags, integrating with HTML pages, bundlers (Webpack/Vite), and Node.js projects."
 ---
 

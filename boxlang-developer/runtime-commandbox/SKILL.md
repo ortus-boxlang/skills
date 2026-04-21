@@ -1,5 +1,5 @@
 ---
-name: boxlang-commandbox
+name: runtime-commandbox
 description: "Use this skill when deploying BoxLang as an enterprise Java servlet application using CommandBox, configuring server.json for BoxLang, installing BoxLang modules, enabling SSL and rewrites, using BoxLang+ or BoxLang++ subscriptions with CommandBox PRO features, and production server configuration."
 ---
 
