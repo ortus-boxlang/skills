@@ -1,5 +1,5 @@
 ---
-name: runtime-wasm-container
+name: boxlang-runtime-wasm-container
 description: "Use this skill when compiling BoxLang applications to server-side WebAssembly (WASM) using MatchBox's --target wasm flag, running WASM with Wasmtime or WasmEdge, building minimal OCI containers from WASM binaries, and deploying to edge platforms like Fastly Compute or Cloudflare Workers (WASI)."
 ---
 

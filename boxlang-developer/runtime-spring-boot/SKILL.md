@@ -1,5 +1,5 @@
 ---
-name: runtime-spring-boot
+name: boxlang-runtime-spring-boot
 description: "Use this skill when integrating BoxLang with Spring Boot applications, including the starter dependency, MVC view resolution, template structure, accessing Spring Model attributes, configuration via application.properties, and returning BoxLang views from Spring controllers."
 ---
 

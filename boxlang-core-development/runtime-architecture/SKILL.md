@@ -1,5 +1,5 @@
 ---
-name: boxlang-runtime-architecture
+name: boxlang-core-dev-runtime-architecture
 description: "Use this skill when understanding BoxLang internals: BoxRuntime services, IBoxContext hierarchy, scope chain resolution, DynamicObject, type system (IBoxType), parsing pipeline (source to bytecode), class loader isolation, virtual threads, or using --bx-printast for AST debugging."
 ---
 

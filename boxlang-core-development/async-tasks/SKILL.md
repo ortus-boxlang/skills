@@ -1,5 +1,5 @@
 ---
-name: boxlang-async-tasks
+name: boxlang-core-dev-async-tasks
 description: "Use this skill when working with BoxLang asynchronous programming: BoxFuture (CompletableFuture extension), AsyncService, executor types (VIRTUAL/FIXED/CACHED/SCHEDULED), BaseScheduler, ScheduledTask fluent API, scheduling with cron constraints, task lifecycle callbacks, and registerring schedulers via ModuleConfig.bx."
 ---
 

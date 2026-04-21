@@ -1,5 +1,5 @@
 ---
-name: boxlang-component-development
+name: boxlang-core-dev-component-development
 description: "Use this skill when creating custom BoxLang components (tags): component file structure, attribute declarations, body/output handling, registering component paths in modules, the difference between components and classes, and testing custom components."
 ---
 

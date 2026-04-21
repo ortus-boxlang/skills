@@ -1,5 +1,5 @@
 ---
-name: application-descriptor
+name: boxlang-application-descriptor
 description: "Use this skill when designing or debugging Application.bx behavior: app discovery and nesting, multi-application isolation, lifecycle events, pseudo-constructor settings, session management, mappings/javaSettings resolution, and app-scoped schedulers/watchers via this.schedulers and this.watchers."
 ---
 

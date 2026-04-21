@@ -1,5 +1,5 @@
 ---
-name: runtime-aws-lambda
+name: boxlang-runtime-aws-lambda
 description: "Use this skill when building, deploying, or debugging BoxLang applications on AWS Lambda — including Lambda.bx structure, handler conventions, environment variables, SAM CLI testing, performance optimization, connection pooling, multi-function routing, and the boxlang-starter-aws-lambda project."
 ---
 

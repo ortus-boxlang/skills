@@ -1,5 +1,5 @@
 ---
-name: runtime-matchbox
+name: boxlang-runtime-matchbox
 description: "Use this skill when using MatchBox, the Rust-based native implementation of BoxLang that requires no JVM, including installation, understanding the available compilation targets (native, wasm, js, esp32), the philosophy and tradeoffs vs JVM BoxLang, and choosing the right target for CLI tools, edge deployments, browser WASM, and embedded devices."
 ---
 

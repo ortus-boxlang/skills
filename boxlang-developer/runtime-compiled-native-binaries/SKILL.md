@@ -1,5 +1,5 @@
 ---
-name: runtime-compiled-native-binaries
+name: boxlang-runtime-compiled-native-binaries
 description: "Use this skill when compiling BoxLang scripts to standalone native executables using MatchBox's --target native flag, cross-compiling for multiple platforms, optimizing binary size, and using Native Fusion to expose Rust functions as BoxLang built-in functions."
 ---
 

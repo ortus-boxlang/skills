@@ -1,5 +1,5 @@
 ---
-name: boxlang-logging
+name: boxlang-core-dev-logging
 description: "Use this skill when working with BoxLang logging: obtaining loggers via LoggingService, using BoxLangLogger (trace/debug/info/warn/error), pre-configured common loggers, creating named loggers, parameterized messages, accessing loggers from context and interceptors, and logging configuration in boxlang.json."
 ---
 

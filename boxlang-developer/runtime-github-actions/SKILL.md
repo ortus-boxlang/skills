@@ -1,5 +1,5 @@
 ---
-name: runtime-github-actions
+name: boxlang-runtime-github-actions
 description: "Use this skill when setting up GitHub Actions CI/CD pipelines for BoxLang projects, including the setup-boxlang action, supported inputs/outputs, installing modules, CommandBox integration, multi-engine testing, and complete workflow templates."
 ---
 
