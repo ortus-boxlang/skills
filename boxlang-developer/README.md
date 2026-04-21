@@ -13,6 +13,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | Skill | What It Covers | Install |
 |-------|----------------|---------|
 | `async-programming` | `BoxFuture`, `futureNew`, `asyncRun`, `asyncAll`, `asyncAny`, `asyncAllApply`, executors, schedulers, `thread` component, `bx:lock`, file watchers | `npx skills add ortus-boxlang/skills/boxlang-developer/async-programming` |
+| `file-watchers` | Filesystem watcher lifecycle (`watcherNew`/`watcherStart`/`watcherStop`), listener styles (closure/struct/class), event payload handling, debounce/throttle tuning, watcher stats and safety patterns | `npx skills add ortus-boxlang/skills/boxlang-developer/file-watchers` |
 | `best-practices` | Naming conventions, scoping, function structure, error handling, performance, and maintainability guidelines | `npx skills add ortus-boxlang/skills/boxlang-developer/best-practices` |
 | `caching` | Cache providers, named regions, `cachePut`/`cacheGet`, output caching, Redis, Couchbase, TTL policies, distributed locking | `npx skills add ortus-boxlang/skills/boxlang-developer/caching` |
 | `cfml-migration` | Key syntax and behavioral differences, `bx-compat-cfml` module, converting file types, fixing common migration issues | `npx skills add ortus-boxlang/skills/boxlang-developer/cfml-migration` |
@@ -29,6 +30,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | `java-integration` | `createObject`, static methods, type conversion, closures as functional interfaces, JARs, JSR-223 scripting | `npx skills add ortus-boxlang/skills/boxlang-developer/java-integration` |
 | `language-fundamentals` | File types (`.bx`/`.bxs`/`.bxm`), variables, scopes, operators, control flow, exception handling, type system, destructuring | `npx skills add ortus-boxlang/skills/boxlang-developer/language-fundamentals` |
 | `modules-and-packages` | `box install`, module config, BoxLang+ premium modules (`bx-pdf`, `bx-redis`, `bx-csv`, `bx-spreadsheet`), ORM, mail | `npx skills add ortus-boxlang/skills/boxlang-developer/modules-and-packages` |
+| `scheduled-tasks` | Scheduler DSL (`BaseScheduler`/`ScheduledTask`), scheduler lifecycle BIFs, cron/frequency APIs, task grouping, timezone handling, and `bx:schedule` HTTP-driven tasks | `npx skills add ortus-boxlang/skills/boxlang-developer/scheduled-tasks` |
 | `runtime-*` | Deployment/runtime targets are now individual skills such as `runtime-miniserver`, `runtime-commandbox`, `runtime-docker`, `runtime-aws-lambda`, and more | `npx skills add ortus-boxlang/skills/boxlang-developer/runtime-miniserver` |
 | `security` | OWASP Top 10, injection prevention, file upload safety, secret management, secure coding patterns | `npx skills add ortus-boxlang/skills/boxlang-developer/security` |
 | `templating` | `.bxm` markup files, output expressions, `bx:output`/`bx:loop`/`bx:if`/`bx:include`/`bx:script`, building views | `npx skills add ortus-boxlang/skills/boxlang-developer/templating` |
