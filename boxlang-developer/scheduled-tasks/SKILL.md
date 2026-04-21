@@ -18,6 +18,9 @@ Use the Scheduler DSL for rich in-process logic and task callbacks. Use `bx:sche
 
 You can register scheduler classes directly in `Application.bx` so they are auto-discovered for the app context.
 
+For full descriptor behavior (app discovery, multi-app isolation, lifecycle), see
+[`application-descriptor`](../application-descriptor/SKILL.md).
+
 ```boxlang
 class {
 

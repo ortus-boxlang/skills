@@ -20,6 +20,9 @@ Watchers are ideal for:
 
 You can register app-scoped watchers directly in `Application.bx` with `this.watchers`.
 
+For full descriptor behavior (app discovery, multi-app isolation, lifecycle), see
+[`application-descriptor`](../application-descriptor/SKILL.md).
+
 ```boxlang
 class {
 

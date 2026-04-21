@@ -12,6 +12,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 
 | Skill | What It Covers | Install |
 |-------|----------------|---------|
+| `application-descriptor` | `Application.bx` discovery, multi-app isolation, lifecycle callbacks, app-level `this.*` settings, and app-scoped `this.schedulers`/`this.watchers` wiring | `npx skills add ortus-boxlang/skills/boxlang-developer/application-descriptor` |
 | `async-programming` | `BoxFuture`, `futureNew`, `asyncRun`, `asyncAll`, `asyncAny`, `asyncAllApply`, executors, schedulers, `thread` component, `bx:lock`, file watchers | `npx skills add ortus-boxlang/skills/boxlang-developer/async-programming` |
 | `file-watchers` | Filesystem watcher lifecycle (`watcherNew`/`watcherStart`/`watcherStop`), listener styles (closure/struct/class), event payload handling, debounce/throttle tuning, watcher stats and safety patterns | `npx skills add ortus-boxlang/skills/boxlang-developer/file-watchers` |
 | `best-practices` | Naming conventions, scoping, function structure, error handling, performance, and maintainability guidelines | `npx skills add ortus-boxlang/skills/boxlang-developer/best-practices` |

@@ -12,6 +12,10 @@ application lifecycle controller. The runtime handles HTTP requests through a
 well-defined lifecycle, with full support for REST, sessions, CSRF, SSE, and
 both MiniServer (dev) and CommandBox (production) deployment.
 
+For a deep dive into multi-app isolation, descriptor discovery, and advanced
+`Application.bx` patterns, see the
+[`application-descriptor`](../application-descriptor/SKILL.md) skill.
+
 ## Application.bx
 
 `Application.bx` lives at the web root and configures the entire application:

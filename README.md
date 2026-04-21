@@ -62,6 +62,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 
 | Skill | What It Covers |
 |-------|----------------|
+| [`application-descriptor`](./boxlang-developer/application-descriptor/SKILL.md) | `Application.bx` discovery, multi-app isolation, lifecycle callbacks, app-level `this.*` settings, and app-scoped `this.schedulers`/`this.watchers` wiring |
 | [`async-programming`](./boxlang-developer/async-programming/SKILL.md) | `BoxFuture`, `futureNew`, `asyncRun`, `asyncAll`, `asyncAny`, `asyncAllApply`, executors (`io-tasks`/`cpu-tasks`/`scheduled-tasks`), schedulers, `thread` component, `bx:lock` |
 | [`file-watchers`](./boxlang-developer/file-watchers/SKILL.md) | Filesystem watcher lifecycle (`watcherNew`/`watcherStart`/`watcherStop`), listener strategies (closure/struct/class), event payload handling, debounce/throttle tuning, and watcher stats |
 | [`best-practices`](./boxlang-developer/best-practices/SKILL.md) | Naming conventions, scoping, function structure, error handling, performance, and maintainability guidelines |
@@ -137,6 +138,7 @@ npx skills add ortus-boxlang/skills/commandbox
 ```bash
 # Single skill from boxlang-developer
 npx skills add ortus-boxlang/skills/boxlang-developer/language-fundamentals
+npx skills add ortus-boxlang/skills/boxlang-developer/application-descriptor
 npx skills add ortus-boxlang/skills/boxlang-developer/async-programming
 npx skills add ortus-boxlang/skills/boxlang-developer/file-watchers
 npx skills add ortus-boxlang/skills/boxlang-developer/scheduled-tasks

@@ -11,6 +11,11 @@ BoxLang's runtime is configured through `boxlang.json`. The file is auto-created
 the BoxLang home directory on first startup. All settings can be overridden via
 environment variables or Java system properties without modifying the file.
 
+When configuration questions involve app-specific behavior in `Application.bx`
+(`this.name`, lifecycle callbacks, per-app schedulers/watchers, nested app
+isolation), pair this with the
+[`application-descriptor`](../application-descriptor/SKILL.md) skill.
+
 ---
 
 ## Config File Locations
