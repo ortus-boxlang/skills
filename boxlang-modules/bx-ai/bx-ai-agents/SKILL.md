@@ -87,11 +87,11 @@ agent = aiAgent(
     instructions   : "Review code for quality and security issues",
     // Always-on: content always injected into system context
     skills         : [
-        aiSkill( ".ai/skills/security/SKILL.md" ),
-        aiSkill( ".ai/skills/code-style/SKILL.md" )
+        aiSkill( ".agents/skills/security/SKILL.md" ),
+        aiSkill( ".agents/skills/code-style/SKILL.md" )
     ],
     // Lazy-loaded: agent picks relevant ones on demand
-    availableSkills: aiSkill( ".ai/skills/languages" )  // scans entire directory
+    availableSkills: aiSkill( ".agents/skills/languages" )  // scans entire directory
 )
 ```
 

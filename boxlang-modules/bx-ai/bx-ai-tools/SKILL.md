@@ -120,8 +120,8 @@ agentB = aiAgent( name: "B", tools: registry.getTools() )
 ```javascript
 // Register skills available to ALL agents in the application
 aiGlobalSkills([
-    aiSkill( ".ai/skills/company-guidelines/SKILL.md" ),
-    aiSkill( ".ai/skills/brand-tone/SKILL.md" )
+    aiSkill( ".agents/skills/company-guidelines/SKILL.md" ),
+    aiSkill( ".agents/skills/brand-tone/SKILL.md" )
 ])
 ```
 
