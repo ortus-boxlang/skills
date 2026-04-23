@@ -6,6 +6,8 @@ This repository provides reusable **AI skills** for BoxLang development, compati
 
 Skills inject BoxLang domain knowledge directly into your AI agent so it can write accurate, idiomatic BoxLang code for you.
 
+**You can find all our skills published to our online directory at https://skills.boxlang.io/.**
+
 ---
 
 ## What Are Skills?
@@ -48,6 +50,28 @@ If you use plugin marketplace commands:
 /plugin marketplace add ortus-boxlang/skills
 /plugin install boxlang-agent-skills@ortus-boxlang
 ```
+
+## ColdBox CLI
+
+```bash
+# Install the ColdBox CLI if you haven't already
+box install coldbox-cli
+
+# Install AI integration into your app
+# This reads your app, box.json and installs skills based on your stack and preferences
+coldbox ai install
+
+# Skills Management
+
+# List installed skills
+coldbox ai skills list
+# Add a skill
+coldbox ai skills add Ortus-Solutions/skills/vuejs-expert
+# Remove a skill
+coldbox ai skills remove vuejs-expert
+```
+
+All skills are installed at `.agents/skills/` in your project.
 
 ---
 
