@@ -69,7 +69,7 @@ function run( event, context, response ){
 
     // Option 2: populate response struct
     response.statusCode = 200
-    response.body       = serializeJSON({ message: "Done" })
+    response.body       = jsonSerialize({ message: "Done" })
     response.headers    = { "Content-Type": "application/json" }
 }
 ```

@@ -126,7 +126,7 @@ class ValidationInterceptor {
             throw(
                 type: "ValidationException",
                 message: "Validation failed",
-                detail: serializeJSON( result.getAllErrors() )
+                detail: jsonSerialize( result.getAllErrors() )
             )
         }
     }

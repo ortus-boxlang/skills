@@ -172,11 +172,11 @@ function uploadFile( fileField, destination ) {
 ```boxlang
 // JSON file round-trip
 function readJSON( filePath ) {
-    return deserializeJSON( fileRead( filePath ) )
+    return jsonDeserialize( fileRead( filePath ) )
 }
 
 function writeJSON( filePath, data ) {
-    fileWrite( filePath, serializeJSON( data ) )
+    fileWrite( filePath, jsonSerialize( data ) )
 }
 
 // CSV reader

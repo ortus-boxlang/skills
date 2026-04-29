@@ -86,7 +86,7 @@ bx:zip action="read"
     entryPath="config.json"
     variable="local.configContent"
 
-var config = deserializeJSON( configContent )
+var config = jsonDeserialize( configContent )
 ```
 
 ## Modifying Archives

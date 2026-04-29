@@ -320,7 +320,7 @@ var merged = [...getDefaults(), ...getOverrides()]
 function memoize( required function fn ) {
     var cache = {}
     return function() {
-        var key = serializeJSON( arguments )
+        var key = jsonSerialize( arguments )
         if ( !cache.keyExists( key ) ) {
             cache[ key ] = fn( argumentCollection=arguments )
         }

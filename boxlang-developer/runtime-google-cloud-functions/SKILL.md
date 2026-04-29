@@ -73,7 +73,7 @@ class {
     function run( event, context, response ){
         response.statusCode = 200
         response.headers    = { "Content-Type": "application/json" }
-        response.body       = serializeJSON({
+        response.body       = jsonSerialize({
             orders:  orderService.list(),
             total:   orderService.count()
         })
@@ -107,10 +107,10 @@ class {
     }
 
     function createOrder( event, context, response ){
-        var data = deserializeJSON( event.body )
+        var data = jsonDeserialize( event.body )
         var order = orderService.create( data )
         response.statusCode = 201
-        response.body = serializeJSON( order )
+        response.body = jsonSerialize( order )
     }
 }
 ```

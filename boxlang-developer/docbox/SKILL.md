@@ -266,7 +266,7 @@ component extends="docbox.strategy.AbstractTemplateStrategy" {
     }
 
     private string function buildMarkdown( required struct meta ) {
-        return "# #meta.name#" & chr( 10 ) & meta.hint
+        return "# #meta.name#" & char( 10 ) & meta.hint
     }
 
 }

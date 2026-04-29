@@ -259,7 +259,7 @@ redis.set( "key", "value", 3600 )  // with TTL in seconds
 var val = redis.get( "key" )
 redis.del( "key" )
 redis.incr( "counter" )
-redis.lpush( "queue", serializeJSON(job) )
+redis.lpush( "queue", jsonSerialize(job) )
 var job = redis.rpop( "queue" )
 ```
 

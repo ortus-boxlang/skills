@@ -178,7 +178,7 @@ class {
     }
 
     function create() {
-        var data = deserializeJSON( getHTTPRequestData().content )
+        var data = jsonDeserialize( getHTTPRequestData().content )
         var user = userService.create( data )
         httpStatus( 201 )
         renderJSON( user )
@@ -188,13 +188,13 @@ class {
 
 // Helper functions
 function renderJSON( required any data ) {
-    cfheader( name="Content-Type", value="application/json" )
-    writeOutput( serializeJSON( arguments.data ) )
+    bx:header name="Content-Type" value="application/json";
+    writeOutput( jsonSerialize( arguments.data ) )
     abort
 }
 
 function httpStatus( required numeric code ) {
-    cfheader( statusCode=arguments.code )
+    bx:header statusCode=arguments.code;
 }
 ```
 
@@ -203,19 +203,19 @@ function httpStatus( required numeric code ) {
 ```boxlang
 // Simple GET
 var response = httpGet( "https://api.example.com/data" )
-var data     = deserializeJSON( response.fileContent )
+var data     = jsonDeserialize( response.fileContent )
 
 // Full bx:http request
 bx:http url="https://api.example.com/users" method="POST" result="apiResponse" {
     bx:httpparam type="header" name="Authorization" value="Bearer #token#"
     bx:httpparam type="header" name="Content-Type"  value="application/json"
-    bx:httpparam type="body"   value=serializeJSON({ name: "Ada", email: "ada@example.com" })
+    bx:httpparam type="body"   value=jsonSerialize({ name: "Ada", email: "ada@example.com" })
 }
 
-var response = deserializeJSON( apiResponse.fileContent )
+var response = jsonDeserialize( apiResponse.fileContent )
 
 // HTTP with query string
-bx:http url="https://api.example.com/search" method="GET" result="searchResult" {
+bx:http url="https://api.example.com/search" method="GET" result="searcharesult" {
     bx:httpparam type="url" name="q"     value="boxlang"
     bx:httpparam type="url" name="limit" value="10"
 }
@@ -269,14 +269,14 @@ if ( !csrfVerifyToken( form.csrfToken, "loginForm" ) ) {
 
 ```boxlang
 // SSE endpoint: sse/updates.bxs
-cfheader( name="Content-Type",      value="text/event-stream" )
-cfheader( name="Cache-Control",     value="no-cache" )
-cfheader( name="X-Accel-Buffering", value="no" )
+bx:header name="Content-Type" value="text/event-stream";
+bx:header name="Cache-Control" value="no-cache";
+bx:header name="X-Accel-Buffering" value="no";
 
 var i = 0
 while ( i < 100 ) {
     var data = getLatestUpdates()
-    writeOutput( "data: #serializeJSON(data)##chr(10)##chr(10)#" )
+    writeOutput( "data: #jsonSerialize(data)##char(10)##char(10)#" )
     flush
     sleep( 1000 )
     i++

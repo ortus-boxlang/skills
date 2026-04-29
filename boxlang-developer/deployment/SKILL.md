@@ -219,7 +219,7 @@ class {
         return {
             statusCode : 200,
             headers    : { "Content-Type": "application/json" },
-            body       : serializeJSON({
+            body       : jsonSerialize({
                 message : "Hello from BoxLang Lambda!",
                 path    : path,
                 method  : method
