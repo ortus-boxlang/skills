@@ -68,6 +68,50 @@ function getUser( required numeric id ) {
 }
 ```
 
+### Avoid Shadowing Built-In Scope Names
+
+Never declare local variables with the same name as a built-in scope. BoxLang
+resolves unscoped variable references by walking the scope chain, and shadowing
+a scope name breaks access to that scope's data and causes confusing bugs.
+
+**Reserved scope names to avoid as variable names:**
+`session`, `server`, `request`, `url`, `form`, `application`, `cgi`, `thread`
+
+```boxlang
+// BAD — shadows the `session` scope, breaking all session access
+function login( required string user ) {
+    var session = { user: arguments.user }  // DON'T do this
+    session.user = arguments.user           // writes to local var, not session scope
+}
+
+// BAD — shadows the `url` scope
+var url = parseUrl( input )                 // url.params is now broken
+
+// GOOD — use descriptive names that don't collide
+function login( required string user ) {
+    var sessionData = { user: arguments.user }
+    session.user = arguments.user           // correctly writes to session scope
+}
+
+// GOOD — use a different name
+var urlParts = parseUrl( input )
+var queryParams = url.params                // url scope still accessible
+```
+
+When you need a local reference to scope data, use a name that describes the
+data, not the scope itself:
+
+| Instead of | Use |
+|------------|-----|
+| `var session = ...` | `var sessionData`, `var userSession`, `var sess` |
+| `var request = ...` | `var requestData`, `var req`, `var httpRequest` |
+| `var url = ...` | `var urlParts`, `var currentUrl`, `var uri` |
+| `var form = ...` | `var formData`, `var formFields`, `var payload` |
+| `var application = ...` | `var appConfig`, `var appData`, `var settings` |
+| `var cgi = ...` | `var cgiData`, `var serverInfo` |
+| `var thread = ...` | `var threadInfo`, `var workerThread` |
+| `var server = ...` | `var serverInfo`, `var hostConfig` |
+
 ### Scope Lookup Performance
 
 BoxLang walks the scope chain on each unscoped variable access. In hot code
@@ -322,6 +366,7 @@ handle unrelated concerns. Split into service, repository, and model layers.
 | Anti-Pattern | Problem | Fix |
 |-------------|---------|-----|
 | Unscoped vars in functions | Variables bleed into component scope | Always use `var` |
+| Shadowing scope names (`session`, `url`, `form`, etc.) | Breaks access to built-in scopes | Use descriptive names like `sessionData`, `formData` |
 | Silent catch-all `catch(any)` | Swallows unexpected errors | Re-throw unknown exceptions |
 | Logic in templates | Hard to test, poor separation | Move to services/handlers |
 | Direct SQL in handlers | No reuse, SQL injection risk | Use repository classes with parameterized queries |
