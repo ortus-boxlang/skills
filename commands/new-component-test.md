@@ -1,5 +1,7 @@
 ---
+name: boxlang-cmd-new-component-test
 description: Scaffold a JUnit 5 test for a BoxLang Component (custom tag). Usage: /boxlang-agent-skills:new-component-test com.example.components.MyTag
+category: scaffolding
 ---
 
 Create a JUnit 5 test class for the BoxLang Component `$ARGUMENTS`.

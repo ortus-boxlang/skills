@@ -1,5 +1,7 @@
 ---
+name: boxlang-cmd-new-bif
 description: Scaffold a new Java BIF for BoxLang. Usage: /boxlang-agent-skills:new-bif com.example.bifs.MyFunction
+category: scaffolding
 ---
 
 Create a new Java BoxLang Built-In Function (BIF) for the fully-qualified class `$ARGUMENTS`.

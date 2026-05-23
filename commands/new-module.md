@@ -1,5 +1,7 @@
 ---
+name: boxlang-cmd-new-module
 description: Scaffold a complete BoxLang module directory and files. Usage: /boxlang-agent-skills:new-module my-module-name
+category: scaffolding
 ---
 
 Scaffold a complete BoxLang module named `$ARGUMENTS`.

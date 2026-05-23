@@ -1,5 +1,7 @@
 ---
+name: boxlang-cmd-new-bif-test
 description: Scaffold a JUnit 5 test for a BoxLang BIF. Usage: /boxlang-agent-skills:new-bif-test com.example.bifs.MyFunction
+category: scaffolding
 ---
 
 Create a JUnit 5 test class for the BoxLang BIF `$ARGUMENTS`.

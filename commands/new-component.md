@@ -1,5 +1,7 @@
 ---
+name: boxlang-cmd-new-component
 description: Scaffold a new Java BoxLang Component (custom tag). Usage: /boxlang-agent-skills:new-component com.example.components.MyTag
+category: scaffolding
 ---
 
 Create a new Java BoxLang Component (custom tag) for the fully-qualified class `$ARGUMENTS`.
