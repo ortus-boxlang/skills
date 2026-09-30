@@ -171,6 +171,17 @@ npx skills add ortus-boxlang/skills/commandbox
 
 ---
 
+### `boxlang-modules`: Official BoxLang Modules
+
+Topic skills for official modules (bx-ai, bx-orm, bx-playwright, bx-mail, bx-pdf and more). See [boxlang-modules/README.md](./boxlang-modules/README.md) for the full list.
+
+```bash
+npx skills add ortus-boxlang/skills/boxlang-modules
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-playwright
+```
+
+---
+
 ## Install Individual Skills
 
 ```bash
