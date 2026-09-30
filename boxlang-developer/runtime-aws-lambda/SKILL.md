@@ -1,15 +1,18 @@
 ---
 name: boxlang-runtime-aws-lambda
-description: "Use this skill when building, deploying, or debugging BoxLang applications on AWS Lambda — including Lambda.bx structure, handler conventions, environment variables, SAM CLI testing, performance optimization, connection pooling, multi-function routing, and the boxlang-starter-aws-lambda project."
+description: "Use this skill when building, deploying, or debugging BoxLang applications on AWS Lambda — including the handlers/ routing convention, manifest.json, Lambda.bx/Application.bx structure, environment variables, SAM CLI local testing, performance tuning, and the boxlang-starter-aws-lambda project."
 ---
 
 # BoxLang on AWS Lambda
 
 ## Overview
 
-The BoxLang AWS Runtime provides a pre-built Java handler for serverless Lambda
-functions. You write BoxLang classes; the runtime handles request/response
-lifecycle, serialization, logging, and error management.
+The BoxLang AWS Lambda runtime (`ortus.boxlang.runtime.aws.LambdaRunner`) is a
+pre-built Java handler for serverless Lambda functions. You write BoxLang
+classes; the runtime handles request/response lifecycle, URI routing,
+serialization, logging, and error management.
+
+Starter template: `https://github.com/ortus-boxlang/boxlang-starter-aws-lambda`
 
 ---
 
@@ -22,8 +25,9 @@ ortus.boxlang.runtime.aws.LambdaRunner::handleRequest
 ```
 
 The runtime automatically:
-- Deserializes the incoming JSON event into a BoxLang `Struct`
-- Calls your `Lambda.bx` class `run()` method
+- Deserializes the incoming event (API Gateway v1/v2, Lambda Function URL, ALB, or direct invocation) into a BoxLang `Struct`
+- Resolves the target `.bx` class by URI path (see Routing below)
+- Calls its `run()` method (or an alternate method via the `x-bx-function` header)
 - Serializes the return value back to JSON
 - Manages error handling and logging
 
@@ -31,21 +35,21 @@ The runtime automatically:
 
 ## Lambda.bx Convention
 
-The runtime looks for `Lambda.bx` in your deployment package root and calls `run()`:
+`Lambda.bx` at the project root is the **default handler** — it runs for `/`
+and for any URI that doesn't match a registered route:
 
 ```boxlang
 class {
 
     /**
-     * The main Lambda handler function.
+     * The default Lambda handler function.
      *
      * @param event    The incoming event struct (deserialized from JSON)
-     * @param context  The AWS Lambda context object (Java LambdaContext)
+     * @param context  The AWS Lambda context object (com.amazonaws.services.lambda.runtime.Context)
      * @param response A pre-built response struct you can populate:
-     *                 { statusCode: 200, body: "", headers: {} }
+     *                 { statusCode: 200, body: "", headers: {}, cookies: [] }
      */
     function run( event, context, response ){
-        // Simple return value — auto-serialized to JSON
         return {
             statusCode: 200,
             body: {
@@ -58,27 +62,16 @@ class {
 }
 ```
 
-### Response Convention
-
-You can either `return` a value or populate the `response` struct:
-
-```boxlang
-function run( event, context, response ){
-    // Option 1: return a value (auto-serialized)
-    return { statusCode: 200, body: "OK" }
-
-    // Option 2: populate response struct
-    response.statusCode = 200
-    response.body       = jsonSerialize({ message: "Done" })
-    response.headers    = { "Content-Type": "application/json" }
-}
-```
+You can either `return` a value (auto-serialized to JSON) or populate the
+`response` struct directly - both work.
 
 ---
 
 ## Application Lifecycle (`Application.bx`)
 
-Place `Application.bx` in your deployment package for lifecycle hooks:
+Place `Application.bx` next to `Lambda.bx` at the project root for lifecycle
+hooks. It fires for **every** request, whether it's served by `Lambda.bx` or
+by a routed handler under `handlers/`:
 
 ```boxlang
 class {
@@ -97,35 +90,117 @@ class {
 }
 ```
 
+`Application.bx` is never itself a URI-routing target, regardless of what a
+client requests or what `x-bx-function` header it sends.
+
+---
+
+## URI Routing with `handlers/`
+
+Every request goes to `Lambda.bx` by default. To route requests to a
+different class based on the URL path, add it under `src/main/bx/handlers/`
+instead of the project root:
+
+```boxlang
+// src/main/bx/handlers/Products.bx
+class {
+    function run( event, context, response ){
+        response.body = { "message": "Hello from Products" }
+        response.statusCode = 200
+    }
+}
+```
+
+| Incoming URI | Handler File |
+|---|---|
+| `/products` | `handlers/Products.bx` |
+| `/api/test` | `handlers/api/Test.bx` (nested) |
+| `/user-profiles` | `handlers/UserProfiles.bx` (hyphens map to PascalCase) |
+| `/` or anything unmatched | `Lambda.bx` (the default handler) |
+
+Folders can be nested and use any case you like - only the leaf `.bx`
+filename needs to be PascalCase. Matching is case-insensitive, and the
+longest matching prefix wins.
+
+**Only files under `handlers/` are ever routable.** `Application.bx`,
+`Lambda.bx`, and anything else at the project root can never be reached this
+way, no matter what path or `x-bx-function` header a client sends.
+
+Use the `x-bx-function` header to call an alternative method on `Lambda.bx`
+or any routed handler:
+
+```bash
+curl -H "x-bx-function: processOrder" https://api.example.com/products
+```
+
+Only a `public`/`remote` method you declared is reachable this way - BoxLang's
+own scope rules gate it, so don't mark a method public if you don't want it
+externally callable.
+
+### `manifest.json`: the routing table
+
+`./gradlew generateManifest` scans `handlers/` and writes
+`src/main/bx/manifest.json` - the build-time routing table the runtime reads
+**once at cold start** (never scanning the filesystem on a live request). It's
+wired via `dependsOn` into `test`, `runLocal`, `runLocalApi`, `runLocalLegacy`,
+and `buildLambdaZip`, so it can never silently drift. It's gitignored - never
+hand-edited or committed.
+
+```json
+{
+	"manifestVersion": 1,
+	"defaultHandler": { "file": "Lambda.bx", "method": "run" },
+	"handlers": {
+		"products": { "file": "handlers/Products.bx" },
+		"api/test": { "file": "handlers/api/Test.bx" }
+	},
+	"reserved": ["Application.bx", "Lambda.bx"]
+}
+```
+
+The runtime **enforces** `reserved` and `defaultHandler`, not just documents
+them: a manifest can never route to a reserved file, and `defaultHandler.file`/
+`method` is honored as the fallback handler (falling back to the
+`Lambda.bx`/`run()` convention when absent or pointing at a nonexistent file).
+
+If `manifest.json` is missing or invalid, the runtime falls back to scanning
+`handlers/` directly, and if that directory doesn't exist either, to scanning
+the project root for backward compatibility with pre-`handlers/` deployments -
+gated behind `BOXLANG_ENABLE_ROOT_SCAN` (default `true`; set to `false` to
+restrict that last-resort scenario to the default handler only). Either
+fallback logs a `WARNING` listing every handler it discovered.
+
 ---
 
 ## Project Structure (Starter Template)
-
-Use the official starter: `https://github.com/ortus-boxlang/boxlang-starter-aws-lambda`
 
 ```
 /src
   /main
     /bx
       Application.bx     -- Lifecycle class
-      Lambda.bx          -- Your Lambda handler
+      Lambda.bx          -- Default handler
+      handlers/          -- Routed handlers (see URI Routing above)
+      manifest.json       -- Generated (gitignored) by ./gradlew generateManifest
     /resources
       boxlang.json        -- BoxLang runtime config
       boxlang_modules/    -- Installed BoxLang modules
   /test
     /java
-      /com/myproject
-        LambdaRunnerTest.java   -- Integration tests
-        TestContext.java
-        TestLogger.java
+      /com/myproject      -- JUnit integration tests + mocks
 /workbench
-  config.env              -- Default env config
-  config.local.env        -- Local overrides (gitignored)
+  config.env              -- Default deployment config
+  config.local.env        -- Your local overrides (gitignored)
+  template.yml            -- SAM template used by 2-deploy.sh
   sampleEvents/           -- Test event payloads (.json files)
-  template.yml            -- SAM template for local testing + deploy
-  *.sh                    -- Deploy/management scripts
+  0-check-aws.sh          -- Diagnose AWS credential/config issues
+  1-create-bucket.sh      -- Create the S3 bucket for deployment artifacts
+  2-deploy.sh             -- Build and deploy via SAM/CloudFormation
+  3-invoke.sh             -- Invoke the deployed Lambda with a test payload
+  4-cleanup.sh            -- Tear down all deployed AWS resources
 /box.json                 -- BoxLang module dependencies
-/build.gradle             -- Build config (shaded JAR)
+/build.gradle             -- Build config (shadowJar, generateManifest, buildLambdaZip)
+/gradle.properties         -- version, jdkVersion, boxlangVersion
 ```
 
 ---
@@ -134,10 +209,11 @@ Use the official starter: `https://github.com/ortus-boxlang/boxlang-starter-aws-
 
 | Variable | Description |
 |----------|-----------|
-| `BOXLANG_LAMBDA_CLASS` | Absolute path to Lambda class. Default: `/var/task/Lambda.bx` |
+| `BOXLANG_LAMBDA_CLASS` | Absolute path to the default handler. Default: `/var/task/Lambda.bx` |
 | `BOXLANG_LAMBDA_DEBUGMODE` | Enable debug mode + performance metrics (`true`/`false`) |
 | `BOXLANG_LAMBDA_CONFIG` | Path to custom `boxlang.json`. Default: `/var/task/boxlang.json` |
 | `BOXLANG_LAMBDA_CONNECTION_POOL_SIZE` | Database connection pool size. Default: `2` |
+| `BOXLANG_ENABLE_ROOT_SCAN` | Allow the legacy root-directory routing fallback (see URI Routing above). Default: `true`. Shared across every BoxLang serverless runtime (AWS/GCP/Azure). |
 | `LAMBDA_TASK_ROOT` | Lambda deployment root. Default: `/var/task` |
 
 Any `BOXLANG_*` env variable also maps to `boxlang.json` config overrides.
@@ -148,17 +224,11 @@ Any `BOXLANG_*` env variable also maps to `boxlang.json` config overrides.
 
 ### Class Compilation Caching
 
-Lambda classes are compiled and cached on the first (cold start) invocation.
-Warm invocations reuse the cached bytecode — no re-compilation overhead.
-
-Disable caching in development (debug mode):
-```bash
-BOXLANG_LAMBDA_DEBUGMODE=true
-```
+Handler classes are compiled and cached on the first (cold start) invocation.
+Warm invocations reuse the cached bytecode - no re-compilation overhead.
+Disable caching in development: `BOXLANG_LAMBDA_DEBUGMODE=true`.
 
 ### Connection Pooling
-
-Database connections are pooled and reused across warm invocations:
 
 ```bash
 BOXLANG_LAMBDA_CONNECTION_POOL_SIZE=5
@@ -167,91 +237,65 @@ BOXLANG_LAMBDA_CONNECTION_POOL_SIZE=5
 ### Cold Start Optimization Tips
 
 1. Use `Application.bx` `onApplicationStart()` to initialize shared resources
-2. Minimize modules loaded at startup — only install what you use
-3. Use the `asm` compiler (default) for better startup performance
-4. Set `storeClassFilesOnDisk: true` in `boxlang.json`
+2. Minimize modules loaded at startup - only install what you use
+3. Set `trustedCache: true` in `boxlang.json` for production
 
 ---
 
-## Multiple Lambda Functions (URI Routing)
-
-Use the `x-bx-function` header to call a specific method on the class:
+## Local Development
 
 ```bash
-# Calls Lambda.bx run() method (default)
-curl https://api.example.com/function
-
-# Calls Lambda.bx processOrder() method
-curl -H "x-bx-function: processOrder" https://api.example.com/function
+./gradlew test                       # run the test suite
+./gradlew runLocal                   # test locally with the default event
+./gradlew runLocalApi                # test locally with an API Gateway event
 ```
 
-In `Lambda.bx`:
-
-```boxlang
-class {
-
-    function run( event, context, response ){
-        return { message: "Default handler" }
-    }
-
-    function processOrder( event, context, response ){
-        return orderService.process( event )
-    }
-
-    function getUsers( event, context, response ){
-        return userService.list( event.limit ?: 20 )
-    }
-
-}
-```
-
----
-
-## Local Development with SAM CLI
+For HTTP endpoint testing with the [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) installed:
 
 ```bash
-# Install AWS SAM CLI
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html
-
-# Start local Lambda API
-sam local start-api --template workbench/template.yml
-
-# Invoke a specific function locally
-sam local invoke BoxLangFunction --event workbench/sampleEvents/test-event.json
-
-# Build the shaded JAR (includes all dependencies)
-./gradlew shadowJar
+./gradlew startSamServerBackground   # start a local API server at :3000
+curl http://localhost:3000
+curl -H "x-bx-function: anotherFunction" http://localhost:3000
+./gradlew stopSamServer              # stop it when done
 ```
+
+Sample event payloads live in `workbench/sampleEvents/` - pass one with
+`-PeventFile=workbench/sampleEvents/s3-event.json`.
 
 ---
 
 ## Deploying to AWS
 
 ```bash
-# Configure AWS credentials first
-aws configure
+# One-time setup
+cp workbench/config.env workbench/config.local.env
+# edit config.local.env: AWS_LAMBDA_BUCKET, STACK_NAME, AWS_REGION, etc.
 
-# Build, package, and deploy via SAM
-./gradlew shadowJar
-sam deploy --guided --template workbench/template.yml
-
-# Or use the included deploy scripts
-chmod +x workbench/*.sh
-./workbench/deploy.sh
+./workbench/1-create-bucket.sh
+./workbench/2-deploy.sh
+./workbench/3-invoke.sh
 ```
+
+`config.local.env` is gitignored and layers over `config.env` →
+environment variables. Key settings: `AWS_LAMBDA_BUCKET` (required, globally
+unique), `STACK_NAME`, `LAMBDA_MEMORY`, `LAMBDA_TIMEOUT`, `AWS_REGION`.
+
+The starter also ships GitHub Actions workflows (`.github/workflows/`) for
+test, snapshot, and release builds - the AWS deployment step is commented out
+by default; uncomment it once your function exists and your `AWS_*` secrets
+are configured.
 
 ---
 
 ## BoxLang Modules in Lambda
 
-Install modules to the `src/main/resources/boxlang_modules/` directory using CommandBox:
-
 ```bash
-# Install a module to the Lambda module directory
-box install bx-mail --boxlang-home=src/main/resources
-
-# The module will be zipped with the deployment package
+box install {moduleName} --production --directory=src/resources/boxlang_modules
 ```
+
+Or declare them in `box.json` under `dependencies`/`installPaths` and run
+`box install --production`. Modules are automatically packaged into your
+deployment ZIP under `boxlang_modules/`.
 
 ---
 
@@ -260,8 +304,10 @@ box install bx-mail --boxlang-home=src/main/resources
 - [ ] `Application.bx` initializes shared resources (connections, config) in `onApplicationStart()`
 - [ ] `BOXLANG_LAMBDA_DEBUGMODE=false` in production
 - [ ] Connection pool size tuned: `BOXLANG_LAMBDA_CONNECTION_POOL_SIZE`
+- [ ] Routing convention adopted: handlers live under `handlers/`, `manifest.json` regenerated via `generateManifest` (wired into `buildLambdaZip`)
+- [ ] `BOXLANG_ENABLE_ROOT_SCAN=false` once you've fully migrated to `handlers/` (removes the legacy root-scan fallback)
 - [ ] Secrets via AWS SSM Parameter Store or Secrets Manager, injected as env vars
-- [ ] `boxlang.json` present in deployment package root
+- [ ] `boxlang.json` present in deployment package root, `trustedCache: true`
 - [ ] Lambda timeout set generously for cold starts (30s+ recommended)
 - [ ] Memory allocation ≥ 512MB (1024MB+ for better performance)
 - [ ] Integration tests passing via `./gradlew test`
