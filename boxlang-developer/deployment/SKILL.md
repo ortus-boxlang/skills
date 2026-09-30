@@ -1,6 +1,6 @@
 ---
 name: boxlang-deployment
-description: "Use this skill when deploying BoxLang applications: CommandBox server setup, Docker containers, AWS Lambda, GitHub Actions CI/CD, BoxLang Version Manager (BVM), boxlang.json runtime config, environment variables, or Spring Boot integration."
+description: "Use this skill when deploying BoxLang applications: CommandBox server setup, Docker containers, serverless (AWS Lambda, Google Cloud Functions, Azure Functions - see their dedicated runtime-* skills), GitHub Actions CI/CD, BoxLang Version Manager (BVM), boxlang.json runtime config, environment variables, or Spring Boot integration."
 ---
 
 # BoxLang Deployment
@@ -192,70 +192,41 @@ docker-compose down
 
 ---
 
-## AWS Lambda
+## Serverless (AWS Lambda, Google Cloud Functions, Azure Functions)
 
-### Setup
+BoxLang ships a dedicated pre-built runtime for each of the three major
+serverless providers - `LambdaRunner`, `FunctionRunner`, and
+`AzureFunctionRunner` respectively. All three are structural mirrors of each
+other: the same `handlers/` directory routing convention, the same
+`manifest.json` build-time routing table (with `reserved`/`defaultHandler`
+enforcement), the same `run( event, context, response )` handler contract,
+and the same `x-bx-function` header for calling an alternate method. `.bx`
+handler code moves between all three providers unmodified - only the
+deployment step differs.
 
-```bash
-box install bx-aws-lambda
-```
+Each has its own starter template (Gradle build, `Application.bx`/`Lambda.bx`
+scaffold, local dev server, deploy scripts/plugin) and its own dedicated
+skill with full routing, configuration, and deployment details - use those
+skills instead of this one for anything serverless-specific:
 
-### Handler
+- **AWS Lambda** - `runtime-aws-lambda` skill · [boxlang-starter-aws-lambda](https://github.com/ortus-boxlang/boxlang-starter-aws-lambda)
+- **Google Cloud Functions** - `runtime-google-cloud-functions` skill · [boxlang-starter-google-functions](https://github.com/ortus-boxlang/boxlang-starter-google-functions)
+- **Azure Functions** - `runtime-azure-functions` skill · [boxlang-starter-azure-functions](https://github.com/ortus-boxlang/boxlang-starter-azure-functions)
+
+Minimal handler shape, identical across all three runtimes:
 
 ```boxlang
-// handlers/Lambda.bx
+// src/main/bx/Lambda.bx - the default handler
 class {
-
-    /**
-     * AWS Lambda entry point.
-     * @event   The Lambda event payload (struct)
-     * @context AWS Lambda context object
-     */
-    struct function handle( required struct event, required any context ) {
-        var path   = event.path ?: "/"
-        var method = event.httpMethod ?: "GET"
-
-        // Route the request
-        return {
-            statusCode : 200,
-            headers    : { "Content-Type": "application/json" },
-            body       : jsonSerialize({
-                message : "Hello from BoxLang Lambda!",
-                path    : path,
-                method  : method
-            })
-        }
+    function run( event, context, response ){
+        return { "message": "Hello from BoxLang!" }
     }
-
 }
 ```
 
-### `template.yaml` (SAM)
-
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
-
-Resources:
-  MyFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: handlers.Lambda::handle
-      Runtime: java21
-      CodeUri: ./build/
-      MemorySize: 512
-      Timeout: 30
-      Environment:
-        Variables:
-          DB_HOST: !Ref DBHost
-          APP_ENV: production
-      Events:
-        Api:
-          Type: HttpApi
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
-```
+Add routed handlers under `src/main/bx/handlers/` (e.g. `handlers/Products.bx`
+serves `/products`); `./gradlew generateManifest` regenerates the routing
+`manifest.json` from that directory on every build.
 
 ---
 
@@ -461,6 +432,8 @@ boxlang-miniserver
 - [CommandBox](https://boxlang.ortusbooks.com/getting-started/running-boxlang/commandbox)
 - [Docker](https://boxlang.ortusbooks.com/getting-started/running-boxlang/docker)
 - [AWS Lambda](https://boxlang.ortusbooks.com/getting-started/running-boxlang/aws-lambda)
+- [Google Cloud Functions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/google-cloud-functions)
+- [Azure Functions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/azure-functions)
 - [GitHub Actions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/github-actions)
 - [BVM](https://boxlang.ortusbooks.com/getting-started/installation/bvm)
 - [boxlang.json](https://boxlang.ortusbooks.com/getting-started/configuration)

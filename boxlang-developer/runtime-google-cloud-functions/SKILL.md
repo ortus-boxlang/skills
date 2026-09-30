@@ -1,6 +1,6 @@
 ---
 name: boxlang-runtime-google-cloud-functions
-description: "Use this skill when building, testing, or deploying BoxLang applications on Google Cloud Functions Gen 2, including handler structure, FunctionRunner entry point, URI routing, environment variables, local development with the GCF invoker, and debugging."
+description: "Use this skill when building, testing, or deploying BoxLang applications on Google Cloud Functions Gen 2, including the handlers/ routing convention, manifest.json, FunctionRunner entry point, environment variables, local development with the GCF invoker, and the boxlang-starter-google-functions project."
 ---
 
 # BoxLang on Google Cloud Functions
@@ -9,7 +9,16 @@ description: "Use this skill when building, testing, or deploying BoxLang applic
 
 BoxLang runs on Google Cloud Functions Gen 2 via the Java 21 runtime. The
 `FunctionRunner` bridge handles HTTP request mapping, handler routing, class
-caching, and response serialization — so you focus on writing BoxLang handler files.
+caching, and response serialization - so you focus on writing BoxLang
+handler files.
+
+Starter template: `https://github.com/ortus-boxlang/boxlang-starter-google-functions`
+
+**Runtime entry point:**
+
+```
+ortus.boxlang.runtime.gcp.FunctionRunner
+```
 
 ---
 
@@ -20,17 +29,11 @@ HTTP Request
     → GCF Gen 2 (java21 runtime)
     → FunctionRunner (HttpFunction)
     → RequestMapper (HttpRequest → BoxLang event struct)
-    → Route resolution (first URI segment → PascalCase → .bx file)
+    → Route resolution (manifest.json / handlers/ scan → .bx file)
     → Handler compilation + class cache (warm invocations)
     → Method dispatch (run() or x-bx-function header)
     → BoxLang handler execution
     → ResponseMapper (response struct → HttpResponse)
-```
-
-**Runtime entry point:**
-
-```
-ortus.boxlang.runtime.gcp.FunctionRunner
 ```
 
 ---
@@ -47,89 +50,135 @@ cd boxlang-starter-google-functions
 
 ---
 
-## Handler File Convention
+## Lambda.bx Convention
 
-Handlers live in `src/main/bx/`. The URI path maps to a PascalCase `.bx` file:
-
-| Request URI | Resolved handler |
-|------------|----------------|
-| `GET /`     | `src/main/bx/Index.bx` |
-| `GET /orders` | `src/main/bx/Orders.bx` |
-| `POST /users` | `src/main/bx/Users.bx` |
-
-Each handler file is a BoxLang class with a `run()` method:
+`Lambda.bx` at the project root is the **default handler** - it runs for `/`
+and for any URI that doesn't match a registered route:
 
 ```boxlang
-// src/main/bx/Orders.bx
+// src/main/bx/Lambda.bx
 class {
 
-    /**
-     * Main GCF handler.
-     *
-     * @param event    HTTP event struct: { method, path, headers, body, queryString }
-     * @param context  GCF context info
-     * @param response Response struct to populate: { statusCode, body, headers }
-     */
     function run( event, context, response ){
         response.statusCode = 200
         response.headers    = { "Content-Type": "application/json" }
         response.body       = jsonSerialize({
-            orders:  orderService.list(),
-            total:   orderService.count()
+            message: "Hello from BoxLang!",
+            input:   event
         })
+    }
+
+    // Alternative method (call with x-bx-function header)
+    function anotherLambda( event, context, response ){
+        return "Hola!!"
     }
 
 }
 ```
+
+---
+
+## Application Lifecycle (`Application.bx`)
+
+Place `Application.bx` next to `Lambda.bx` at the project root for lifecycle
+hooks. It fires for **every** request, whether it's served by `Lambda.bx` or
+by a routed handler under `handlers/`, and is never itself a URI-routing
+target.
+
+```boxlang
+class {
+    this.name = "MyFunction"
+
+    boolean function onApplicationStart(){
+        application.db = createObject("component","DataService").init()
+        return true
+    }
+
+    boolean function onRequestStart( required string targetPage ){
+        return true
+    }
+}
+```
+
+---
+
+## URI Routing with `handlers/`
+
+Every request goes to `Lambda.bx` by default. To route requests to a
+different class based on the URL path, add it under `src/main/bx/handlers/`
+instead of the project root:
+
+```boxlang
+// src/main/bx/handlers/Products.bx
+class {
+    function run( event, context, response ){
+        response.statusCode = 200
+        response.body = {
+            "error": false,
+            "data": [ "Product A", "Product B" ]
+        }
+    }
+}
+```
+
+| Incoming URI | Handler File |
+|---|---|
+| `/products` | `handlers/Products.bx` |
+| `/api/test` | `handlers/api/Test.bx` (nested) |
+| `/user-profiles` | `handlers/UserProfiles.bx` (hyphens map to PascalCase) |
+| `/` or anything unmatched | `Lambda.bx` (the default handler) |
+
+Folders can be nested and use any case you like - only the leaf `.bx`
+filename needs to be PascalCase. **Only files under `handlers/` are ever
+routable.** `Application.bx`, `Lambda.bx`, and anything else at the project
+root can never be reached this way, no matter what path or `x-bx-function`
+header a client sends.
+
+### `manifest.json`: the routing table
+
+`./gradlew generateManifest` scans `handlers/` and writes
+`src/main/bx/manifest.json` - the build-time routing table the runtime reads
+**once at cold start**. It's wired via `dependsOn` into `test`, `runFunction`,
+and `buildLambdaZip`, so it can never silently drift. It's gitignored - never
+hand-edited or committed.
+
+```json
+{
+	"manifestVersion": 1,
+	"defaultHandler": { "file": "Lambda.bx", "method": "run" },
+	"handlers": {
+		"products": { "file": "handlers/Products.bx" },
+		"api/test": { "file": "handlers/api/Test.bx" }
+	},
+	"reserved": ["Application.bx", "Lambda.bx"]
+}
+```
+
+The runtime **enforces** `reserved` and `defaultHandler`, not just documents
+them: a manifest can never route to a reserved file, and `defaultHandler.file`/
+`method` is honored as the fallback handler when present.
+
+If `manifest.json` is missing or invalid, the runtime falls back to scanning
+`handlers/` directly, and if that directory doesn't exist either, to scanning
+the function root for backward compatibility with pre-`handlers/`
+deployments - gated behind `BOXLANG_ENABLE_ROOT_SCAN` (default `true`; set to
+`false` to restrict that last-resort scenario to the default handler only).
 
 ---
 
 ## Calling Specific Methods (Header Routing)
 
-Use the `x-bx-function` header to call a specific method on a handler class:
+Use the `x-bx-function` header to call a specific method on the resolved
+handler:
 
 ```bash
-# Calls Orders.bx run() (default)
-curl http://localhost:9099/orders
-
-# Calls Orders.bx createOrder()
-curl -H "x-bx-function: createOrder" -X POST http://localhost:9099/orders \
+curl http://localhost:9099/products                                  # run()
+curl -H "x-bx-function: createOrder" -X POST http://localhost:9099/products \
     -H "Content-Type: application/json" \
     -d '{"productId": 1, "qty": 2}'
 ```
 
-In the handler:
-
-```boxlang
-class {
-    function run( event, context, response ){
-        // Default — list orders
-    }
-
-    function createOrder( event, context, response ){
-        var data = jsonDeserialize( event.body )
-        var order = orderService.create( data )
-        response.statusCode = 201
-        response.body = jsonSerialize( order )
-    }
-}
-```
-
----
-
-## Event Struct
-
-The incoming HTTP request is mapped to an `event` struct:
-
-```boxlang
-// event properties
-event.method       // "GET", "POST", "PUT", etc.
-event.path         // "/orders/42"
-event.headers      // Struct of HTTP headers
-event.queryString  // Struct of parsed query parameters
-event.body         // Raw request body string
-event.json         // Parsed JSON body (if Content-Type: application/json)
-```
+Only a `public`/`remote` method you declared is reachable this way.
 
 ---
 
@@ -137,60 +186,27 @@ event.json         // Parsed JSON body (if Content-Type: application/json)
 
 | Variable | Description |
 |----------|-----------|
-| `BOXLANG_GCP_ROOT` | Root directory for handler `.bx` files. Default: `src/main/bx` |
-| `BOXLANG_GCP_DEBUGMODE` | Disable class caching for hot reload during development |
+| `BOXLANG_GCP_ROOT` | Root directory for `.bx` files. Default: `/workspace` |
+| `BOXLANG_GCP_CLASS` | Override the default handler path |
+| `BOXLANG_GCP_DEBUGMODE` | Enable verbose logging and disable class caching |
 | `BOXLANG_GCP_CONFIG` | Path to a custom `boxlang.json` configuration |
+| `BOXLANG_ENABLE_ROOT_SCAN` | Allow the legacy root-directory routing fallback (see URI Routing above). Default: `true`. Shared across every BoxLang serverless runtime (AWS/GCP/Azure). |
+| `K_SERVICE` / `K_REVISION` / `GOOGLE_CLOUD_PROJECT` | Set automatically by GCF |
 
 ---
 
 ## Local Development
 
 ```bash
-# Start local GCF server (port 9099)
-./gradlew runFunction
-
-# Custom port
-./gradlew runFunction -PtestPort=8080
-
-# Enable debug mode (disables class cache for hot reload)
-./gradlew runFunction -PdebugMode=true
-
-# Custom function root
-./gradlew runFunction -PfunctionRoot=/absolute/path/to/bx
+./gradlew runFunction                        # start local server (port 9099)
+./gradlew runFunction -PtestPort=8080         # custom port
+./gradlew runFunction -PdebugMode=true        # disable class cache for hot reload
 ```
-
-Expected startup banner:
-
-```
-================================================================
- BoxLang GCF Function Invoker
- Listening on  : http://localhost:9099
- Function root : .../src/main/bx
- Debug mode    : false
- Press Ctrl+C to stop.
-================================================================
-```
-
----
-
-## Testing Locally
 
 ```bash
-# Simple GET
 curl http://localhost:9099/
-
-# POST with JSON payload
-curl -X POST http://localhost:9099/orders \
-    -H "Content-Type: application/json" \
-    -d '{"productId": 1, "qty": 2}'
-
-# Header-routed method
-curl -H "x-bx-function: anotherMethod" http://localhost:9099/
-
-# From a sample event file
-curl -X POST http://localhost:9099/ \
-    -H "Content-Type: application/json" \
-    -d @workbench/sampleRequests/event-local.json
+curl -X POST http://localhost:9099/products -H "Content-Type: application/json" -d '{"qty":2}'
+curl -H "x-bx-function: anotherLambda" http://localhost:9099/
 ```
 
 ---
@@ -200,7 +216,7 @@ curl -X POST http://localhost:9099/ \
 | Mode | Behavior |
 |------|---------|
 | Cold start | Runtime initializes; first request is slower |
-| Warm invocation | Compiled handler class reused — fast |
+| Warm invocation | Compiled handler class reused - fast |
 | Debug mode ON | Class cache disabled; edits picked up immediately |
 | Debug mode OFF (production) | Maximum performance via class caching |
 
@@ -209,51 +225,49 @@ curl -X POST http://localhost:9099/ \
 ## Deploying to GCP
 
 ```bash
-# Authenticate
 gcloud auth login
 gcloud config set project YOUR_PROJECT_ID
 
-# Build the deployment ZIP
-./gradlew buildZip
+./gradlew clean shadowJar buildLambdaZip
 
-# Deploy via gcloud
-gcloud functions deploy myBoxLangFunction \
-    --gen2 \
-    --runtime java21 \
-    --region us-central1 \
-    --entry-point ortus.boxlang.runtime.gcp.FunctionRunner \
-    --source build/distributions/function.zip \
-    --trigger-http \
-    --allow-unauthenticated \
-    --memory 512MB \
-    --min-instances 0 \
-    --max-instances 10
+gcloud functions deploy YOUR_FUNCTION_NAME \
+  --gen2 \
+  --runtime=java21 \
+  --region=us-central1 \
+  --entry-point=ortus.boxlang.runtime.gcp.FunctionRunner \
+  --trigger-http \
+  --allow-unauthenticated \
+  --source=build/distributions/boxlang-google-function-project-1.0.0.zip
 ```
+
+If you changed `version` in `gradle.properties`, update the ZIP filename in
+`--source` accordingly.
 
 ---
 
-## Portability with AWS Lambda
+## Portability with AWS Lambda and Azure Functions
 
-Handler patterns are intentionally compatible between BoxLang GCF and AWS Lambda:
+Handler patterns are intentionally identical across all three BoxLang
+serverless runtimes - the same `handlers/` convention, `manifest.json`
+schema, `run(event, context, response)` contract, and `x-bx-function`
+header dispatch. `.bx` code moves between providers unmodified.
 
-| Feature | GCF | AWS Lambda |
-|---------|-----|-----------|
-| Handler class | `FunctionRunner` | `LambdaRunner` |
-| Handler method | `run()` | `run()` |
-| Method routing header | `x-bx-function` | `x-bx-function` |
-| Event struct | Same structure | Same structure |
-| Debug mode env var | `BOXLANG_GCP_DEBUGMODE` | `BOXLANG_LAMBDA_DEBUGMODE` |
-
-Many handlers can be shared between GCF and Lambda with minimal changes.
+| Feature | GCF | AWS Lambda | Azure Functions |
+|---------|-----|-----------|-----------|
+| Runner class | `FunctionRunner` | `LambdaRunner` | `AzureFunctionRunner` |
+| Handler method | `run()` | `run()` | `run()` |
+| Method routing header | `x-bx-function` | `x-bx-function` | `x-bx-function` |
+| Debug mode env var | `BOXLANG_GCP_DEBUGMODE` | `BOXLANG_LAMBDA_DEBUGMODE` | `BOXLANG_AZURE_DEBUGMODE` |
+| Root-scan opt-out | `BOXLANG_ENABLE_ROOT_SCAN` | `BOXLANG_ENABLE_ROOT_SCAN` | `BOXLANG_ENABLE_ROOT_SCAN` |
 
 ---
 
 ## Production Checklist
 
 - [ ] `BOXLANG_GCP_DEBUGMODE=false` in production
-- [ ] Handler files under `src/main/bx/` named in PascalCase matching URI segments
+- [ ] Routing convention adopted: handlers live under `handlers/`, `manifest.json` regenerated via `generateManifest` (wired into `buildLambdaZip`)
+- [ ] `BOXLANG_ENABLE_ROOT_SCAN=false` once you've fully migrated to `handlers/`
 - [ ] Secrets injected as environment variables (not in code)
 - [ ] Memory: 512MB minimum; 1GB+ for database-heavy functions
-- [ ] Min-instances configured for latency-sensitive paths
 - [ ] Integration tests passing: `./gradlew clean test`
-- [ ] Deployment ZIP built fresh before each deploy: `./gradlew buildZip`
+- [ ] Deployment ZIP built fresh before each deploy: `./gradlew shadowJar buildLambdaZip`
