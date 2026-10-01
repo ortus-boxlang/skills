@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, and running tests via the BoxLang CLI runner."
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning failures with --failed, and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
 ---
 
 # BoxLang Testing with TestBox
@@ -717,6 +717,59 @@ describe( title="Parallel specs", asyncAll=true, body=() => {
 
 ---
 
+## Attachments, Retries and Browser Tests
+
+### Attach Files to a Spec: `attach()`
+
+Every spec can attach files (screenshots, logs, dumps) to the running spec. They are kept for passed and failed specs and reporters list them (JSON report, links in the Simple report, `[[ATTACHMENT|path]]` lines in JUnit `<system-out>`, text/console/stream output under failed specs).
+
+```boxlang
+it( "exports the report", () => {
+    var file = service.export()
+    attach( file, "file", "export.csv" )   // attach( path, type = "file", name = file name of path )
+    attach( logPath, "log" )
+    expect( fileExists( file ) ).toBeTrue()
+} )
+```
+
+Call it from a spec body or a `beforeEach()` / `afterEach()` / `aroundEach()` closure; outside a running spec it throws `TestBox.InvalidContext`.
+
+### Retries
+
+A failing or erroring spec can rerun up to N more times. Each attempt reruns `beforeEach()`, the body and `afterEach()` (xUnit: `setup()`, the test, `teardown()`), and only the final attempt is recorded. Output shows "(passed after N attempts)".
+
+```boxlang
+// 1. Spec argument (highest precedence), also on fit() and xit()
+it( title = "talks to a flaky service", retries = 2, body = () => { ... } )
+
+// 2. Bundle annotation
+class extends="testbox.system.BaseSpec" retries="1" { ... }
+
+// xUnit: method annotation overrides the bundle annotation
+function testFlaky() retries="3" { ... }
+```
+
+```bash
+# 3. Global default (lowest precedence)
+./testbox/run --retries=2
+```
+
+Skipped specs are never retried. Use retries for genuinely flaky I/O (browsers, networks), not to hide bugs.
+
+### Rerun Only Failures: `--failed`
+
+Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bundles and specs that failed or errored. `./testbox/run --failed` reruns only those; when the file is missing or empty it prints a message and runs nothing.
+
+### Playwright Failures
+
+`Playwright.AssertionFailed` (thrown by bx-playwright assertions such as `page.assertSee()`) counts as a spec **failure**, like `TestBox.AssertionFailed`, keeping its message and detail. Other `Playwright.*` exceptions count as errors.
+
+### Browser Tests
+
+For browser tests extend `testbox.system.BrowserSpec` (or `coldbox.system.testing.BrowserTestCase` in ColdBox apps) and use `browse()`, the browser matchers (`expect( page ).toSee( "Welcome" )`) and the `--web-server` runner option. Load the **bx-playwright-testing** skill for the full API.
+
+---
+
 ## Running Tests
 
 ### BoxLang CLI Runner
@@ -742,6 +795,13 @@ describe( title="Parallel specs", asyncAll=true, body=() => {
 
 # Verbose output (every spec printed)
 ./testbox/run --verbose
+
+# Retry failing specs, or rerun only the last failures
+./testbox/run --retries=2
+./testbox/run --failed
+
+# Start the app before the tests (browser tests)
+./testbox/run --web-server="boxlang-miniserver --port 8080" --web-server-url=http://localhost:8080
 ```
 
 ### CLI Runner Options
@@ -755,6 +815,11 @@ describe( title="Parallel specs", asyncAll=true, body=() => {
 | `--eager-failure` | `false` | Stop on first failure |
 | `--verbose` | `false` | Print each spec as it runs |
 | `--stream` | `false` | Real-time streaming output |
+| `--retries` | `0` | Extra runs for failing or erroring specs (spec and bundle values win) |
+| `--failed` | `false` | Run only the bundles and specs that failed or errored in the last run |
+| `--web-server` | | Shell command that starts a web server before the tests, stopped after them |
+| `--web-server-url` | `http://localhost:8080` | URL polled until the server answers; default `baseURL` of `BrowserSpec` bundles |
+| `--web-server-timeout` | `60` | Seconds to wait for the server, exits with code 1 when it does not answer |
 
 ### CommandBox Runner
 

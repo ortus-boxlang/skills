@@ -2,7 +2,7 @@
   "name": "boxlang-agent-skills",
   "displayName": "BoxLang & CommandBox Skills",
   "description": "BoxLang and CommandBox skills for Cursor — language fundamentals, OOP, async, web, DB, caching, Java integration, modules (AI, ORM, Playwright browser testing and more), deployment, runtime extension, CLI, package management, embedded server, and task runners.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "Ortus Solutions",
     "url": "https://www.ortussolutions.com"

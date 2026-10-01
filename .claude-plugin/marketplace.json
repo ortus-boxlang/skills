@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Production-ready Claude Code skills for BoxLang and CommandBox — language fundamentals, OOP, async programming, web, database, caching, Java integration, modules (AI, ORM, Playwright browser testing and more), deployment, runtime extension, CLI, package management, embedded server, and task runners",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
     {
@@ -16,7 +16,7 @@
         "repo": "ortus-boxlang/skills"
       },
       "description": "BoxLang and CommandBox skills for Claude Code — language fundamentals, OOP, async, web, DB, caching, Java integration, modules (AI, ORM, Playwright browser testing and more), deployment, runtime extension, CLI, package management, embedded server, and task runners",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": {
         "name": "Ortus Solutions",
         "email": "info@ortussolutions.com"

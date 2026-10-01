@@ -11,12 +11,12 @@ Skills for [bx-playwright](https://github.com/ortus-boxlang/bx-playwright): flue
 | [bx-playwright-assertions](./bx-playwright-assertions/SKILL.md) | Inline `assert*()` and `expect()` assertions, soft assertions, typed errors |
 | [bx-playwright-network](./bx-playwright-network/SKILL.md) | Mocking with `intercept()`, events, `request()` API testing, saved sessions |
 | [bx-playwright-rendering](./bx-playwright-rendering/SKILL.md) | Screenshots, PDFs, `render()`, `content()`, the `bx:playwrightRender` component |
-| [bx-playwright-testing](./bx-playwright-testing/SKILL.md) | Tests, artifacts, page objects, components, macros, accessibility, visual regression |
+| [bx-playwright-testing](./bx-playwright-testing/SKILL.md) | TestBox `BrowserSpec` and browser matchers, ColdBox `BrowserTestCase` (`visitRoute`, `assertRouteIs`, `loginAs`), retries, artifacts, page objects, components, macros, accessibility, visual regression |
 | [bx-playwright-ai](./bx-playwright-ai/SKILL.md) | AI snapshots with refs, `aiTools()` for bx-ai agents, MCP, codegen, `help()` |
 
 ## Combining Skills
 
-- **End-to-end tests** → `bx-playwright-browsing` + `bx-playwright-assertions` + `bx-playwright-testing`
+- **End-to-end tests** → `bx-playwright-testing` (start with `BrowserSpec` or `BrowserTestCase`) + `bx-playwright-browsing` + `bx-playwright-assertions` + `boxlang-dev-boxlang-testing`
 - **Scraping or PDF generation** → `bx-playwright-browsing` + `bx-playwright-rendering`
 - **Agents that browse** → `bx-playwright-ai` + `bx-ai-agents` + `bx-ai-tools`
 
