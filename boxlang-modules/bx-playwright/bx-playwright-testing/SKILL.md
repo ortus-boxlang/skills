@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-testing
-description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's BrowserSpec (testbox.system.BrowserSpec, browse(), this.playwright(), browserProfile and baseURL annotations), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BrowserTestCase (routeURL, visitRoute, assertRouteIs, loginAs, logout and the BrowserTesting module), plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@playwright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
+description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's BrowserSpec (testbox.system.BrowserSpec, browse(), this.playwright(), browserProfile and baseURL annotations), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BrowserTestCase (routeURL, visitRoute, assertRouteIs), logged-in tests with saved sessions, plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@playwright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
 ---
 
 # bx-playwright: Testing, Page Objects and Quality
@@ -10,7 +10,7 @@ Pick the base class by what you test:
 | You test... | Extend | Gives you |
 |---|---|---|
 | Any web app from TestBox | `testbox.system.BrowserSpec` | `browse()`, bundle browser, browser matchers, attachments |
-| A ColdBox app | `coldbox.system.testing.BrowserTestCase` | All of the above plus `routeURL()`, `visitRoute()`, `assertRouteIs()`, `loginAs()`, `logout()` |
+| A ColdBox app | `coldbox.system.testing.BrowserTestCase` | All of the above plus `routeURL()`, `visitRoute()`, `assertRouteIs()` |
 | Older TestBox, or another framework | `testbox.system.BaseSpec` | `playwright( "ci" ).browse()` by hand (see [Plain TestBox](#plain-testbox-fallback)) |
 
 All of them are BoxLang only. When bx-playwright is not installed (or the engine is not BoxLang), browser specs are **skipped** with an install hint, not failed.
@@ -19,7 +19,9 @@ All of them are BoxLang only. When bx-playwright is not installed (or the engine
 
 ```js
 // tests/specs/browser/LoginSpec.bx
-class extends="testbox.system.BrowserSpec" baseURL="http://localhost:8080" browserProfile="ci" {
+@baseURL( "http://localhost:8080" )
+@browserProfile( "ci" )
+class extends="testbox.system.BrowserSpec" {
 
 	function run() {
 		describe( "Login", () => {
@@ -39,7 +41,7 @@ class extends="testbox.system.BrowserSpec" baseURL="http://localhost:8080" brows
 }
 ```
 
-Class annotations:
+Class annotations, written as BoxLang annotations above `class` (never inline attributes in `.bx` files):
 
 - `browserProfile`: bx-playwright profiles for the bundle browser, a list such as `ci` or `ci,mobile`.
 - `baseURL`: relative `visit()` calls resolve against it. Default: the runner's `--web-server-url` when the runner started a web server, else bx-playwright's own `baseURL` setting or `BX_PLAYWRIGHT_BASEURL`.
@@ -47,6 +49,7 @@ Class annotations:
 How it behaves:
 
 - One browser per bundle, started on first use, closed after the bundle by `closeBrowser()` (it carries `@afterAll`, so your own `beforeAll()` / `afterAll()` need no `super` calls).
+- Safety net: every browser a TestBox run opens is also closed when the run ends, even when an `afterAll()` throws or a spec calls `abort`, and bx-playwright closes any instance still open when the module unloads or the JVM shuts down.
 - Every `browse()` call gets fresh pages, each in its own isolated browser context, closed when the callback ends.
 - `browse()` returns the callback result.
 - Do not use `asyncAll` in suites that browse: browser specs are not thread safe.
@@ -120,7 +123,7 @@ expect( page.locator( "#email" ) ).toHaveValue( "luis@ortus.com" )
 
 When a `browse()` callback throws, its contexts close with `failed = true`, so the artifact policies keep their files, and the kept screenshots, trace and videos are attached to the spec with `attach()` (types `screenshot`, `trace`, `video`). The exception is rethrown unchanged. Reporters list attachments: JSON report, links in the Simple report, `[[ATTACHMENT|path]]` lines in JUnit `<system-out>`, and text/console/stream output under failed specs.
 
-Turn artifacts on with a profile (`browserProfile="ci"`) or per call:
+Turn artifacts on with a profile (`@browserProfile( "ci" )`) or per call:
 
 ```js
 browse( ( page ) => { ... }, {
@@ -134,7 +137,8 @@ Attach your own files from any spec: `attach( path, type = "file", name = "" )`,
 
 ```js
 it( title = "flaky checkout", retries = 2, body = () => { ... } )      // spec wins
-class extends="testbox.system.BrowserSpec" retries="1" { ... }        // bundle annotation
+@retries( 1 )                                                         // bundle annotation, above class
+class extends="testbox.system.BrowserSpec" { ... }
 ```
 
 ```bash
@@ -145,7 +149,7 @@ class extends="testbox.system.BrowserSpec" retries="1" { ... }        // bundle 
 ```
 
 - Precedence: `it( ..., retries )` > bundle `retries` annotation > `--retries`. A retry reruns `beforeEach()`, body and `afterEach()`. Skipped specs are never retried. Output shows "(passed after N attempts)".
-- `--failed` reads `{reportpath}/.testbox-failed.json`, which every run writes.
+- `--failed` reads `{reportpath}/.testbox-failed.json`, which every run writes. Bundles that failed outside of a spec (`beforeAll()`, `afterAll()`) are listed under `bundleErrors` and never rerun: fix them and run them directly.
 - `--web-server` starts the command, waits until `--web-server-url` answers (status below 500), runs the tests, then stops the server and its child processes. It exits with code 1 when the server does not answer in time. The URL becomes the default `baseURL` of `BrowserSpec` bundles.
 
 ## ColdBox BrowserTestCase
@@ -153,18 +157,30 @@ class extends="testbox.system.BrowserSpec" retries="1" { ... }        // bundle 
 It loads your ColdBox app like any integration test (`appMapping`, `webMapping`, `configMapping`, ...) and drives a real browser against the running app. Everything in the BrowserSpec section above applies.
 
 ```js
-class extends="coldbox.system.testing.BrowserTestCase" appMapping="/root" baseURL="http://127.0.0.1:8080" browserProfile="ci" {
+@appMapping( "/root" )
+@baseURL( "http://127.0.0.1:8080" )
+@browserProfile( "ci" )
+class extends="coldbox.system.testing.BrowserTestCase" {
+
+	function beforeAll() {
+		super.beforeAll()
+		// Log in once through the real login page, reused by browse( ..., { session : "admin" } )
+		this.playwright().session( "admin", ( page ) => {
+			visitRoute( page, "login" )
+				.fill( "Email", "admin@example.com" )
+				.fill( "Password", getSystemSetting( "TEST_ADMIN_PASSWORD" ) )
+				.click( "Sign in" )
+		} )
+	}
 
 	function run() {
 		describe( "Users", () => {
-			it( "shows a user", () => {
+			it( "shows a user to an admin", () => {
 				browse( ( page ) => {
-					loginAs( page, 1 )
 					visitRoute( page, "users.show", { id : 5 } )
 					assertRouteIs( page, "users.show" )
 					expect( page ).toSee( "User 5" )
-					logout( page )
-				} )
+				}, { session : "admin" } )
 			} )
 		} )
 	}
@@ -175,10 +191,8 @@ class extends="coldbox.system.testing.BrowserTestCase" appMapping="/root" baseUR
 | Helper | Does |
 |---|---|
 | `routeURL( name, params = {} )` | Path of a named route (no scheme or host), built by `event.route()`. Module routes: `name@module` or `module:name`. Throws `InvalidArgumentException` for unknown routes |
-| `visitRoute( page, name, params = {} )` | `page.visit( routeURL( name, params ) )`, returns the page |
-| `assertRouteIs( page, name, params = {} )` | Waits for the page to be on the route. No params: any placeholder value matches. With params: the exact path. Ignores case, trailing slash, query and hash. Fails with `TestBox.AssertionFailed` |
-| `loginAs( page, id )` | Calls the BrowserTesting `login` closure; the page's cookies get the session |
-| `logout( page )` | Calls the BrowserTesting `logout` closure |
+| `visitRoute( page, name, params = {} )` | `page.visit( routeURL( name, params ) )`, returns the page. Needs no browser support itself: pages come from `browse()` |
+| `assertRouteIs( page, name, params = {} )` | Waits for the page to be on the route. No params: any placeholder value matches, and a route with optional placeholders (`/posts/:id?`) matches with and without them. With params: the exact path. Ignores case, trailing slash, query and hash. Fails with `TestBox.AssertionFailed` |
 
 ```js
 routeURL( "users.show", { id : 5 } )    // /users/5/
@@ -186,30 +200,15 @@ routeURL( "home@blog" )                 // /blog/home/
 assertRouteIs( page, "users.show", { id : 5 } )
 ```
 
-### loginAs() / logout() Setup (BrowserTesting module)
+### Logged-In Tests: Saved Sessions
 
-The `BrowserTesting` core module exposes `GET /__browser-testing/login/:id` and `GET /__browser-testing/logout`. Configure it in `config/ColdBox.cfc` (the endpoints only answer when the app runs in the `testing` environment):
+ColdBox has no test-only login endpoints (no backdoor). Log in once through your real login page with `this.playwright().session( name, setup, options )`, then start any `browse()` already logged in with `{ session : name }`:
 
-```js
-moduleSettings = {
-	browserTesting : {
-		enabled : true,
-		token   : getSystemSetting( "BROWSER_TESTING_TOKEN", "" ),
-		login   : ( id, event, rc, prc ) => auth().login( userService.get( id ) ),
-		logout  : ( event, rc, prc ) => auth().logout()
-	}
-}
-```
-
-Security rules: every request answers a plain `404 Not Found` and runs nothing unless ALL hold:
-
-- The app `environment` setting is `testing`.
-- `enabled` is `true` (default `false`).
-- `token` is not empty and the request sends it in the `X-Browser-Testing-Token` header (or a `token` variable). Compared in constant time.
-- The `login` or `logout` closure is set.
-- The request is a GET.
-
-`loginAs()` reads the token from the test app's settings and sends the header for you. Keep the token in an environment variable, random per environment, out of source control. Never enable the module where real users can reach it. Failures throw `BrowserTestCase.BrowserTestingUnavailable` with a setup hint (a 404 means: module disabled, token mismatch, closure missing, or environment is not `testing`).
+- The setup page always starts clean; cookies and local storage are saved under the name in the bx-playwright home (`{home}/sessions`, outside the project: never commit them).
+- The session is reused until it is stale: `maxAge` (minutes, default `0` = never expires) or `refresh : true` logs in again. Keep `maxAge` below the app session timeout.
+- One session per role (`"admin"`, `"editor"`); pages of a `browse()` without the option start logged out, and every page has its own cookies.
+- Seed dedicated test users; read passwords from environment variables or CI secrets.
+- Test logout like users do: click the link, then `assertRouteIs( page, "login" )`.
 
 ## Plain TestBox (fallback)
 
@@ -242,7 +241,7 @@ page = ctx.newPage()
 kept = ctx.close( failed = true )   // { screenshots : [], trace : "path.zip", videos : [], directory }
 ```
 
-View traces: `bxPlaywright show-trace path/trace.zip`. Debug: `playwright( "debug" )` or `browserProfile="debug"` (headed, slowMo, all artifacts), `BX_PLAYWRIGHT_HEADLESS=false`, `page.snapshot()`, `bxPlaywright codegen <url>`.
+View traces: `bxPlaywright show-trace path/trace.zip`. Debug: `playwright( "debug" )` or `@browserProfile( "debug" )` (headed, slowMo, all artifacts), `BX_PLAYWRIGHT_HEADLESS=false`, `page.snapshot()`, `bxPlaywright codegen <url>`.
 
 ## Page Objects
 
