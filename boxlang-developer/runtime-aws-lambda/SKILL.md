@@ -93,6 +93,49 @@ class {
 `Application.bx` is never itself a URI-routing target, regardless of what a
 client requests or what `x-bx-function` header it sends.
 
+### Wrapping responses and handling errors
+
+`run()`, `onRequestEnd` and `onError` all receive the same `response` struct
+as their **last** argument. The value a handler returns is stored in
+`response.body` before `onRequestEnd` runs, so a hook can wrap or replace it:
+
+```boxlang
+class {
+    function onRequestEnd( target, event, context, response ){
+        response.body = { ok: true, data: response.body }
+    }
+
+    function onError( exception, eventName, event, context, response ){
+        response.body = { ok: false, error: exception.message }
+        // response.statusCode = 404   // override the default 500
+    }
+}
+```
+
+Rules to remember:
+
+- `onRequestEnd` runs **before** `onError`. On a failure `onRequestEnd` wraps
+  the empty body first, then `onError` overwrites it, so `onError` has the last word.
+- A handled error defaults the status to `500` unless `onError` sets
+  `response.statusCode`. It used to be `200`.
+- If `Application.bx` defines `onError`, the error counts as handled whatever
+  the hook returns. To fail the invocation, rethrow from `onError` or do not define it.
+- Hooks that do not declare the extra `response` argument keep working.
+
+### Response modes (`BOXLANG_RESPONSE_MODE`)
+
+| Mode | Lambda returns | Use for |
+|------|----------------|---------|
+| `http` (default) | The whole `response` struct, pre-seeded with `statusCode` (200), `headers`, `body`, `cookies` | API Gateway HTTP API, Function URLs |
+| `raw` | Only `response.body`, unwrapped. Nothing predefined (`response` starts as `{ body: null }`) | Direct invocation, Step Functions, SQS, REST API without a proxy integration |
+
+For a handler that does `return { id: 1 }`: `http` returns
+`{ "statusCode": 200, "headers": {...}, "body": { "id": 1 }, "cookies": [] }`,
+`raw` returns `{ "id": 1 }`. In `raw` mode any JSON value can be returned. Behind
+a proxy integration the handler builds the envelope itself, e.g.
+`return { statusCode: 201, body: serializeJSON( { id: 1 } ) }`. Any value other
+than `http` or `raw` aborts cold start.
+
 ---
 
 ## URI Routing with `handlers/`
@@ -214,6 +257,7 @@ fallback logs a `WARNING` listing every handler it discovered.
 | `BOXLANG_LAMBDA_CONFIG` | Path to custom `boxlang.json`. Default: `/var/task/boxlang.json` |
 | `BOXLANG_LAMBDA_CONNECTION_POOL_SIZE` | Database connection pool size. Default: `2` |
 | `BOXLANG_ENABLE_ROOT_SCAN` | Allow the legacy root-directory routing fallback (see URI Routing above). Default: `true`. Shared across every BoxLang serverless runtime (AWS/GCP/Azure). |
+| `BOXLANG_RESPONSE_MODE` | `http` (default envelope) or `raw` (unwrapped `response.body`). Any other value aborts cold start. |
 | `LAMBDA_TASK_ROOT` | Lambda deployment root. Default: `/var/task` |
 
 Any `BOXLANG_*` env variable also maps to `boxlang.json` config overrides.
@@ -304,6 +348,8 @@ deployment ZIP under `boxlang_modules/`.
 - [ ] `Application.bx` initializes shared resources (connections, config) in `onApplicationStart()`
 - [ ] `BOXLANG_LAMBDA_DEBUGMODE=false` in production
 - [ ] Connection pool size tuned: `BOXLANG_LAMBDA_CONNECTION_POOL_SIZE`
+- [ ] Errors are shaped in `onError` (set `response.statusCode` when 500 is not right); remember `onError` always counts as handled
+- [ ] `BOXLANG_RESPONSE_MODE=raw` for direct invocations and REST API non-proxy integrations
 - [ ] Routing convention adopted: handlers live under `handlers/`, `manifest.json` regenerated via `generateManifest` (wired into `buildLambdaZip`)
 - [ ] `BOXLANG_ENABLE_ROOT_SCAN=false` once you've fully migrated to `handlers/` (removes the legacy root-scan fallback)
 - [ ] Secrets via AWS SSM Parameter Store or Secrets Manager, injected as env vars

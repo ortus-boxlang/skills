@@ -145,6 +145,35 @@ class {
 }
 ```
 
+### Wrapping responses and handling errors
+
+`run()`, `onRequestEnd` and `onError` all receive the same `response` struct
+as their **last** argument. The value a handler returns is stored in
+`response.body` before `onRequestEnd` runs, so a hook can wrap or replace it:
+
+```boxlang
+class {
+    function onRequestEnd( target, event, context, response ){
+        response.body = { ok: true, data: response.body }
+    }
+
+    function onError( exception, eventName, event, context, response ){
+        response.body = { ok: false, error: exception.message }
+        // response.statusCode = 404   // override the default 500
+    }
+}
+```
+
+Rules to remember:
+
+- `onRequestEnd` runs **before** `onError`. On a failure `onRequestEnd` wraps
+  the empty body first, then `onError` overwrites it, so `onError` has the last word.
+- A handled error defaults the status to `500` unless `onError` sets
+  `response.statusCode`. It used to be `200`.
+- If `Application.bx` defines `onError`, the error counts as handled whatever
+  the hook returns. To fail the invocation, rethrow from `onError` or do not define it.
+- Hooks that do not declare the extra `response` argument keep working.
+
 ---
 
 ## URI Routing with `handlers/`
@@ -280,6 +309,7 @@ shape has no prefix to strip and matches AWS/GCF's raw path exactly.
 
 - [ ] `Application.bx` initializes shared resources in `onApplicationStart()`
 - [ ] `BOXLANG_AZURE_DEBUGMODE=false` in production
+- [ ] Errors are shaped in `onError` (set `response.statusCode` when 500 is not right); remember `onError` always counts as handled
 - [ ] Routing convention adopted: handlers live under `handlers/`, `manifest.json` regenerated via `generateManifest` (wired into `azureFunctionsPackage`/`azureFunctionsDeploy`)
 - [ ] `BOXLANG_ENABLE_ROOT_SCAN=false` once you've fully migrated to `handlers/`
 - [ ] Secrets via Azure Key Vault or App Settings, injected as env vars
