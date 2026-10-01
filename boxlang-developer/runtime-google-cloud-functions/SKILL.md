@@ -102,8 +102,8 @@ class {
 
 ### Wrapping responses and handling errors
 
-`run()`, `onRequestEnd` and `onError` all receive the same `response` struct
-as their **last** argument. The value a handler returns is stored in
+`run()` and every request lifecycle hook (`onRequestStart`, `onRequestEnd`,
+`onError`, `onAbort`) receive the same `response` struct as their **last** argument. The value a handler returns is stored in
 `response.body` before `onRequestEnd` runs, so a hook can wrap or replace it:
 
 ```boxlang
@@ -118,6 +118,12 @@ class {
     }
 }
 ```
+
+Hook arguments: `onRequestStart( target, event, context, response )`,
+`onRequestEnd( target, event, context, response )`,
+`onError( exception, eventName, event, context, response )`,
+`onAbort( target, event, context, response )`. `onApplicationStart` and the
+session hooks are fired by BoxLang itself and receive no request data.
 
 Rules to remember:
 
