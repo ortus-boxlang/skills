@@ -5,6 +5,8 @@ description: "Use this skill when you need the evaluate() BIF in BoxLang for leg
 
 # bx-unsafe-evaluate: Dynamic Code Evaluation
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

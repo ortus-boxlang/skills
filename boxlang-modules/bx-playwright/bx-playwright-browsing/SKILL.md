@@ -5,6 +5,8 @@ description: "Use this skill when driving a browser from BoxLang with bx-playwri
 
 # bx-playwright: Browsing
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Entry Points
 
 ```js

@@ -5,6 +5,8 @@ description: "Use this skill when generating API documentation for BoxLang or CF
 
 # DocBox — API Documentation Generator
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 DocBox automatically parses your BoxLang or CFML source code and generates

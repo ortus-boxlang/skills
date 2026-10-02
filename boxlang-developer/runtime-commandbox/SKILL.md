@@ -5,6 +5,8 @@ description: "Use this skill when deploying BoxLang as an enterprise Java servle
 
 # BoxLang with CommandBox
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 **CommandBox** is the enterprise Java servlet deployment option for BoxLang. Unlike the MiniServer (Undertow, no-servlet), CommandBox runs BoxLang inside a full Java EE servlet container (Undertow with servlet API), enabling enterprise features like multi-site hosting, SSL management, OS service integration, and JDK management.

@@ -5,6 +5,8 @@ description: "Use this skill to render HTML forms in BoxLang using the bx-ui-for
 
 # bx-ui-forms: HTML Form Components
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

@@ -5,6 +5,8 @@ description: "Use this skill to migrate ColdFusion (Adobe CF) or Lucee CFML appl
 
 # bx-compat-cfml: CFML Compatibility Layer
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

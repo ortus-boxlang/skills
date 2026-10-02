@@ -5,6 +5,8 @@ description: "Use this skill when working with BoxLang's interceptor/event syste
 
 # BoxLang Interceptors
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang interceptors provide Aspect-Oriented Programming (AOP) capabilities through
@@ -225,6 +227,15 @@ class {
     }
 }
 ```
+
+## Class Instantiation Events (v1.18+)
+
+| Event | When | Data |
+|---|---|---|
+| `afterBoxClassCreation` | Instance fully defined (pseudo-constructor ran, interfaces and abstract methods validated) but before `init()`. Also fires for `noInit` creations such as `createObject()` and deserialization. Never fires for super classes in an `extends` chain. | `instance`, `className`, `noInit`, `context` |
+| `afterBoxClassInit` | After `init()` (or the implicit constructor) completes. Does not fire for `noInit` creations or when `init()` throws. | `instance`, `result`, `className`, `context` |
+
+Use them for dependency injection, auditing and observability.
 
 ## Best Practices
 

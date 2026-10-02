@@ -5,6 +5,8 @@ description: "Use this skill when defining BoxLang ORM entities: the persistent 
 
 # bx-orm: Entities & Properties
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Defining a Persistent Entity
 
 ```javascript

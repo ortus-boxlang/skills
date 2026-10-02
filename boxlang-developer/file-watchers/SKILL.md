@@ -5,6 +5,8 @@ description: "Use this skill when implementing BoxLang filesystem watchers: watc
 
 # BoxLang File Watchers
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang includes a runtime watcher service for real-time filesystem automation.

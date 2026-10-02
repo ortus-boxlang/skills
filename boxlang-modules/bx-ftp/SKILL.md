@@ -5,6 +5,8 @@ description: "Use this skill when working with FTP, FTPS, or SFTP operations in 
 
 # bx-ftp: FTP / SFTP Module
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

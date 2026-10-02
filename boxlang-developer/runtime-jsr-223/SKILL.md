@@ -5,6 +5,8 @@ description: "Use this skill when embedding BoxLang into Java applications via t
 
 # BoxLang JSR-223 Scripting
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 JSR-223 ("Scripting for the Java Platform") allows Java applications to embed

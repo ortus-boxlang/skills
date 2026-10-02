@@ -5,6 +5,8 @@ description: "Use this skill when creating or managing BoxLang scheduled workloa
 
 # BoxLang Scheduled Tasks
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang offers two scheduling models:
@@ -144,6 +146,19 @@ scheduler.xtask( "experimental-task", "debug" )
 - `everyYear()`, `everyYearOn( month, day, time )`
 - `onWeekdays( time )`, `onWeekends( time )`
 
+`everyMonthOn( day )` clamps to the last day of shorter months (v1.18+), so `everyMonthOn( 31 )` runs once in February instead of every day.
+
+## Server Fixation (Clusters, v1.18+)
+
+When the same scheduler is deployed to every node, each node runs every task. Call `.onOneServer()` so only one node runs each execution. BoxLang uses the scheduler's `cacheName` cache as a distributed lock, so point it at a cache the servers share (for example Redis via `bx-redis`).
+
+```boxlang
+task( "nightly-cleanup" )
+    .call( () => cleanupOldRecords() )
+    .everyDayAt( "02:00" )
+    .onOneServer()
+```
+
 Time units supported in scheduler APIs include: `days`, `hours`, `minutes`, `seconds`, `milliseconds`, `microseconds`, `nanoseconds`.
 
 ## Cron Support
@@ -175,10 +190,13 @@ scheduler.task( "weekday-digest" )
 - Prefer `onFailure` hooks and centralized logging for observability.
 - Avoid overly fine-grained intervals without throughput checks.
 - Use `spacedDelay()` or no-overlap patterns when tasks can run longer than their interval.
+- Use `.onOneServer()` for cluster-wide jobs that must run once (v1.18+).
+- Inspect scheduling from the CLI with `boxlang schedule` and `boxlang schedule --json` (v1.18+).
 
 ## Troubleshooting
 
 - **Scheduler not found**: confirm `schedulerStart()` was called and `schedulerList()` contains the name.
 - **Task never firing**: verify timezone, cron expression, and start/end constraints.
 - **Duplicate/stacked runs**: use spacing/no-overlap strategies instead of strict fixed-rate behavior.
+- **Task runs on every node**: add `.onOneServer()` and use a shared `cacheName` (v1.18+).
 - **Silent failures**: inspect scheduler logger output and `schedulerStats()` counters (`totalFailures`, `lastResult`).

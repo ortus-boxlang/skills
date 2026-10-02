@@ -5,6 +5,8 @@ description: "Use this skill when configuring BoxLang runtime settings via boxla
 
 # BoxLang Configuration
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang's runtime is configured through `boxlang.json`. The file is auto-created in
@@ -23,6 +25,7 @@ isolation), pair this with the
 | Runtime | Default Location |
 |---------|----------------|
 | OS / CLI / MiniServer | `~/.boxlang/config/boxlang.json` |
+| CLI project override (v1.18+) | `./.boxlang.json` in the current working directory, used when `BOXLANG_CONFIG` / `--bx-config` are not set |
 | AWS Lambda | `{lambdaRoot}/boxlang.json` |
 | Google Cloud Functions | `{gcfRoot}/boxlang.json` |
 | CommandBox | `~/.commandbox/servers/{home}/WEB-INF/boxlang/config/boxlang.json` |

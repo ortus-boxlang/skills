@@ -5,6 +5,8 @@ description: "Use this skill when serializing or deserializing YAML in BoxLang w
 
 # bx-yaml: YAML Serialization
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

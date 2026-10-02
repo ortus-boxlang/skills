@@ -5,6 +5,8 @@ description: "Use this skill when setting up or developing BoxLang on a Chromebo
 
 # BoxLang on Chromebooks
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 Chromebooks support full BoxLang development through the built-in Linux

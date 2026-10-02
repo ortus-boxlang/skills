@@ -5,6 +5,8 @@ description: "Use this skill when working with BoxLang lambdas, closures, arrow 
 
 # BoxLang Functional Programming
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang treats functions as first-class values. Functions can be stored in variables,

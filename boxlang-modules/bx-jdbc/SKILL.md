@@ -5,6 +5,8 @@ description: "Use this skill when selecting and installing JDBC driver modules f
 
 # bx-jdbc: JDBC Driver Modules
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 BoxLang provides separate installable JDBC driver modules — one per database vendor. Install only the driver you need.
 
 ## Available JDBC Driver Modules

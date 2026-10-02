@@ -5,6 +5,8 @@ description: "Use this skill when integrating BoxLang with Java: createObject, s
 
 # BoxLang Java Integration
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang compiles to Java bytecode and runs on JRE 21+. It has 100% Java

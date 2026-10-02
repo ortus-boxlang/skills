@@ -5,6 +5,8 @@ description: "Use this skill when building, testing, or deploying BoxLang applic
 
 # BoxLang on Google Cloud Functions
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang runs on Google Cloud Functions Gen 2 via the Java 21 runtime. The

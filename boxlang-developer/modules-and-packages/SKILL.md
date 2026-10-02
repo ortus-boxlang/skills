@@ -5,6 +5,8 @@ description: "Use this skill when installing, configuring, or using BoxLang modu
 
 # BoxLang Modules and Packages
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang's module system allows the runtime to be extended with additional built-in

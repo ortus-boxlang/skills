@@ -5,6 +5,8 @@ description: "Use this skill when using MatchBox, the Rust-based native implemen
 
 # MatchBox — BoxLang Without the JVM
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 **MatchBox** is a native Rust implementation of the BoxLang runtime. It compiles BoxLang source code to a custom bytecode and executes it without any JVM required. MatchBox is ideal for environments where the JVM is unavailable, cold-start time matters, or binary size must be minimal.

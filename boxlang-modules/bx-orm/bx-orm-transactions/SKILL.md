@@ -5,6 +5,8 @@ description: "Use this skill for ORM transactions and session management in BoxL
 
 # bx-orm: Transactions & Session Management
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Basic `transaction {}` Block
 
 ```javascript

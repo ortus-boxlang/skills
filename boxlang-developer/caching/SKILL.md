@@ -5,6 +5,8 @@ description: "Use this skill when implementing caching in BoxLang applications: 
 
 # BoxLang Caching
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang provides a flexible, pluggable caching system managed by `CacheService`.

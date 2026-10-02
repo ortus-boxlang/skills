@@ -5,6 +5,8 @@ description: "Use this skill when deploying BoxLang applications to DigitalOcean
 
 # BoxLang on DigitalOcean App Platform
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 DigitalOcean App Platform supports BoxLang applications via a containerized starter kit. The starter uses BoxLang MiniServer inside a multi-stage Docker build and auto-deploys from GitHub on every push to `main`.

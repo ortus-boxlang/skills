@@ -5,6 +5,8 @@ description: "Use this skill when implementing memory in BoxLang AI: aiMemory() 
 
 # bx-ai: Memory Systems
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## `aiMemory()` BIF
 
 ```java

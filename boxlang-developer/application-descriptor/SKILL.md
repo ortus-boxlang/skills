@@ -5,6 +5,8 @@ description: "Use this skill when designing or debugging Application.bx behavior
 
 # BoxLang Application Descriptor
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 `Application.bx` is BoxLang's application descriptor. It defines application-level settings and lifecycle callbacks, and it is the cornerstone for running multiple isolated applications in one BoxLang server/runtime.

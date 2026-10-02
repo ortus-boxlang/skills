@@ -5,6 +5,8 @@ description: "Use this skill when helping developers migrate from CFML (Adobe Co
 
 # BoxLang for CFML Developers
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang is a new language with a **dual parser** — it can parse and run CFML file types (`.cfc`, `.cfm`, `.cfs`) while also offering a modern native syntax via `.bx` / `.bxs` / `.bxm` files. For full CFML behavioral parity, install the `bx-compat-cfml` compatibility module.
@@ -291,6 +293,10 @@ queryExecute( "SELECT * FROM bigTable", {}, { fetchSize: 100 } )
 
 ---
 
+## `cflock type="exclusive"` (v1.17.6+)
+
+Earlier CF-transpiled locks written with `type="exclusive"` were compiled as read locks. This is fixed: `write` and `exclusive` map to exclusive, `readonly` stays read, anything else defaults to read. Expect more lock contention in code that unknowingly relied on the old behavior.
+
 ## Date and Time Handling
 
 BoxLang uses `java.time.ZonedDateTime` (not `java.util.Date`) for all date/time values. This means:
@@ -303,6 +309,8 @@ BoxLang uses `java.time.ZonedDateTime` (not `java.util.Date`) for all date/time 
 // If you need to pass a date to Java code requiring java.util.Date
 var legacyDate = toLegacyDate( myDate )
 ```
+
+BoxLang 1.18 adds single-unit setters as BIFs and member methods: `dateSetYear()`, `dateSetMonth()`, `dateSetDay()`, `dateSetHour()`, `dateSetMinute()`, `dateSetSecond()` (or `myDate.setDay( 15 )`). They mutate in place and return the date; out-of-range values roll over.
 
 With `bx-compat-cfml`, date comparison functions revert to second-level precision to match legacy behavior.
 

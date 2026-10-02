@@ -5,6 +5,8 @@ description: "Use this skill when building AI agents with aiAgent(): instruction
 
 # bx-ai: AI Agents
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## `aiAgent()` BIF
 
 ```java

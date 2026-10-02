@@ -5,6 +5,8 @@ description: "Use this skill when creating BoxLang interceptors: Observer/Interc
 
 # BoxLang Interceptors
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang's interceptor system implements the **Observer** and **Intercepting Filter**
@@ -239,6 +241,13 @@ Use `BoxEvent.ON_REQUEST_START.key()` in Java, or the string name in BoxLang.
 | `onMissingMapping` | Mapping cannot be resolved | `mapping` |
 | `onPreSourceInvoke` | Before any source file runs | `context`, `source` |
 | `onPostSourceInvoke` | After any source file runs | `context`, `source` |
+
+### Class Instantiation Events (v1.18+)
+
+| Event | When | Payload Keys |
+|---|---|---|
+| `afterBoxClassCreation` | Instance defined, before `init()`. Also fires for `noInit` creations (`createObject()`, deserialization). Never fires for super classes in an `extends` chain. | `instance`, `className`, `noInit`, `context` |
+| `afterBoxClassInit` | After `init()` or the implicit constructor completes. Skipped for `noInit` creations and when `init()` throws. | `instance`, `result`, `className`, `context` |
 
 ### Module Events
 

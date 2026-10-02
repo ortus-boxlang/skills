@@ -5,6 +5,8 @@ description: "Use this skill when writing BoxLang markup templates (.bxm files),
 
 # BoxLang Templating Language
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang's templating language uses `.bxm` files (BoxLang Markup) to mix HTML with

@@ -5,6 +5,8 @@ description: "Use this skill for secure password hashing and verification in Box
 
 # bx-password-encrypt: Secure Password Hashing
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

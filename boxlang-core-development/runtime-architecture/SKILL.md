@@ -5,6 +5,8 @@ description: "Use this skill when understanding BoxLang internals: BoxRuntime se
 
 # BoxLang Runtime Architecture
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang is a dynamic JVM language (JRE 21+) that compiles source to Java bytecode
