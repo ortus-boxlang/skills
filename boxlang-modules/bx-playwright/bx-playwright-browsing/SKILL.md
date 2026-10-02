@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-browsing
-description: "Use this skill when driving a browser from BoxLang with bx-playwright: the playwright() BIF, visit(), browse(), newPage()/newContext(), smart selectors (@testId, CSS, visible text), chainable actions (click, fill, check, select, press, upload), finders (byRole, byText, byLabel), locators (nth, filter, texts), within(), frames, waiting, popups, downloads, evaluate, and cleanup."
+description: "Use this skill when driving a browser from BoxLang with bx-playwright: the playwright() BIF, visit(), browse(), newPage()/newContext(), smart selectors (@testId, CSS, visible text), chainable actions (click, fill, check, select, press, upload), finders (byRole, byText, byLabel), locators (nth, filter, texts), within(), frames, waiting, popups, downloads, evaluate, and cleanup., and automation scripts (.bxs jobs with cliGetArgs(), codegen recording, retries, exit codes, cron or boxlang schedule)"
 ---
 
 # bx-playwright: Browsing
@@ -87,3 +87,23 @@ file  = page.waitForDownload( () => page.click( "Export" ), "export.csv" )   // 
 ## Discover
 
 `page.help()`, `page.help( "fill" )`, `playwright().help()` list every method with arguments from the docblocks. `getJava()` returns the raw Playwright object.
+
+## Automation Scripts
+
+bx-playwright also runs plain BoxLang jobs outside of tests. Full guide: `docs/automation.md` (bxplaywright.boxlang.io/automation/).
+
+```js
+// jobs/capture.bxs, run with: boxlang jobs/capture.bxs --url=https://boxlang.io --out=home.png
+args = cliGetArgs()                       // { options : { url, out }, positionals : [ "jobs/capture.bxs", ... ] }
+playwright( "ci" ).browse( ( page ) => {  // browse() closes everything, even on errors
+	page.visit( args.options.url ).screenshot( args.options.out ?: "capture.png", { fullPage : true } )
+} )
+```
+
+- Record instead of writing clicks: `bxPlaywright codegen <url> --output=job.bxs`, then rewrite `// TODO translate:` lines, move secrets to `getSystemSetting()`, add assertions after key steps.
+- Log in once: `pw.session( "app", ( page ) => ...login..., { maxAge : 720 } )`, then `pw.browse( fn, { session : "app" } )`.
+- `browse()` returns the callback result: scrape with `page.locator( "tr" ).all().map( ( row ) => row.locator( "td" ).texts() )`, write with `fileWrite( path, jsonSerialize( data ) )`.
+- Retry flaky sites by catching `Playwright.Timeout` in a loop; fail a job with `cliExit( 1 )` (an uncaught error also exits 1).
+- The `ci` profile is headless and keeps a screenshot, trace and video of a failed `browse()`.
+- Servers: `bxPlaywright install chromium --with-deps` once, then `boxlang job.bxs` from cron.
+- BoxLang scheduler: a class with `configure()` calling `scheduler.task( "name" ).call( () => playwright( "ci" ).browse( ... ) ).everyHour()`, run with `boxlang schedule Scheduler.bx`. Use absolute paths for files (relative ones resolve against the scheduler file) and `yyyy-MM-dd` date masks (`mm` is minutes). One browser per task run: Playwright is not thread safe.

@@ -744,11 +744,15 @@ A failing or erroring spec can rerun up to N more times. Each attempt reruns `be
 // 1. Spec argument (highest precedence), also on fit() and xit()
 it( title = "talks to a flaky service", retries = 2, body = () => { ... } )
 
-// 2. Bundle annotation
-class extends="testbox.system.BaseSpec" retries="1" { ... }
+// 2. Bundle annotation (BoxLang annotations go above the declaration)
+@retries( 1 )
+class extends="testbox.system.BaseSpec" { ... }
 
 // xUnit: method annotation overrides the bundle annotation
-function testFlaky() retries="3" { ... }
+@retries( 3 )
+function testFlaky() { ... }
+
+// CFML components keep inline attributes: component extends="testbox.system.BaseSpec" retries="1" { ... }
 ```
 
 ```bash
@@ -760,7 +764,7 @@ Skipped specs are never retried. Use retries for genuinely flaky I/O (browsers, 
 
 ### Rerun Only Failures: `--failed`
 
-Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bundles and specs that failed or errored. `./testbox/run --failed` reruns only those; when the file is missing or empty it prints a message and runs nothing.
+Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bundles and specs that failed or errored. `./testbox/run --failed` reruns only those; when the file is missing or empty it prints a message and runs nothing. A bundle that failed outside of a spec (`beforeAll()`, `afterAll()`) is broken, not flaky: it goes to `bundleErrors` in the file and is listed, never rerun. The other bundles still rerun only their failed specs.
 
 ### Playwright Failures
 
