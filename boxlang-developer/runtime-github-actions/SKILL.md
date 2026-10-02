@@ -5,6 +5,8 @@ description: "Use this skill when setting up GitHub Actions CI/CD pipelines for 
 
 # BoxLang in GitHub Actions
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 The `ortus-boxlang/setup-boxlang@main` action installs and configures BoxLang

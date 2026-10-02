@@ -5,6 +5,8 @@ description: "Use this skill when parsing, querying, or sanitizing HTML in BoxLa
 
 # bx-jsoup: HTML Parsing & Sanitization
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

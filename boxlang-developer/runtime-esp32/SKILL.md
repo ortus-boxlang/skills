@@ -5,6 +5,8 @@ description: "Use this skill when deploying BoxLang to ESP32 microcontrollers us
 
 # BoxLang on ESP32
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 MatchBox can compile and deploy BoxLang scripts directly to **ESP32 microcontrollers** using `--target esp32`. BoxLang runs on FreeRTOS with a custom task stack, and bytecode is stored in a dedicated flash partition. Full firmware flashing is only needed on first setup; subsequent deploys update only the bytecode (~1 second).

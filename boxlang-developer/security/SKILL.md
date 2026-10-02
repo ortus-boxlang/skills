@@ -5,6 +5,8 @@ description: "Use this skill when reviewing BoxLang code or applications for sec
 
 # BoxLang Security
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang inherits both the power and the historical attack surface of ColdFusion/CFML

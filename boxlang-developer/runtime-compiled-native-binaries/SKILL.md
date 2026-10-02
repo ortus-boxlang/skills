@@ -5,6 +5,8 @@ description: "Use this skill when compiling BoxLang scripts to standalone native
 
 # BoxLang Compiled Native Binaries
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 MatchBox can compile BoxLang source code to standalone native executables using `--target native`. The resulting binary embeds a small Rust runner stub (~500 KB) with the compiled BoxLang bytecode appended, requiring no JVM or MatchBox installation on the target machine.

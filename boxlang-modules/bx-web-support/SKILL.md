@@ -5,6 +5,8 @@ description: "Use this skill for testing web-context code outside a web server i
 
 # bx-web-support: Web Context Mocking for Testing
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

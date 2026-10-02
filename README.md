@@ -1,6 +1,6 @@
 # BoxLang Skills
 
-> AI agent skills for [BoxLang](https://boxlang.ortusbooks.com/) — a Modern Dynamic JVM Language built on JRE 21+.
+> AI agent skills for [BoxLang](https://boxlang.ortusbooks.com/), the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
 
 This repository provides reusable **AI skills** for BoxLang development, compatible with any agent that supports the [skills.sh](https://skills.sh) open standard — including Claude Code, Cursor, Copilot, and more.
 
@@ -322,7 +322,7 @@ For manual placement and Claude Project support files, see **Direct / Manual Ins
 
 ## About BoxLang
 
-[BoxLang](https://boxlang.ortusbooks.com/) is a modern, dynamic JVM language (JRE 21+) designed for rapid application development. It features:
+[BoxLang](https://boxlang.ortusbooks.com/) is the AI-native software productivity platform, built on a modern, dynamic JVM language (JRE 21+) designed for rapid application development. It features:
 
 - **Multi-runtime deployment** — web servers, CLI scripts, AWS Lambda, Docker, WASM, Spring Boot, Android
 - **Complete Java interoperability** — use any Java library directly, compile to Java bytecode

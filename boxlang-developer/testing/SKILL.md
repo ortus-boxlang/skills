@@ -5,6 +5,8 @@ description: "Use this skill when writing, running, or debugging tests for BoxLa
 
 # BoxLang Testing with TestBox
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 TestBox is the standard testing framework for BoxLang. It supports two styles:

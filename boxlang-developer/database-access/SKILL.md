@@ -5,6 +5,8 @@ description: "Use this skill when writing BoxLang database code: queryExecute, b
 
 # BoxLang Database Access
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang provides first-class database access via JDBC. Datasources are configured
@@ -63,6 +65,10 @@ class {
     }
 }
 ```
+
+### `BIT` Columns as Booleans (v1.18+)
+
+BoxLang represents JDBC `BIT` columns as `1`/`0`. Set `representBitAsBoolean` on the datasource (`GenericJDBCDriver`) to get true booleans instead.
 
 ## Basic Queries
 

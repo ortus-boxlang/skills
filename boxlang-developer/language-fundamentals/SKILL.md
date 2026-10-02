@@ -5,6 +5,8 @@ description: "Use this skill when writing or reviewing BoxLang code covering syn
 
 # BoxLang Language Fundamentals
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang is a modern, dynamic JVM language (JRE 21+) influenced by Java, CFML, Python,

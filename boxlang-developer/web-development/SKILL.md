@@ -5,6 +5,8 @@ description: "Use this skill when building BoxLang web applications: Application
 
 # BoxLang Web Development
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang web applications revolve around `Application.bx`, which acts as the

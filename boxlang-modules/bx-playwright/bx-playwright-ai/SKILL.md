@@ -5,6 +5,8 @@ description: "Use this skill when connecting AI agents to a browser with bx-play
 
 # bx-playwright: AI Agents
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Snapshots With Element Refs
 
 ```js

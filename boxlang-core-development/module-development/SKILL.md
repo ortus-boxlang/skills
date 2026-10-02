@@ -5,6 +5,8 @@ description: "Use this skill when creating a BoxLang module: ModuleConfig.bx str
 
 # BoxLang Module Development
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 A BoxLang module is a packaged unit of functionality that extends the runtime

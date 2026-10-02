@@ -5,6 +5,8 @@ description: "Use this skill when containerizing BoxLang applications with Docke
 
 # BoxLang with Docker
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang ships three official Docker images for different use cases: a headless

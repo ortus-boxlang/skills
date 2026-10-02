@@ -5,6 +5,8 @@ description: "Use this skill when working with BoxLang logging: obtaining logger
 
 # BoxLang Logging
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang uses a centralized logging system built on **Logback** (SLF4J implementation).

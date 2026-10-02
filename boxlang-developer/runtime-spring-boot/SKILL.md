@@ -5,6 +5,8 @@ description: "Use this skill when integrating BoxLang with Spring Boot applicati
 
 # BoxLang with Spring Boot
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 The `boxlang-spring-boot-starter` automatically configures BoxLang as a view

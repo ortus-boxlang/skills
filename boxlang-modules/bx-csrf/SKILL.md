@@ -5,6 +5,8 @@ description: "Use this skill for CSRF (Cross-Site Request Forgery) protection in
 
 # bx-csrf: CSRF Protection
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

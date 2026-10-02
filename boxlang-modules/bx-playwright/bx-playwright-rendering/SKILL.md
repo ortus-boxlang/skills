@@ -5,6 +5,8 @@ description: "Use this skill when producing screenshots, PDFs, images or rendere
 
 # bx-playwright: Screenshots, PDFs and Rendering
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## One-shot Helpers (start and stop the browser for you)
 
 ```js

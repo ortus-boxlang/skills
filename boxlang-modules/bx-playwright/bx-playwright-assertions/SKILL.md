@@ -5,6 +5,8 @@ description: "Use this skill when asserting on web pages with bx-playwright: web
 
 # bx-playwright: Assertions and Errors
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 Assertions retry until they pass or `timeouts.assertion` (5000 ms) expires. Never sleep before them.
 
 ## Inline Style (chainable)

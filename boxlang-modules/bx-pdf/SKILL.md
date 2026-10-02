@@ -5,6 +5,8 @@ description: "Use this skill when generating PDF documents in BoxLang with the b
 
 # bx-pdf: PDF Generation
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

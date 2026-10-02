@@ -5,6 +5,8 @@ description: "Use this skill when building BoxLang desktop applications with Ele
 
 # BoxLang Desktop Runtime (Electron + MiniServer)
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 This skill applies to desktop applications that embed BoxLang using Electron and run a local BoxLang MiniServer process.

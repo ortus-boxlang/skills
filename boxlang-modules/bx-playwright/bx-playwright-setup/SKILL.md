@@ -5,6 +5,8 @@ description: "Use this skill when installing or configuring bx-playwright (BoxLa
 
 # bx-playwright: Setup, CLI and Configuration
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Install
 
 Requires BoxLang 1.17+ and Java 21+. Two distributions, same module name (`playwright`) and API:

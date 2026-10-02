@@ -5,6 +5,8 @@ description: "Use this skill when writing BoxLang CLI scripts and classes, handl
 
 # BoxLang CLI Scripting
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 The `boxlang` binary can run scripts, classes, templates, and inline code directly from the command line. It supports multiple file types, shebang lines, structured argument parsing, and a built-in REPL.
@@ -157,7 +159,7 @@ if ( !fileExists( configFile ) ) {
 | Flag | Env Variable | Description |
 |------|-------------|-------------|
 | `--bx-debug` | `BOXLANG_DEBUG` | Enable debug output |
-| `--bx-config <path>` | `BOXLANG_CONFIG` | Path to `boxlang.json` config file |
+| `--bx-config <path>` | `BOXLANG_CONFIG` | Path to `boxlang.json` config file. If omitted, a `.boxlang.json` in the current working directory is auto-discovered (v1.18+). The flag or env var always wins. |
 | `--bx-home <path>` | `BOXLANG_HOME` | Override BoxLang home directory |
 | `--bx-code <code>` | — | Execute inline BoxLang code string |
 | `--bx-printAST` | `BOXLANG_PRINTAST` | Print the AST for the script |
@@ -211,6 +213,13 @@ boxlang schedule ./schedulers/MainScheduler.bx
 ```
 
 Runs continuously until `Ctrl+C`. File must be a `.bx` class with scheduler definitions.
+
+Since v1.18, run with no arguments to print a report of scheduling configuration, loaded schedulers and their tasks, and persisted tasks. Add `--json` for a machine-readable document (credentials are stripped), ideal for `jq`, scripts and AI agents:
+
+```bash
+boxlang schedule
+boxlang schedule --json | jq '.tasks'
+```
 
 ---
 
@@ -319,7 +328,7 @@ class DataProcessor {
 
 - [ ] Use `CLIGetArgs()` for all argument access (not raw `args` array)
 - [ ] Validate required arguments and call `CLIExit( 1 )` on error
-- [ ] Use `--bx-config` / `BOXLANG_CONFIG` to separate config from code
+- [ ] Use `--bx-config` / `BOXLANG_CONFIG` (or a project `.boxlang.json`, v1.18+) to separate config from code
 - [ ] Use `server.boxlang.cliMode` for runtime-aware conditional logic
 - [ ] Prefer `.bx` classes with `main()` for reusable, testable entry points
 - [ ] Use `#!/usr/bin/env boxlang` shebang for directly executable scripts

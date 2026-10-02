@@ -5,6 +5,8 @@ description: "Use this skill when accessing OS and hardware information in BoxLa
 
 # bx-oshi: OS & Hardware Information
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

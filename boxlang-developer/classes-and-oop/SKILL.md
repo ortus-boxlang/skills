@@ -5,6 +5,8 @@ description: "Use this skill when writing BoxLang classes, components, interface
 
 # BoxLang Classes and Object-Oriented Programming
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang classes are defined in `.bx` files. A class is a blueprint that encapsulates

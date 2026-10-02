@@ -5,6 +5,8 @@ description: "Use this skill when creating, extracting, listing, or modifying ZI
 
 # BoxLang ZIP Archives
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang provides the `bx:zip` component for creating, extracting, listing, and

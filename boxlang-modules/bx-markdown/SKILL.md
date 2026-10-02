@@ -5,6 +5,8 @@ description: "Use this skill when converting Markdown to HTML or HTML to Markdow
 
 # bx-markdown: Markdown Support
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

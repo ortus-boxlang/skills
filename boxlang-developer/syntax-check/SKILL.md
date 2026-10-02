@@ -5,6 +5,8 @@ description: "Use this skill to validate BoxLang and CFML source files for synta
 
 # BoxLang Syntax Check
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 `boxlang check` parses BoxLang and CFML source files and reports syntax errors

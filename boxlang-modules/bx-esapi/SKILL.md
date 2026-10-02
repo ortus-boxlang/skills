@@ -5,6 +5,8 @@ description: "Use this skill for OWASP ESAPI encoding, decoding, and HTML saniti
 
 # bx-esapi: OWASP ESAPI Security Module
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

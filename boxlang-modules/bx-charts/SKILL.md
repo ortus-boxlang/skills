@@ -5,6 +5,8 @@ description: "Use this skill to create charts and graphs in BoxLang with the bx-
 
 # bx-charts: Charts & Graphs
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

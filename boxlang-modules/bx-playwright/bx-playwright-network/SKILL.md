@@ -5,6 +5,8 @@ description: "Use this skill when working with the network in bx-playwright: moc
 
 # bx-playwright: Network, APIs and Sessions
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Mock, Block, Modify
 
 ```js

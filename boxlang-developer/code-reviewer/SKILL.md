@@ -5,6 +5,8 @@ description: "Use this skill when reviewing BoxLang code for quality, correctnes
 
 # BoxLang Code Reviewer
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 This skill provides a structured checklist and framework for reviewing BoxLang

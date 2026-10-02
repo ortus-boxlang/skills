@@ -5,6 +5,8 @@ description: "Use this skill when writing BoxLang asynchronous code: BoxFuture, 
 
 # BoxLang Async Programming
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang provides a comprehensive async framework built on Java's CompletableFuture
@@ -138,6 +140,14 @@ var validated = asyncAllApply(
     ( item ) => validateConfig( item.key, item.value )  // item = { key, value }
 )
 ```
+
+`BoxFuture::allApply()` also has an overload that does not require an error handler (v1.18+):
+
+```boxlang
+results = BoxFuture::allApply( myArray, ( item ) => processItem( item ) )
+```
+
+`runAsync()`, `asyncAll()` and `asyncAllApply()` isolate their JDBC connection and transaction from the caller (v1.18+), so async work gets a fresh connection instead of sharing the parent's.
 
 ## Named Executors
 

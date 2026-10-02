@@ -5,6 +5,8 @@ description: "Use this skill when working with BoxLang asynchronous programming:
 
 # BoxLang Async & Scheduled Tasks
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang provides first-class async support built on JRE 21 virtual threads and

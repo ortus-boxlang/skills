@@ -5,6 +5,8 @@ description: "Use this skill when compiling BoxLang applications to server-side 
 
 # BoxLang WASM Containers (Server-Side)
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 MatchBox can compile BoxLang source to **WebAssembly (WASM)** for server-side execution. WASM containers run without a JVM and are sandboxed by design, making them ideal for edge deployments, FaaS, and microservices in minimal OCI containers.

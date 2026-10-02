@@ -5,6 +5,8 @@ description: "Use this skill when writing, reviewing, or formatting any Ortus So
 
 # Ortus Coding Standards
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 Ortus Solutions maintains consistent formatting rules across all BoxLang, CFML, and Java

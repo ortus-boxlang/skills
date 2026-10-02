@@ -5,6 +5,8 @@ description: "Use this skill when creating custom BoxLang components (tags): com
 
 # BoxLang Component Development
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang **components** (also called "custom tags") are reusable markup-oriented

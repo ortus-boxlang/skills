@@ -5,6 +5,8 @@ description: "Use this skill when compiling BoxLang to WebAssembly or JavaScript
 
 # BoxLang WASM in the Browser
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 MatchBox can compile BoxLang source to browser-compatible output via two modes:

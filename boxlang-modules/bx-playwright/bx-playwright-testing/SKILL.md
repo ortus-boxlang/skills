@@ -5,6 +5,8 @@ description: "Use this skill when writing browser tests with bx-playwright in Bo
 
 # bx-playwright: Testing, Page Objects and Quality
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 Pick the base class by what you test:
 
 | You test... | Extend | Gives you |

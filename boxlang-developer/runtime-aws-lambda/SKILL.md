@@ -5,6 +5,8 @@ description: "Use this skill when building, deploying, or debugging BoxLang appl
 
 # BoxLang on AWS Lambda
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 The BoxLang AWS Lambda runtime (`ortus.boxlang.runtime.aws.LambdaRunner`) is a

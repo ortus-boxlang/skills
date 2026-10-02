@@ -5,6 +5,8 @@ description: "Use this skill when sending email in BoxLang with the bx-mail modu
 
 # bx-mail: Email Sending
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Installation
 
 ```bash

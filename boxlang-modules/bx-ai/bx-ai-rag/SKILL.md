@@ -5,6 +5,8 @@ description: "Use this skill when building RAG (Retrieval-Augmented Generation) 
 
 # bx-ai: RAG (Retrieval-Augmented Generation)
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 RAG enhances AI responses by grounding them in your own documents, reducing hallucinations and keeping answers current without model retraining.
 
 ## RAG Workflow

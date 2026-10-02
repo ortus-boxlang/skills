@@ -5,6 +5,8 @@ description: "Use this skill when deploying BoxLang applications: CommandBox ser
 
 # BoxLang Deployment
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang applications can be deployed across multiple runtimes: embedded web servers

@@ -5,6 +5,8 @@ description: "Use this skill when building AI pipelines with BoxLang AI: aiMessa
 
 # bx-ai: AI Pipelines
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 Pipelines chain AI operations together — message templates → model calls → transforms — into reusable, composable workflows.
 
 ## Core Pipeline BIFs

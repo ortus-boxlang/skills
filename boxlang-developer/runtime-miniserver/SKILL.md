@@ -5,6 +5,8 @@ description: "Use this skill when running BoxLang as a lightweight web server us
 
 # BoxLang MiniServer
 
+> BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
+
 ## Overview
 
 BoxLang MiniServer is the official lightweight web server for BoxLang applications. It is built on **Undertow** and is NOT a servlet container — it is a purpose-built, fast web runtime for BoxLang. Use it for development servers and production deployments where a full Java EE container is not needed.
