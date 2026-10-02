@@ -68,7 +68,7 @@ class {
 
 ### `BIT` Columns as Booleans (v1.18+)
 
-BoxLang represents JDBC `BIT` columns as `1`/`0`. Set `representBitAsBoolean` on the datasource (`GenericJDBCDriver`) to get true booleans instead.
+BoxLang represents `BIT` values in query objects as `1`/`0`. A global Java flag, `GenericJDBCDriver.representBitAsBoolean` (default `false`), switches them to true booleans. It can be enabled from Java code or a module and has no `boxlang.json` setting yet.
 
 ## Basic Queries
 
