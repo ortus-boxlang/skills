@@ -1,6 +1,6 @@
 ---
 name: bx-ai-chatting
-description: "Use this skill when writing BoxLang AI chat code: aiChat(), aiChatAsync(), aiChatStream(), parameters (temperature, max_tokens, model), provider selection, API keys, return formats, multi-turn conversations, and error handling."
+description: "Use this skill when writing BoxLang AI chat code: aiChat(), aiChatAsync(), aiChatStream(), aiMessage(), params (temperature, max_tokens, model), options (provider, apiKey, returnFormat, timeout), provider selection, return formats, multi-turn conversations, normalized reasoning, and error handling."
 ---
 
 # bx-ai: Chatting with AI
@@ -9,20 +9,21 @@ description: "Use this skill when writing BoxLang AI chat code: aiChat(), aiChat
 
 ## Core BIF: `aiChat()`
 
-```java
+```javascript
 // Signature
-aiChat( message, params={}, options={} )
+aiChat( messages, params={}, options={}, headers={} )
 ```
 
-- `message` — string or array of message structs
-- `params` — model parameters (`temperature`, `max_tokens`, `model`, `top_p`, `stop`, etc.)
-- `options` — provider options (`provider`, `apiKey`, `returnFormat`, `timeout`)
-- Returns: string by default; array or struct depending on `returnFormat`
+- `messages`: string, a message struct, an array of message structs, or an `aiMessage()` object
+- `params`: model parameters sent to the provider (`temperature`, `max_tokens`, `model`, `top_p`, `stop`, etc.)
+- `options`: `provider`, `apiKey`, `timeout` (seconds, module default 90), `returnFormat`, `logRequest`, `logResponse`, `logRequestToConsole`, `logResponseToConsole`
+- `headers`: struct of extra HTTP headers for the request
+- Returns: the message content string by default (`returnFormat: "single"`)
 
 ## Simple Usage
 
 ```javascript
-// Simplest call — uses configured default provider
+// Uses the configured default provider
 answer = aiChat( "What is the capital of France?" )
 
 // With parameters
@@ -43,7 +44,7 @@ result = aiChat(
 
 ```javascript
 params = {
-    temperature : 0.7,      // 0.0 (deterministic) → 1.0+ (creative)
+    temperature : 0.7,      // 0.0 (deterministic) up to creative
     max_tokens  : 1000,     // max response length
     model       : "gpt-4o", // provider-specific model name
     top_p       : 1.0,      // nucleus sampling (use OR temperature, not both)
@@ -51,30 +52,36 @@ params = {
 }
 ```
 
-Temperature guide:
-- `0.0–0.3` — Facts, code, data extraction
-- `0.5–0.7` — General chat, balanced
-- `0.8–1.0` — Creative writing, brainstorming
+Params are passed through to the provider, so valid names depend on the provider.
 
 ## Return Formats
 
+Valid `options.returnFormat` strings: `single` (default), `all`, `raw`, `json`, `xml`. Anything else throws `InvalidArgument`.
+
+| Value | Returns |
+|-------|---------|
+| `single` | The message content string |
+| `all` | Array of choices (OpenAI-shaped providers); for `claude`, the array of content blocks |
+| `raw` | The full provider response (struct) |
+| `json` | Parsed JSON from the reply (struct/array); empty struct if none is found |
+| `xml` | Parsed XML document |
+
 ```javascript
-// Default: returns string
 text = aiChat( "Hello" )
 
-// Full response struct (includes usage, model, finish_reason, etc.)
-response = aiChat( "Hello", {}, { returnFormat: "full" } )
-println( response.content )      // the AI text
-println( response.usage.total )  // tokens used
+// Full provider response (OpenAI-shaped providers)
+response = aiChat( "Hello", {}, { returnFormat: "raw" } )
+println( response.choices.first().message.content )
+println( response.usage.total_tokens )   // usage keys: prompt_tokens, completion_tokens, total_tokens
 
-// Multiple choices/candidates
-choices = aiChat( "Tell a joke", { n: 3 }, { returnFormat: "choices" } )
+// A class, struct, or array may also be passed as returnFormat for structured output
 ```
+
+`raw` returns the provider's own envelope, so for `claude` it is Anthropic's native shape, not `choices[]`.
 
 ## Multi-Turn Conversations
 
 ```javascript
-// Pass an array of message structs
 messages = [
     { role: "system",    content: "You are a helpful assistant." },
     { role: "user",      content: "What is 2+2?" },
@@ -83,67 +90,108 @@ messages = [
 ]
 
 result = aiChat( messages )
-// "40"
+```
+
+`aiMessage()` is a fluent builder; the method name is the role, and `bind()` fills `${placeholders}`:
+
+```javascript
+msg = aiMessage()
+    .system( "You are a helpful assistant." )
+    .user( "Tell me about ${topic}" )
+    .bind( { topic: "BoxLang" } )
+
+result = aiChat( msg.render() )
 ```
 
 ## Async Chat
 
 ```javascript
-// Non-blocking — returns a BoxFuture
+// Non-blocking, returns a BoxLang Future
 future = aiChatAsync( "Explain quantum entanglement" )
 
 // Do other work here...
 
-response = future.get()    // blocks until complete
-// or with timeout:
-response = future.get( 30, "seconds" )
+response = future.get()
 ```
+
+`aiChatAsync()` takes the same arguments as `aiChat()`.
 
 ## Streaming Responses
 
 ```javascript
-// aiChatStream — provides real-time chunks
+// aiChatStream( messages, callback, params={}, options={}, headers={} )
 aiChatStream(
     "Write a short story about a robot",
-    {},
-    {},
-    ( chunk ) -> {
-        // called for each token chunk
-        print( chunk )
-    }
+    ( chunk ) => {
+        // chunk is an OpenAI-shaped chat.completion.chunk struct
+        print( chunk.choices?.first()?.delta?.content ?: "" )
+    },
+    { temperature: 0.7 },
+    { provider: "openai" }
 )
+```
+
+- The callback is the 2nd argument, and is called once per chunk with the parsed chunk struct.
+- `aiChatStream()` returns nothing. It has no `returnFormat`.
+- `delta.content` may be absent on some chunks (role, reasoning, or usage chunks), so default it with `?: ""`.
+
+## Reasoning (Normalized)
+
+Reasoning/thinking text is surfaced on one standard key regardless of provider, and is never merged into `content`.
+
+- Streaming: `chunk.choices.first().delta.reasoning`. Providers that emit `reasoning_content` (for example DeepSeek) or `thinking` are mapped onto `delta.reasoning`. Claude extended thinking is emitted as `delta.reasoning` chunks before the text.
+- Sync (OpenAI-shaped providers): `response.choices[ i ].message.reasoning`, available with `returnFormat: "raw"` or `"all"`. `reasoning_content` and `thinking` are mapped onto it.
+- Sync Claude with `returnFormat: "raw"`: `response.reasoning` at the top level of the native envelope (only present when the model produced thinking blocks).
+- Absence is normal: if a model has no reasoning, the key is simply not set. Always read it with `?.` and a default.
+
+```javascript
+aiChatStream( "Solve 17 * 24", ( chunk ) => {
+    var delta = chunk.choices?.first()?.delta ?: {}
+    if( delta.keyExists( "reasoning" ) ) print( "[thinking] " & delta.reasoning )
+    if( delta.keyExists( "content" ) )   print( delta.content ?: "" )
+}, {}, { provider: "deepseek" } )
 ```
 
 ## Provider Configuration
 
 ```javascript
-// Provider in options
 result = aiChat( "Hello", {}, { provider: "openai", apiKey: "sk-..." } )
-result = aiChat( "Hello", {}, { provider: "claude", apiKey: "sk-ant-..." } )
-result = aiChat( "Hello", {}, { provider: "gemini" } )
-result = aiChat( "Hello", {}, { provider: "ollama" } )   // local, no key needed
-
-// Available providers: openai, claude, gemini, grok, groq, deepseek, ollama, mistral
+result = aiChat( "Hello", {}, { provider: "claude" } )
+result = aiChat( "Hello", {}, { provider: "ollama" } )   // local
 ```
 
+The provider must support chat, otherwise `UnsupportedCapability` is thrown. If no `apiKey` is passed, the `<PROVIDER>_API_KEY` environment setting is used, then the module `apiKey` setting. Valid provider keys and their capabilities are in the `bx-ai-models` skill. For speech and transcription, see the `bx-ai-audio` skill.
+
 ## Error Handling
+
+There is no exceptions package. Errors are thrown as plain BoxLang exceptions with a `type`:
+
+- `ProviderError`: a streaming request failed (thrown from `aiChatStream()`)
+- `JsonDeserializationError`: the provider response was not valid JSON
+- `ProviderNotSupported`: unknown `provider` key
+- `UnsupportedCapability`: the provider cannot chat
+- `InvalidArgument`: invalid `returnFormat`
 
 ```javascript
 try {
     result = aiChat( "Hello", {}, { provider: "openai" } )
-} catch ( bxModules.bxai.exceptions.AIProviderException e ) {
-    // Provider-level error (bad key, rate limit, etc.)
-    logError( "AI provider error: #e.message#" )
-} catch ( bxModules.bxai.exceptions.AITimeoutException e ) {
-    // Response took too long
-    return getDefaultResponse()
+} catch ( any e ) {
+    if( e.type == "ProviderNotSupported" ) {
+        logError( "Bad provider: #e.message#" )
+    } else {
+        logError( "AI error [#e.type#]: #e.message#" )
+    }
 }
 ```
 
+Failures and rate limits also announce the `onAIError` and `onAIRateLimitHit` interception points.
+
 ## Common Pitfalls
 
-- ❌ Do NOT pass `model:` as a top-level BIF argument — put it in `params`
-- ❌ Do NOT use both `temperature` and `top_p` simultaneously
-- ❌ Do NOT forget to handle provider exceptions in production code
-- ✅ Set `returnFormat: "full"` when you need token counts or finish reasons
-- ✅ Use `aiChatAsync()` for long-running requests in web handlers
+- Do NOT pass `model:` as a top-level BIF argument: put it in `params`
+- Do NOT use both `temperature` and `top_p` simultaneously
+- Do NOT put the callback last in `aiChatStream()`: it is the 2nd argument
+- Do NOT use `returnFormat: "full"` or `"choices"`: they are not valid values
+- Handle provider errors in production code
+- Use `returnFormat: "raw"` when you need token counts, finish reasons or reasoning
+- Use `aiChatAsync()` for long-running requests in web handlers
