@@ -1,6 +1,6 @@
 ---
 name: bx-ai-memory
-description: "Use this skill when implementing memory in BoxLang AI: aiMemory() types (windowed, summary, session, file, cache, JDBC, vector), multi-tenant isolation with userId and conversationId, using memory with agents and pipelines, and choosing the right memory type."
+description: "Use this skill when implementing memory in BoxLang AI: aiMemory() types (window, summary, session, file, cache, jdbc, hybrid, vector stores), multi-tenant isolation with userId and conversationId, the memory API, using memory with agents, and choosing the right memory type."
 ---
 
 # bx-ai: Memory Systems
@@ -11,86 +11,77 @@ description: "Use this skill when implementing memory in BoxLang AI: aiMemory() 
 
 ```java
 // Signature
-aiMemory( type, key="", userId="", conversationId="", config={} )
+aiMemory( memory, key=createUUID(), userId="", conversationId="", config={} )
 ```
 
-- `type` — memory type name (see table below)
-- `key` — unique identifier for this memory instance
-- `userId` — tenant user identifier (multi-tenant isolation)
-- `conversationId` — isolate separate conversations for the same user
-- `config` — type-specific configuration struct
+- `memory`: memory type name (see table below). Defaults to the `memory.provider` module setting (`window`)
+- `key`: unique identifier for this memory instance
+- `userId`: tenant user identifier. If set, the instance is bound to it
+- `conversationId`: isolate separate conversations. If set, the instance is bound to it
+- `config`: type-specific configuration struct
 
 ## Memory Types
 
-| Type | Best For | Persistence |
+| Type key (aliases) | Best For | Persistence |
 |------|----------|-------------|
-| `windowed` | Last N messages | In-memory |
+| `window` (`buffered`, `buffer`) | Last N messages | In-memory |
 | `summary` | Long conversations (auto-summarizes) | In-memory |
-| `session` | Single request/session | In-memory |
+| `session` | BoxLang session scope | Session |
 | `file` | Simple persistence across restarts | File system |
-| `cache` | Fast shared memory | CacheBox |
-| `jdbc` | Multi-server production use | Database |
-| `chroma` | Semantic search (vector) | ChromaDB |
-| `pinecone` | Semantic search (vector) | Pinecone |
-| `weaviate` | Semantic search (vector) | Weaviate |
-| `in-memory-vector` | Dev/test semantic search | In-memory |
+| `cache` | Fast shared memory | BoxLang cache |
+| `jdbc` (`database`, `db`) | Multi-server production use | Database |
+| `hybrid` | Recent messages plus semantic search | Window + vector store |
+| `boxvector` | Dev/test semantic search | In-memory |
+| `chroma`, `milvus`, `mysql`, `typesense`, `postgres` (`pgvector`), `pinecone`, `qdrant`, `opensearch`, `weaviate` | Semantic search (vector) | The named store |
+
+A full class path is also accepted as the type. An unknown type throws `InvalidMemoryType`.
 
 ## Creating Memory
 
 ```javascript
-// Windowed: keeps last N messages
-memory = aiMemory( "windowed", config: { maxMessages: 20 } )
+// Window: keeps last N messages (default 100)
+memory = aiMemory( "window", config: { maxMessages: 20 } )
 
-// Summary: automatically compresses old messages into a summary
+// Summary: compresses old messages into an AI summary.
+// maxMessages (default 20) is the trigger, summaryThreshold (default 10) is how many
+// recent messages are kept verbatim and must be < maxMessages.
 memory = aiMemory( "summary", config: {
-    maxMessages    : 10,         // keep last 10 messages before summarizing
-    summaryProvider: "openai"    // which provider does the summarization
+    maxMessages     : 20,
+    summaryThreshold: 10,
+    summaryProvider : "openai",     // default openai
+    summaryModel    : "gpt-4o-mini" // default gpt-4o-mini
 })
 
-// Session: lives for the duration of the current request
+// Summary, token-based trigger (maxTokens and maxMessages are mutually exclusive, so zero maxMessages)
+memory = aiMemory( "summary", config: { maxTokens: 4000, maxMessages: 0 } )
+
+// Session: stored in the BoxLang session scope
 memory = aiMemory( "session" )
 
-// File: persists conversations to disk
+// File: persists conversations as JSON files in a directory
 memory = aiMemory( "file", config: {
-    filePath: expandPath( "./data/conversations" )
+    directoryPath: expandPath( "./data/conversations" )
 })
 
-// JDBC: stored in a database table (production-ready)
+// JDBC: stored in a database table (default table bx_ai_memories)
 memory = aiMemory( "jdbc", config: {
     datasource: "myApp",
     table     : "ai_conversations"
 })
 
-// Cache: uses CacheBox for shared, fast access
-memory = aiMemory( "cache", config: {
-    cacheName: "default"
-})
+// Cache: stored in a BoxLang cache
+memory = aiMemory( "cache", config: { cacheName: "default" } )
 ```
 
 ## Multi-Tenant Isolation
 
-All memory types support isolation via `userId` and `conversationId`:
+Pass `userId` and `conversationId` to bind a memory instance to a tenant and conversation:
 
 ```javascript
-// Isolate per user
-memory = aiMemory( "windowed",
-    key   : createUUID(),
-    userId: "user-alice",
-    config: { maxMessages: 10 }
-)
-
-// Isolate per conversation (same user, different chats)
-supportMemory = aiMemory( "windowed",
+memory = aiMemory( "window",
     key           : createUUID(),
     userId        : "user-alice",
     conversationId: "support-ticket-456",
-    config        : { maxMessages: 20 }
-)
-
-salesMemory = aiMemory( "windowed",
-    key           : createUUID(),
-    userId        : "user-alice",
-    conversationId: "sales-inquiry-789",
     config        : { maxMessages: 20 }
 )
 ```
@@ -99,7 +90,7 @@ salesMemory = aiMemory( "windowed",
 
 ```javascript
 // Create a persistent memory instance
-memory = aiMemory( "windowed",
+memory = aiMemory( "window",
     key   : "chat-#session.sessionId#",
     userId: auth.getCurrentUserId(),
     config: { maxMessages: 30 }
@@ -115,74 +106,86 @@ agent = aiAgent(
 agent.run( "I'm having trouble with my subscription." )
 agent.run( "It's been broken for 3 days." )
 agent.run( "Can you summarize my issue?"  )
-// → Agent remembers both earlier messages
+// Agent remembers both earlier messages
 ```
 
 ## Memory API
 
 ```javascript
-// Direct memory manipulation
-memory.add( "user", "My name is Alice" )
-memory.add( "assistant", "Hello Alice, how can I help?" )
+// add() accepts a string (user message), a struct { role, content }, an array, an AiMessage, or a Document
+memory.add( "My name is Alice" )
+memory.add( { role: "assistant", content: "Hello Alice, how can I help?" } )
 
-// Get all messages
-messages = memory.getMessages()
-
-// Get recent N messages
-recent = memory.getMessages( 5 )
-
-// Clear memory
+messages = memory.getAll()          // all messages
+recent   = memory.getRecent( 5 )    // last 5 messages
+users    = memory.getByRole( "user" )
+hits     = memory.search( "Alice" ) // text search
+count    = memory.count()
+memory.isEmpty()
+memory.setSystemMessage( "You are concise." )
 memory.clear()
 
-// Get memory size
-count = memory.size()
+// Compress history into a summary (available on every conversation memory type)
+memory.summarize( { keepRecent: 5 } )
+
+// Save / restore
+data = memory.export()
+memory.import( data )
 ```
 
 ## Vector Memory (Semantic Search)
 
-For RAG and semantic retrieval, see the [RAG skill](../bx-ai-rag/SKILL.md). Quick reference:
+For RAG and document loading, see the [RAG skill](../bx-ai-rag/SKILL.md).
 
 ```javascript
 // In-memory vector store (dev/testing)
-vectorMem = aiMemory( "in-memory-vector", config: {
+vectorMem = aiMemory( "boxvector", config: {
     embeddingProvider: "openai",
     embeddingModel   : "text-embedding-3-small"
 })
 
-// ChromaDB (production)
+// ChromaDB (config keys: host, port, protocol, tenant, database, timeout)
 vectorMem = aiMemory( "chroma", config: {
     collection       : "knowledge_base",
     embeddingProvider: "openai",
-    serverUrl        : "http://localhost:8000"
+    host             : "localhost",
+    port             : 8000
 })
 
-// Multi-tenant vector memory
-aliceMem = aiMemory( "chroma",
-    key   : createUUID(),
-    userId: "alice",
-    config: { collection: "user_notes", embeddingProvider: "openai" }
-)
-
-// Add documents
 vectorMem.add( "BoxLang is a modern JVM language" )
 
-// Retrieve semantically similar content
+// getRelevant( query, limit=5, filter={}, minScore=0.0 )
 results = vectorMem.getRelevant( "What language runs on the JVM?", 5 )
+```
+
+Common vector config keys: `collection`, `embeddingProvider`, `embeddingModel`, `dimensions`, `metric` (`cosine`, `euclidean`, `dot_product`), `embeddingOptions`, `cache` (cache embeddings), `cacheName`.
+
+### Hybrid memory
+
+`hybrid` combines a window of recent messages with semantic search over a vector store. Config keys: `recentLimit` (5), `semanticLimit` (5), `totalLimit` (10), `recentWeight` (0.6), `vectorProvider` (default `BoxVectorMemory`), `vectorConfig`.
+
+```javascript
+memory = aiMemory( "hybrid", config: {
+    vectorProvider: "chroma",
+    vectorConfig  : { collection: "chat", embeddingProvider: "openai" }
+})
+memory.getRelevant( "what did we decide about pricing?", 5 )
 ```
 
 ## Choosing the Right Memory Type
 
-- **Development / testing** → `windowed` or `in-memory-vector`
-- **Single user, single server** → `file` or `cache`
-- **Multi-server production** → `jdbc`
-- **RAG / document search** → `chroma`, `pinecone`, or `weaviate`
-- **Long conversations** → `summary` to avoid context overflow
-- **Multi-tenant apps** → any type with `userId` + `conversationId`
+- **Development / testing**: `window` or `boxvector`
+- **Single user, single server**: `file` or `cache`
+- **Multi-server production**: `jdbc`
+- **RAG / document search**: `chroma`, `pinecone`, `weaviate`, `postgres`, `qdrant`, etc.
+- **Long conversations**: `summary` to avoid context overflow
+- **Recency plus relevance**: `hybrid`
+- **Multi-tenant apps**: any type with `userId` + `conversationId`
 
 ## Common Pitfalls
 
 - ❌ Do NOT store API keys or secrets in memory
-- ❌ Do NOT use `session` memory for multi-turn conversations across requests
+- ❌ Do NOT set both `maxTokens` and `maxMessages` on `summary` memory (throws `InvalidConfiguration`)
 - ✅ Always set `userId` in multi-user applications to prevent data leakage
 - ✅ Use `summary` memory for customer support bots with long conversations
 - ✅ Reuse the same memory instance across multiple `agent.run()` calls for continuity
