@@ -37,5 +37,5 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | `security` | OWASP Top 10, injection prevention, file upload safety, secret management, secure coding patterns | `npx skills add ortus-boxlang/skills/boxlang-developer/security` |
 | `templating` | `.bxm` markup files, output expressions, `bx:output`/`bx:loop`/`bx:if`/`bx:include`/`bx:script`, building views | `npx skills add ortus-boxlang/skills/boxlang-developer/templating` |
 | `testing` | TestBox BDD (`describe`/`it`), xUnit, expectations, `$assert`, life-cycle hooks, MockBox, mock data, async/exception testing, `attach()`, retries, `--failed` | `npx skills add ortus-boxlang/skills/boxlang-developer/testing` |
-| `web-development` | `Application.bx` lifecycle, request/response, sessions, forms, REST APIs, HTTP client, CSRF, SSE, MiniServer config | `npx skills add ortus-boxlang/skills/boxlang-developer/web-development` |
+| `web-development` | `Application.bx` lifecycle, request/response, sessions, forms, REST APIs, HTTP client (incl. binary and SSE streaming), CSRF, SSE, MiniServer config | `npx skills add ortus-boxlang/skills/boxlang-developer/web-development` |
 | `zip` | Creating/extracting/listing/modifying ZIP archives via `bx:zip`, compression levels, encryption, backup workflows | `npx skills add ortus-boxlang/skills/boxlang-developer/zip` |
