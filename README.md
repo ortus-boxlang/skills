@@ -124,7 +124,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | [`boxlang-dev-boxlang-security`](./boxlang-developer/security/SKILL.md) | OWASP Top 10, injection prevention, file upload safety, secret management, secure coding patterns |
 | [`boxlang-dev-boxlang-syntax-check`](./boxlang-developer/syntax-check/SKILL.md) | `boxlang check` command: validate BoxLang and CFML syntax without executing code, text and JSON output, exit codes, agent fix loops, git hooks and CI |
 | [`boxlang-dev-boxlang-templating`](./boxlang-developer/templating/SKILL.md) | `.bxm` markup files, output expressions, `bx:output`/`bx:loop`/`bx:if`/`bx:include`/`bx:script`, building views |
-| [`boxlang-dev-boxlang-testing`](./boxlang-developer/testing/SKILL.md) | TestBox BDD (`describe`/`it`), xUnit, expectations, `$assert`, life-cycle hooks, MockBox, mock data, async/exception testing, `attach()`, retries, `--failed` |
+| [`boxlang-dev-boxlang-testing`](./boxlang-developer/testing/SKILL.md) | TestBox BDD (`describe`/`it`), xUnit, expectations, `$assert`, life-cycle hooks, MockBox, mock data, async/exception testing, `attach()`, retries, `--failed` and Run Failed, HTML reporters (Ask AI), the Agent reporter |
 | [`boxlang-dev-boxlang-web-development`](./boxlang-developer/web-development/SKILL.md) | `Application.bx` lifecycle, request/response, sessions, forms, REST APIs, HTTP client, CSRF, Server-Sent Events, MiniServer config |
 | [`boxlang-dev-boxlang-zip`](./boxlang-developer/zip/SKILL.md) | `bx:zip` component: creating/extracting/listing/modifying archives, compression levels, encryption, backup workflows |
 
