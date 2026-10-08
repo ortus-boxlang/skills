@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning failures with --failed, and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
 ---
 
 # BoxLang Testing with TestBox
@@ -762,7 +762,19 @@ function testFlaky() { ... }
 
 Skipped specs are never retried. Use retries for genuinely flaky I/O (browsers, networks), not to hide bugs.
 
-### Rerun Only Failures: `--failed`
+### Rerun Only Failures
+
+`results.getFailedTargets()` returns what failed in a run, on every engine: `{ bundles, specs, bundleErrors }` (bundle paths, spec ids, and bundles that failed outside of a spec). Run only those with the existing filters:
+
+```js
+var failed = results.getFailedTargets()
+new testbox.system.TestBox( bundles = failed.bundles ).runRaw( testBundles = failed.bundles, testSpecs = failed.specs )
+```
+
+- **HTML reports** (Simple, Min, Dot, Doc): a **Run Failed (N)** button next to **Run All**, shown only when something failed. Its link (`?testBundles=...&testSpecs=...`) is built from the report itself, so web runners keep no state; past 2000 characters it reruns the failed bundles whole.
+- **BoxLang CLI** `--failed`: see below.
+
+#### `--failed`
 
 Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bundles and specs that failed or errored. `./testbox/run --failed` reruns only those; when the file is missing or empty it prints a message and runs nothing. A bundle that failed outside of a spec (`beforeAll()`, `afterAll()`) is broken, not flaky: it goes to `bundleErrors` in the file and is listed, never rerun. The other bundles still rerun only their failed specs.
 

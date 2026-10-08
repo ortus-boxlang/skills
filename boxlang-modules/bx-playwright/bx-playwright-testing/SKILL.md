@@ -151,7 +151,7 @@ class extends="testbox.system.BrowserSpec" { ... }
 ```
 
 - Precedence: `it( ..., retries )` > bundle `retries` annotation > `--retries`. A retry reruns `beforeEach()`, body and `afterEach()`. Skipped specs are never retried. Output shows "(passed after N attempts)".
-- `--failed` reads `{reportpath}/.testbox-failed.json`, which every run writes. Bundles that failed outside of a spec (`beforeAll()`, `afterAll()`) are listed under `bundleErrors` and never rerun: fix them and run them directly.
+- `--failed` reads `{reportpath}/.testbox-failed.json`, which every run writes. Bundles that failed outside of a spec (`beforeAll()`, `afterAll()`) are listed under `bundleErrors` and never rerun: fix them and run them directly. In the web runner, the HTML reports offer a **Run Failed (N)** button instead, built from the report (no state). Both use `TestResult.getFailedTargets()`.
 - `--web-server` starts the command, waits until `--web-server-url` answers (status below 500), runs the tests, then stops the server and its child processes. It exits with code 1 when the server does not answer in time. The URL becomes the default `baseURL` of `BrowserSpec` bundles.
 
 ## ColdBox BrowserTestCase
