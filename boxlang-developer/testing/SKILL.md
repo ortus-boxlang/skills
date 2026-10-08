@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), choosing reporters (HTML reporters with Run Failed and Ask AI, the Agent reporter for AI agents), and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
 ---
 
 # BoxLang Testing with TestBox
@@ -848,6 +848,44 @@ box testbox run --verbose
 ```
 
 ---
+
+## Reporters
+
+Pick one with `reporter=` in the runner URL, `--reporter=` on the BoxLang CLI runner, or `reporter = { type : "...", options : {} }` in code.
+
+| Reporter | Output |
+|----------|--------|
+| `Simple` | The complete HTML report: failures first, then every bundle, with Ask AI and editor links |
+| `Min` / `Dot` / `Doc` | HTML: only what needs attention / one dot per spec with a details drawer / documentation style |
+| `Text`, `MinText`, `Console` | Plain text |
+| `JSON`, `Raw`, `XML` | Full results as data |
+| `JUnit`, `ANTJunit` | JUnit XML for CI (attachments as `[[ATTACHMENT\|path]]` lines in `<system-out>`) |
+| `Agent` | Compact JSON for AI agents: totals plus only the failures |
+
+### HTML reporters (Simple, Min, Dot, Doc)
+
+- A verdict banner first (counts, proportion bar, status filters), light, dark and system themes, `F` jumps to the next failure, `/` searches.
+- **Run** links on every bundle, suite and spec, **Run All**, and **Run Failed (N)** when something failed (built from the report, no state, see Rerun Only Failures).
+- `?editor=vscode` (default) and other editors turn failures and stack frames into open-in-editor links.
+- **Ask AI** on every failure: copy or preview a prompt, open it in ChatGPT or Claude, or copy it as Agent JSON. Nothing leaves the page until a provider is clicked.
+
+```js
+reporter = {
+    type    : "testbox.system.reports.SimpleReporter",
+    options : {
+        aiAssist       : true,   // false (or ?aiAssist=false) removes Ask AI
+        aiContextLines : 5,      // code lines around the failing line
+        aiStackFrames  : 8,
+        aiProviders    : [ { id : "acme", name : "Acme AI", url : "https://ai.acme.test/?p={prompt}" } ],
+        aiPrompt       : "{intro} {spec} ({status}) {message} {code} {stack} Rerun: {rerun}",
+        urlParams      : { editor : "idea" }   // request params for reports produced from code (no url scope)
+    }
+}
+```
+
+### Agent reporter (`reporter=agent`)
+
+One minified JSON line: `{"ok":false,"totals":{"pass","fail","error","skipped","specs","ms"},"failures":[{"bundle","spec","status","message","at"}],"truncated":0}`. Branch on `ok`; the exit code is not changed. Options: `detail` (`summary`, `failures`, `all`), `maxFailures` (20), `maxMessageLength` (300), `includeStack` (false), `stackDepth` (3), `includeSkipped`, `includeDebug`. Prefer it when an agent runs the tests: `./testbox/run --reporter=agent`.
 
 ## Test Harness Layout
 
