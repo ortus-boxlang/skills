@@ -1,6 +1,6 @@
 ---
 name: boxlang-web-development
-description: "Use this skill when building BoxLang web applications: Application.bx lifecycle, request/response handling, sessions, forms, REST APIs, HTTP clients, routing, CSRF protection, Server-Sent Events, or configuring CommandBox/MiniServer."
+description: "Use this skill when building BoxLang web applications: Application.bx lifecycle, request/response handling, sessions, forms, REST APIs, HTTP clients (including binary and SSE response streaming), routing, CSRF protection, Server-Sent Events, or configuring CommandBox/MiniServer."
 ---
 
 # BoxLang Web Development
@@ -227,6 +227,87 @@ bx:http url="https://example.com/report.pdf" method="GET" result="pdfResponse"
         getAsBinary="yes"
 fileWrite( expandPath( "./downloads/report.pdf" ), pdfResponse.fileContent )
 ```
+
+### Streaming Responses (BoxLang 1.19.0+)
+
+Pass a callback to `http()` or `bx:http` to process a response as it arrives instead of buffering it. There are two kinds of streaming callback, and choosing the right one matters:
+
+| Response | Callback | You receive |
+| --- | --- | --- |
+| Binary (audio, images, downloads) | `onBinaryChunk( bytes, info )` | Raw `byte[]` per network read |
+| Server-Sent Events | `.sse( true )` + `onChunk( event, lastEventId, httpResult, httpClient, response )` | A struct `{ data, event, id, retry }` per event |
+| Plain text lines (legacy) | `onChunk( chunkNumber, line, totalBytes, ... )` | One line at a time, decoded as text |
+
+**Never use line-based `onChunk` for binary data.** It decodes the body as text and splits on newlines, which corrupts the bytes. Use `onBinaryChunk`.
+
+```boxlang
+// Binary streaming: restream audio from a provider, forwarding bytes as they arrive
+result = http( "https://api.example.com/v1/speech" )
+    .post()
+    .header( "Authorization", "Bearer #apiKey#" )
+    .jsonBody( '{"text":"Hello from BoxLang","format":"mp3"}' )
+    .timeout( 30 )
+    .onBinaryChunk( ( bytes, info ) => {
+        // info: chunkNumber (1-based), totalBytes (so far), result, httpClient,
+        // and headers on the FIRST chunk only
+        if ( info.chunkNumber == 1 ) {
+            println( "Content-Type: " & info.headers[ "Content-Type" ] )
+        }
+        socket.send( bytes )
+        // An explicit false stops streaming and closes the connection
+        return !socket.isClosed()
+    } )
+    .onError( ( error, httpResult ) => {
+        println( "Stream failed: #error.message#" )
+    } )
+    .send()
+
+println( "Received #result.totalBytes# bytes in #result.chunkCount# chunks, completed=#result.streamCompleted#" )
+```
+
+```boxlang
+// Save a large download to disk without holding it in memory
+out = createObject( "java", "java.io.FileOutputStream" ).init( expandPath( "./downloads/audio.mp3" ) )
+try {
+    http( "https://example.com/audio.mp3" )
+        .onBinaryChunk( ( bytes, info ) => out.write( bytes ) )
+        .send()
+} finally {
+    out.close()
+}
+```
+
+```boxlang
+// bx:http component form (script syntax)
+bx:http url="https://example.com/audio.mp3" method="GET" result="audio"
+    onBinaryChunk=function( bytes, info ) {
+        return info.totalBytes < 8192   // stop after ~8KB
+    } {}
+println( audio.streamCompleted )   // false
+```
+
+```boxlang
+// SSE: an explicit false from onChunk stops the stream (for example on a [DONE] sentinel)
+http( "https://api.example.com/events" )
+    .sse( true )
+    .timeout( 30 )
+    .onChunk( ( event ) => {
+        if ( event.data == "[DONE]" ) {
+            return false
+        }
+        println( event.data )
+    } )
+    .send()
+```
+
+Rules for `onBinaryChunk` and SSE streams:
+
+- **Stop on false:** only an explicit boolean `false` stops the stream and closes the connection immediately (so the server stops generating). `null`, `0`, `true` or no return value keep streaming. Stopping is not an error: the status code is unchanged and `result.streamCompleted` is `false`.
+- **Idle timeout:** while streaming, `timeout` (seconds) is the longest wait for the response headers or between received bytes. It does not cap the total duration, so long streams keep working. A stalled stream is aborted and reported as a `408` through `onError`. Buffered requests keep the normal timeout meaning.
+- **Errors:** a non 2xx status never reaches the chunk callback. The body is read and reported through `onError` as a message like `HTTP 401: {"error":"bad key"}`, and `result.statusCode` and `result.fileContent` hold the status and body.
+- **No accumulation:** binary mode does not fill `result.fileContent`. Use `result.chunkCount` and `result.totalBytes`. `file` and `path` are not applied, so write the bytes yourself.
+- **Precedence:** if both `onBinaryChunk` and `onChunk` are set, `onBinaryChunk` is used.
+- **Gotchas:** `bytes` is a Java `byte[]`, so use `arrayLen( bytes )` for its size. In `bx:http` script syntax the `bx:httpparam` lines inside the body need a trailing `;`. Requires BoxLang 1.19.0 or newer.
 
 ## Session Management
 
