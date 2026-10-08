@@ -49,6 +49,10 @@ as a literal string and not evaluated:
 <bx:output><p>#name#</p></bx:output>
 ```
 
+For reusable partial templates (`app/views/partials/*.bxm`), make `<bx:output>`
+the wrapper around the rendered HTML block whenever interpolation appears in
+that block. Keep `bx:param` and `bx:set` declarations outside the output block.
+
 ---
 
 ## Core Template Components
