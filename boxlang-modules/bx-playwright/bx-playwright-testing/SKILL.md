@@ -51,7 +51,7 @@ Class annotations, written as BoxLang annotations above `class` (never inline at
 How it behaves:
 
 - One browser per bundle, started on first use, closed after the bundle by `closeBrowser()` (it carries `@afterAll`, so your own `beforeAll()` / `afterAll()` need no `super` calls).
-- Safety net: every browser a TestBox run opens is also closed when the run ends, even when an `afterAll()` throws or a spec calls `abort`, and bx-playwright closes any instance still open when the module unloads or the JVM shuts down.
+- Safety net: when an `afterAll()` throws or a spec calls `abort`, the bundle browser stays open until the next test run that opens a browser, which closes it first. bx-playwright closes any instance still open when the module unloads or the JVM shuts down.
 - Every `browse()` call gets fresh pages, each in its own isolated browser context, closed when the callback ends.
 - `browse()` returns the callback result.
 - Do not use `asyncAll` in suites that browse: browser specs are not thread safe.
