@@ -146,7 +146,7 @@ Bedrock picks the request shape from the model ID: `amazon.titan-embed-text-v1`/
 
 ## Vector Memory Providers
 
-Vector stores are created with `aiMemory()`. Type keys: `boxvector` (in-memory, dev/test), `chroma`, `milvus`, `mysql`, `typesense`, `postgres` (`pgvector`), `pinecone`, `qdrant`, `opensearch`, `weaviate`. See the memory skill for config. Common config: `collection`, `embeddingProvider`, `embeddingModel`, `dimensions`, `metric`, `cache`.
+Vector stores are created with `aiMemory()`. Type keys: `boxvector` (in-memory, dev/test), `chroma`, `milvus`, `mysql`, `mariadb`, `typesense`, `postgres` (`pgvector`), `pinecone`, `qdrant`, `opensearch`, `weaviate`. See the memory skill for config. Common config: `collection`, `embeddingProvider`, `embeddingModel`, `dimensions`, `metric`, `cache`.
 
 ```javascript
 mem = aiMemory( "boxvector", config: { embeddingProvider: "openai" } )
