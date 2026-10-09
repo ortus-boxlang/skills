@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), choosing reporters (HTML reporters with Run Failed and Ask AI, the Agent reporter for AI agents), and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), choosing reporters (HTML reporters with Run Failed and Ask AI, the Agent reporter for AI agents), and running tests via the BoxLang CLI runner. For browser tests (the @browser annotation, ColdBox BaseTestCase with @browser) also load bx-playwright-testing."
 ---
 
 # BoxLang Testing with TestBox
@@ -11,8 +11,8 @@ description: "Use this skill when writing, running, or debugging tests for BoxLa
 
 TestBox is the standard testing framework for BoxLang. It supports two styles:
 
-- **BDD** (Behavior-Driven Development) — `describe()`, `it()`, `feature()`, `story()`, `given()/when()/then()`
-- **xUnit** — class-based, `test*()` methods, `setup()`/`tearDown()`
+- **BDD** (Behavior-Driven Development): `describe()`, `it()`, `feature()`, `story()`, `given()/when()/then()`
+- **xUnit**: class-based, `test*()` methods, `setup()`/`tearDown()`
 
 Both styles use the same assertions/expectations library and MockBox for mocking.
 
@@ -116,7 +116,7 @@ it( "does something", () => {
     expect( true ).toBeTrue()
 } )
 
-// then() is an alias for it() — title arg is "then" instead of "title"
+// then() is an alias for it(): title arg is "then" instead of "title"
 then( "something should happen", () => {
     expect( result ).notToBeNull()
 } )
@@ -429,20 +429,20 @@ assertIsNull( value )
 Prefix any suite/spec function with `x` OR use the `skip` argument:
 
 ```boxlang
-// Prefix approach — skip entire suite
+// Prefix approach: skip entire suite
 xdescribe( "Slow integration tests", () => { ... } )
 
-// Prefix approach — skip single spec
+// Prefix approach: skip single spec
 xit( "is temporarily disabled", () => { ... } )
 
-// skip argument — boolean or closure
+// skip argument: boolean or closure
 it( title="runs only on production", skip=!isProduction(), body=() => { ... } )
 
 describe( title="Lucee only", skip=() => !structKeyExists( server, "lucee" ), body=() => {
     it( "uses Lucee ORM", () => { ... } )
 } )
 
-// skip() method inside spec — programmatic
+// skip() method inside spec: programmatic
 it( "can run on multiple engines", () => {
     if ( !server.keyExists( "boxlang" ) ) {
         skip( "BoxLang-only feature" )
@@ -453,7 +453,7 @@ it( "can run on multiple engines", () => {
 
 ### Focus Specs/Suites
 
-Prefix with `f` or use `focused=true` — ONLY focused specs/suites run:
+Prefix with `f` or use `focused=true`: ONLY focused specs/suites run:
 
 ```boxlang
 // Focus a single spec
@@ -468,7 +468,7 @@ fdescribe( "Critical path", () => {
 } )
 ```
 
-> **Warning**: Never commit focused tests — CI will only run those specs.
+> **Warning**: Never commit focused tests: CI will only run those specs.
 
 ---
 
@@ -482,7 +482,7 @@ MockBox is built into TestBox. Helper methods are available in every bundle.
 // Create a mock of a class (real methods unless overridden)
 var mockService = createMock( "services.UserService" )
 
-// Create an empty mock (ALL methods removed — you mock everything)
+// Create an empty mock (ALL methods removed: you mock everything)
 var mockRepo = createEmptyMock( "repositories.UserRepository" )
 
 // Decorate an existing instance with mocking capabilities
@@ -784,7 +784,7 @@ Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bun
 
 ### Browser Tests
 
-For browser tests extend `testbox.system.BrowserSpec` (or `coldbox.system.testing.BrowserTestCase` in ColdBox apps) and use `browse()`, the browser matchers (`expect( page ).toSee( "Welcome" )`) and the `--web-server` runner option. Load the **bx-playwright-testing** skill for the full API.
+For browser tests annotate the spec with `@browser` (or `@browserProfile( "ci" )` / `@baseURL( "http://..." )`) above `class extends="testbox.system.BaseSpec"` (in ColdBox apps, `coldbox.system.testing.BaseTestCase`) and use `browse()`, the browser matchers (`expect( page ).toSee( "Welcome" )`) and the `--web-server` runner option. Load the **bx-playwright-testing** skill for the full API.
 
 ---
 
@@ -836,7 +836,7 @@ For browser tests extend `testbox.system.BrowserSpec` (or `coldbox.system.testin
 | `--retries` | `0` | Extra runs for failing or erroring specs (spec and bundle values win) |
 | `--failed` | `false` | Run only the bundles and specs that failed or errored in the last run |
 | `--web-server` | | Shell command that starts a web server before the tests, stopped after them |
-| `--web-server-url` | `http://localhost:8080` | URL polled until the server answers; default `baseURL` of `BrowserSpec` bundles |
+| `--web-server-url` | `http://localhost:8080` | URL polled until the server answers; default `baseURL` of browser-enabled (`@browser`) bundles |
 | `--web-server-timeout` | `60` | Seconds to wait for the server, exits with code 1 when it does not answer |
 
 ### CommandBox Runner
