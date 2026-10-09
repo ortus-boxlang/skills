@@ -58,6 +58,8 @@ class {
 | `dbcreate` | `none` | Schema management strategy |
 | `dialect` | auto | Hibernate SQL dialect (usually auto-detected) |
 | `logSQL` | `false` | Log generated SQL to console (debug) |
+| `announceQueryParams` | `false` | Include bound parameter values in the `onORMQuery` event (see `bx-orm-observability`) |
+| `generateStatistics` | `false` | Collect Hibernate statistics for `ORMService.getStatistics()` (see `bx-orm-observability`) |
 | `flushAtRequestEnd` | `true` | Auto-flush at request end — set `false` in production |
 | `autoManageSession` | `true` | Let engine manage sessions — set `false` for explicit transactions |
 | `eventHandling` | `false` | Enable ORM lifecycle events |
