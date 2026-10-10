@@ -1,29 +1,32 @@
 ---
 name: bx-playwright-testing
-description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's BrowserSpec (testbox.system.BrowserSpec, browse(), this.playwright(), browserProfile and baseURL annotations), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BrowserTestCase (routeURL, visitRoute, assertRouteIs), logged-in tests with saved sessions, plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@playwright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
+description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's @browser annotation (browse(), this.playwright(), browserProfile and baseURL annotations, the optional testbox.system.BrowserSpec base class), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BaseTestCase with @browser (routeURL, visitRoute, assertRouteIs), logged-in tests with saved sessions, plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@playwright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
 ---
 
 # bx-playwright: Testing, Page Objects and Quality
 
 > BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
 
-Pick the base class by what you test:
+Browser support is turned on by a class annotation, not a base class. Any spec whose class (or a parent class) has `@browser`, `@browserProfile( ... )` or `@baseURL( ... )` gets it:
 
-| You test... | Extend | Gives you |
+| You test... | Write | Gives you |
 |---|---|---|
-| Any web app from TestBox | `testbox.system.BrowserSpec` | `browse()`, bundle browser, browser matchers, attachments |
-| A ColdBox app | `coldbox.system.testing.BrowserTestCase` | All of the above plus `routeURL()`, `visitRoute()`, `assertRouteIs()` |
+| Any web app from TestBox | `@browser` + `class extends="testbox.system.BaseSpec"` | `browse()`, bundle browser, browser matchers, attachments |
+| A ColdBox app | `@browser` + `class extends="coldbox.system.testing.BaseTestCase"` | All of the above plus `routeURL()`, `visitRoute()`, `assertRouteIs()` |
 | Older TestBox, or another framework | `testbox.system.BaseSpec` | `playwright( "ci" ).browse()` by hand (see [Plain TestBox](#plain-testbox-fallback)) |
+
+`testbox.system.BrowserSpec` still exists as an optional base class: it is just `@browser` on `BaseSpec`. ColdBox's `BrowserTestCase` was removed: use `BaseTestCase` with `@browser`.
 
 All of them are BoxLang only. When bx-playwright is not installed (or the engine is not BoxLang), browser specs are **skipped** with an install hint, not failed.
 
-## TestBox BrowserSpec (recommended)
+## TestBox @browser Specs (recommended)
 
 ```js
 // tests/specs/browser/LoginSpec.bx
+@browser
 @baseURL( "http://localhost:8080" )
 @browserProfile( "ci" )
-class extends="testbox.system.BrowserSpec" {
+class extends="testbox.system.BaseSpec" {
 
 	function run() {
 		describe( "Login", () => {
@@ -43,15 +46,19 @@ class extends="testbox.system.BrowserSpec" {
 }
 ```
 
-Class annotations, written as BoxLang annotations above `class` (never inline attributes in `.bx` files):
+Class annotations, written as BoxLang annotations above `class` (never inline attributes in `.bx` files). Any of the first three turns browser support on:
 
+- `browser`: browser support with the bx-playwright default profile.
 - `browserProfile`: bx-playwright profiles for the bundle browser, a list such as `ci` or `ci,mobile`.
 - `baseURL`: relative `visit()` calls resolve against it. Default: the runner's `--web-server-url` when the runner started a web server, else bx-playwright's own `baseURL` setting or `BX_PLAYWRIGHT_BASEURL`.
+- `browserAutoInstall( false )`: do not download a missing browser on first use (pre-provisioned or offline CI); call `ensureBrowserInstalled()` yourself if needed.
+
+The runner mixes these into the spec (`this` and `variables` scopes, so call them unqualified): `browse()`, `browserAvailable()`, `ensureBrowserInstalled()`, `getBrowserSupport()`, `closeBrowser()`, plus `this.playwright()`, and registers the browser matchers. Methods your spec declares itself are kept.
 
 How it behaves:
 
-- One browser per bundle, started on first use, closed after the bundle by `closeBrowser()` (it carries `@afterAll`, so your own `beforeAll()` / `afterAll()` need no `super` calls).
-- Safety net: when an `afterAll()` throws or a spec calls `abort`, the bundle browser stays open until the next test run that opens a browser, which closes it first. bx-playwright closes any instance still open when the module unloads or the JVM shuts down.
+- One browser per bundle, started on first use. The runner closes it after the bundle, even when `afterAll()` throws, so your own `beforeAll()` / `afterAll()` need no `super` calls for it.
+- Safety net: when the request aborts (a spec calls `abort`), the browser stays open until the next test run that opens a browser, which closes it first. bx-playwright closes any instance still open when the module unloads or the JVM shuts down.
 - Every `browse()` call gets fresh pages, each in its own isolated browser context, closed when the callback ends.
 - `browse()` returns the callback result.
 - Do not use `asyncAll` in suites that browse: browser specs are not thread safe.
@@ -74,7 +81,7 @@ browse( ( page ) => {
 }, { viewport : { width : 390, height : 844 }, timeouts : { assertion : 2000 } } )
 ```
 
-### this.playwright() and browserAvailable()
+### this.playwright(), browserAvailable() and getBrowserSupport()
 
 ```js
 pw = this.playwright()            // the bundle manager (closed for you after the bundle)
@@ -82,11 +89,13 @@ ctx = pw.newContext()             // manual contexts when browse() is not enough
 // playwright() without `this.` is the bx-playwright BIF: a NEW manager the bundle does not close
 
 it( title = "needs a browser", skip = !browserAvailable(), body = () => { ... } )
+
+getBrowserSupport().getUnavailableReason()   // why browser specs cannot run here, "" when they can
 ```
 
 ### Browser Matchers
 
-Registered automatically for `BrowserSpec` and `BrowserTestCase` bundles. In any other BoxLang spec: `addMatchers( new testbox.system.browser.BrowserMatchers() )`.
+Registered automatically for browser-enabled bundles (`@browser`, `@browserProfile`, `@baseURL`). In any other BoxLang spec: `addMatchers( new testbox.system.browser.BrowserMatchers() )`.
 
 | Matcher | Target | Checks |
 |---|---|---|
@@ -139,8 +148,9 @@ Attach your own files from any spec: `attach( path, type = "file", name = "" )`,
 
 ```js
 it( title = "flaky checkout", retries = 2, body = () => { ... } )      // spec wins
+@browser
 @retries( 1 )                                                         // bundle annotation, above class
-class extends="testbox.system.BrowserSpec" { ... }
+class extends="testbox.system.BaseSpec" { ... }
 ```
 
 ```bash
@@ -152,17 +162,18 @@ class extends="testbox.system.BrowserSpec" { ... }
 
 - Precedence: `it( ..., retries )` > bundle `retries` annotation > `--retries`. A retry reruns `beforeEach()`, body and `afterEach()`. Skipped specs are never retried. Output shows "(passed after N attempts)".
 - `--failed` reads `{reportpath}/.testbox-failed.json`, which every run writes. Bundles that failed outside of a spec (`beforeAll()`, `afterAll()`) are listed under `bundleErrors` and never rerun: fix them and run them directly. In the web runner, the HTML reports offer a **Run Failed (N)** button instead, built from the report (no state). Both use `TestResult.getFailedTargets()`.
-- `--web-server` starts the command, waits until `--web-server-url` answers (status below 500), runs the tests, then stops the server and its child processes. It exits with code 1 when the server does not answer in time. The URL becomes the default `baseURL` of `BrowserSpec` bundles.
+- `--web-server` starts the command, waits until `--web-server-url` answers (status below 500), runs the tests, then stops the server and its child processes. It exits with code 1 when the server does not answer in time. The URL becomes the default `baseURL` of browser-enabled bundles.
 
-## ColdBox BrowserTestCase
+## ColdBox: BaseTestCase with @browser
 
-It loads your ColdBox app like any integration test (`appMapping`, `webMapping`, `configMapping`, ...) and drives a real browser against the running app. Everything in the BrowserSpec section above applies.
+`coldbox.system.testing.BaseTestCase` loads your ColdBox app like any integration test (`appMapping`, `webMapping`, `configMapping`, ...); add `@browser` to drive a real browser against the running app. Everything in the TestBox section above applies. (`BrowserTestCase` was removed; `browserUnavailableReason()` is now `getBrowserSupport().getUnavailableReason()`.)
 
 ```js
 @appMapping( "/root" )
+@browser
 @baseURL( "http://127.0.0.1:8080" )
 @browserProfile( "ci" )
-class extends="coldbox.system.testing.BrowserTestCase" {
+class extends="coldbox.system.testing.BaseTestCase" {
 
 	function beforeAll() {
 		super.beforeAll()
@@ -214,7 +225,7 @@ ColdBox has no test-only login endpoints (no backdoor). Log in once through your
 
 ## Plain TestBox (fallback)
 
-Use when `BrowserSpec` is not available (older TestBox) or in another framework. You manage the manager and artifacts yourself.
+Use when `@browser` support is not available (older TestBox) or in another framework. You manage the manager and artifacts yourself.
 
 ```js
 describe( "Login", () => {
