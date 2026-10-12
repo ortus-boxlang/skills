@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-testing
-description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's @browser annotation (browse(), this.playwright(), browserProfile and baseURL annotations, the optional testbox.system.BrowserSpec base class), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BaseTestCase with @browser (routeURL, visitRoute, assertRouteIs), logged-in tests with saved sessions, plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@playwright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
+description: "Use this skill when writing browser tests with bx-playwright in BoxLang: TestBox's @browser annotation (browse(), this.playwright(), browserProfile and baseURL annotations, the optional testbox.system.BrowserSpec base class), the TestBox browser matchers (toSee, toHaveTitle, toHavePath, toHaveURL, toHaveText, toBeVisible, toBeHidden, toHaveCount, toHaveValue), automatic screenshot/trace/video attachments, spec retries and the --failed and --web-server runner options, ColdBox's BaseTestCase with @browser (routeURL, visitRoute, assertRouteIs), logged-in tests with saved sessions, plain TestBox specs with playwright().browse(), artifact policies, debugging with traces, page objects (models.PageObject@bxplaywright), page components, macros, console error and smoke checks, axe-core accessibility audits, and visual regression with assertScreenshotMatches()."
 ---
 
 # bx-playwright: Testing, Page Objects and Quality
@@ -260,7 +260,7 @@ View traces: `bxplaywright show-trace path/trace.zip`. Debug: `playwright( "debu
 
 ```js
 // pages/LoginPage.bx
-class extends="models.PageObject@playwright" {
+class extends="models.PageObject@bxplaywright" {
 	url      = "/login"
 	elements = { email : "#email", password : "input[type=password]", submit : "button" }
 
@@ -288,7 +288,7 @@ home.element( "heading" ).text()                                          // Loc
 
 ```js
 // pages/UserMenu.bx
-class extends="models.PageComponent@playwright" {
+class extends="models.PageComponent@bxplaywright" {
 	selector = "nav.user"
 	elements = { logout : "a.logout" }
 	function name() {

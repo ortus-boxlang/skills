@@ -28,7 +28,7 @@ Everything lives in `~/.boxlang/playwright` (setting `home` or `BX_PLAYWRIGHT_HO
 
 ## CLI
 
-`bxplaywright <verb>` (same as `boxlang module:playwright <verb>`). `--json` gives machine readable output. Exit code 0 = success.
+`bxplaywright <verb>` (same as `boxlang module:bxplaywright <verb>`). `--json` gives machine readable output. Exit code 0 = success.
 
 | Verb | Does |
 |---|---|
@@ -44,7 +44,7 @@ Everything lives in `~/.boxlang/playwright` (setting `home` or `BX_PLAYWRIGHT_HO
 ```json
 {
 	"modules": {
-		"playwright": {
+		"bxplaywright": {
 			"settings": {
 				"baseURL": "http://localhost:8080",
 				"headless": true,

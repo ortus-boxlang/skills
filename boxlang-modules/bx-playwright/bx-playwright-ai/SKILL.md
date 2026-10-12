@@ -48,7 +48,7 @@ Each action returns `URL`, `Title` and the ai snapshot. Errors come back as text
 Other frameworks: `playwright().aiToolDefinitions()` returns `[ { name, description, arguments : { name : description }, handler } ]`. Direct use:
 
 ```js
-browser = new models.AiBrowser@playwright( playwright() )
+browser = new models.AiBrowser@bxplaywright( playwright() )
 state   = browser.visit( "https://boxlang.io" )
 state   = browser.click( "Docs" )
 browser.close()
