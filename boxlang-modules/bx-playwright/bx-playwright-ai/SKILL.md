@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-ai
-description: "Use this skill when connecting AI agents to a browser with bx-playwright: accessibility snapshots in ai mode with element refs (page.snapshot, ref=e12 selectors), playwright().aiTools() for bx-ai agents, aiToolDefinitions() and models.AiBrowser for other frameworks, the Playwright MCP server (bxPlaywright mcp), recording BoxLang code with bxPlaywright codegen, and API self-description with help()."
+description: "Use this skill when connecting AI agents to a browser with bx-playwright: accessibility snapshots in ai mode with element refs (page.snapshot, ref=e12 selectors), playwright().aiTools() for bx-ai agents, aiToolDefinitions() and models.AiBrowser for other frameworks, the Playwright MCP server (bxplaywright mcp), recording BoxLang code with bxplaywright codegen, and API self-description with help()."
 ---
 
 # bx-playwright: AI Agents
@@ -56,11 +56,11 @@ browser.close()
 
 ## MCP and Codegen
 
-- `bxPlaywright mcp` starts Playwright's MCP server for MCP clients (Claude, Cursor, ...).
-- `bxPlaywright codegen http://localhost:8080 --output=flow.bxs` records a session and writes bx-playwright code (`page.byRole( "button", { name : "Save" } ).click()` style). Untranslatable lines are kept as `// TODO translate:` comments.
+- `bxplaywright mcp` starts Playwright's MCP server for MCP clients (Claude, Cursor, ...).
+- `bxplaywright codegen http://localhost:8080 --output=flow.bxs` records a session and writes bx-playwright code (`page.byRole( "button", { name : "Save" } ).click()` style). Untranslatable lines are kept as `// TODO translate:` comments.
 
 ## Self Description
 
 - `page.help()`, `page.help( "fill" )`, `playwright().help()`: methods, arguments and descriptions from the docblocks.
-- `bxPlaywright help --json`, `bxPlaywright doctor --json`, `bxPlaywright devices --json`.
+- `bxplaywright help --json`, `bxplaywright doctor --json`, `bxplaywright devices --json`.
 - Every error has a `type` and a `detail` with the fix.

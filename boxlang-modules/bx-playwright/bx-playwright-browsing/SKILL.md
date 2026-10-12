@@ -100,10 +100,10 @@ playwright( "ci" ).browse( ( page ) => {  // browse() closes everything, even on
 } )
 ```
 
-- Record instead of writing clicks: `bxPlaywright codegen <url> --output=job.bxs`, then rewrite `// TODO translate:` lines, move secrets to `getSystemSetting()`, add assertions after key steps.
+- Record instead of writing clicks: `bxplaywright codegen <url> --output=job.bxs`, then rewrite `// TODO translate:` lines, move secrets to `getSystemSetting()`, add assertions after key steps.
 - Log in once: `pw.session( "app", ( page ) => ...login..., { maxAge : 720 } )`, then `pw.browse( fn, { session : "app" } )`.
 - `browse()` returns the callback result: scrape with `page.locator( "tr" ).all().map( ( row ) => row.locator( "td" ).texts() )`, write with `fileWrite( path, jsonSerialize( data ) )`.
 - Retry flaky sites by catching `Playwright.Timeout` in a loop; fail a job with `cliExit( 1 )` (an uncaught error also exits 1).
 - The `ci` profile is headless and keeps a screenshot, trace and video of a failed `browse()`.
-- Servers: `bxPlaywright install chromium --with-deps` once, then `boxlang job.bxs` from cron.
+- Servers: `bxplaywright install chromium --with-deps` once, then `boxlang job.bxs` from cron.
 - BoxLang scheduler: a class with `configure()` calling `scheduler.task( "name" ).call( () => playwright( "ci" ).browse( ... ) ).everyHour()`, run with `boxlang schedule Scheduler.bx`. Use absolute paths for files (relative ones resolve against the scheduler file) and `yyyy-MM-dd` date masks (`mm` is minutes). One browser per task run: Playwright is not thread safe.

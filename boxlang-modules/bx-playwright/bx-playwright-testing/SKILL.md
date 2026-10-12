@@ -254,7 +254,7 @@ page = ctx.newPage()
 kept = ctx.close( failed = true )   // { screenshots : [], trace : "path.zip", videos : [], directory }
 ```
 
-View traces: `bxPlaywright show-trace path/trace.zip`. Debug: `playwright( "debug" )` or `@browserProfile( "debug" )` (headed, slowMo, all artifacts), `BX_PLAYWRIGHT_HEADLESS=false`, `page.snapshot()`, `bxPlaywright codegen <url>`.
+View traces: `bxplaywright show-trace path/trace.zip`. Debug: `playwright( "debug" )` or `@browserProfile( "debug" )` (headed, slowMo, all artifacts), `BX_PLAYWRIGHT_HEADLESS=false`, `page.snapshot()`, `bxplaywright codegen <url>`.
 
 ## Page Objects
 

@@ -6,7 +6,7 @@ Skills for [bx-playwright](https://github.com/ortus-boxlang/bx-playwright): flue
 
 | Skill | Load When... |
 |-------|--------------|
-| [bx-playwright-setup](./bx-playwright-setup/SKILL.md) | Installing, the `bxPlaywright` CLI, module settings, profiles, environment variables, CI |
+| [bx-playwright-setup](./bx-playwright-setup/SKILL.md) | Installing, the `bxplaywright` CLI, module settings, profiles, environment variables, CI |
 | [bx-playwright-browsing](./bx-playwright-browsing/SKILL.md) | `playwright()`, `visit()`, smart selectors, actions, locators, waits, popups, downloads |
 | [bx-playwright-assertions](./bx-playwright-assertions/SKILL.md) | Inline `assert*()` and `expect()` assertions, soft assertions, typed errors |
 | [bx-playwright-network](./bx-playwright-network/SKILL.md) | Mocking with `intercept()`, events, `request()` API testing, saved sessions |
