@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-setup
-description: "Use this skill when installing or configuring bx-playwright (BoxLang browser automation with Playwright): the bx-playwright vs bx-playwright-full distributions, the bxPlaywright CLI (install, doctor, devices, profiles, codegen, show-trace, mcp), module settings in boxlang.json, built-in and custom profiles, BX_PLAYWRIGHT_* environment variables, and CI setup."
+description: "Use this skill when installing or configuring bx-playwright (BoxLang browser automation with Playwright): the bx-playwright vs bx-playwright-full distributions, the bxplaywright CLI (install, doctor, devices, profiles, codegen, show-trace, mcp), module settings in boxlang.json, built-in and custom profiles, BX_PLAYWRIGHT_* environment variables, and CI setup."
 ---
 
 # bx-playwright: Setup, CLI and Configuration
@@ -13,22 +13,22 @@ Requires BoxLang 1.17+ and Java 21+. Two distributions, same module name (`playw
 
 | Module | Size | Node.js |
 |---|---|---|
-| `bx-playwright` | ~4 MB | Downloaded by `bxPlaywright install` for the current OS |
+| `bx-playwright` | ~4 MB | Downloaded by `bxplaywright install` for the current OS |
 | `bx-playwright-full` | ~206 MB | Bundled for every platform (offline) |
 
 ```bash
 install-bx-module bx-playwright
-bxPlaywright install                    # driver + Node.js + Chromium
-bxPlaywright install firefox webkit     # more browsers ("all" for every browser)
-bxPlaywright install chromium --with-deps   # Linux CI: also OS packages
-bxPlaywright doctor                     # check everything, prints fixes
+bxplaywright install                    # driver + Node.js + Chromium
+bxplaywright install firefox webkit     # more browsers ("all" for every browser)
+bxplaywright install chromium --with-deps   # Linux CI: also OS packages
+bxplaywright doctor                     # check everything, prints fixes
 ```
 
 Everything lives in `~/.boxlang/playwright` (setting `home` or `BX_PLAYWRIGHT_HOME`).
 
 ## CLI
 
-`bxPlaywright <verb>` (same as `boxlang module:playwright <verb>`). `--json` gives machine readable output. Exit code 0 = success.
+`bxplaywright <verb>` (same as `boxlang module:bxplaywright <verb>`). `--json` gives machine readable output. Exit code 0 = success.
 
 | Verb | Does |
 |---|---|
@@ -44,7 +44,7 @@ Everything lives in `~/.boxlang/playwright` (setting `home` or `BX_PLAYWRIGHT_HO
 ```json
 {
 	"modules": {
-		"playwright": {
+		"bxplaywright": {
 			"settings": {
 				"baseURL": "http://localhost:8080",
 				"headless": true,
@@ -95,7 +95,7 @@ Custom profiles take any setting plus `extends` (a name or a list). A custom pro
 
 ```bash
 install-bx-module bx-playwright
-bxPlaywright install chromium --with-deps
+bxplaywright install chromium --with-deps
 BX_PLAYWRIGHT_PROFILE=ci boxlang run-tests.bxs
 ```
 
