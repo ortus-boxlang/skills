@@ -14,7 +14,7 @@ Pipelines chain AI operations together (message templates, model calls, transfor
 | BIF | Role |
 |-----|------|
 | `aiMessage( message? )` | Build prompt templates with `${variable}` placeholders |
-| `aiModel( provider, apiKey, tools, params, options, middleware, skills, mcpServers )` | AI model step; executes the prompt |
+| `aiModel( provider, apiKey, tools, params, options, middleware, skills, mcpServers )` | AI model step; executes the prompt. `mcpServers` takes URLs or stdio `{ command }` structs, see `bx-ai-mcp` |
 | `aiTransform( transformer, config={} )` | Transform step; closure, built-in extractor name, or class |
 | `aiParallel( runnables )` | Run a struct of named runnables concurrently |
 

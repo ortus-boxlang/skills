@@ -9,6 +9,7 @@ Skills for the [BoxLang AI module](https://ai.ortusbooks.com/) — a comprehensi
 | [bx-ai-chatting](./bx-ai-chatting/SKILL.md) | Using `aiChat()`, `aiChatAsync()`, `aiChatStream()`, handling responses, multi-turn conversations |
 | [bx-ai-models](./bx-ai-models/SKILL.md) | Configuring providers with `aiModel()`, `aiService()`, module-level provider setup |
 | [bx-ai-agents](./bx-ai-agents/SKILL.md) | Building agents with `aiAgent()`, tools, skills, MCP servers, multi-agent hierarchies |
+| [bx-ai-mcp](./bx-ai-mcp/SKILL.md) | Consuming and exposing MCP servers: `MCP()` clients over HTTP and stdio (child processes), `mcpServers` on agents, `MCPServer()`, `MCPResponse`, stdio security |
 | [bx-ai-tools](./bx-ai-tools/SKILL.md) | Creating tools with `aiTool()`, parameter descriptions, `aiToolRegistry()` |
 | [bx-ai-memory](./bx-ai-memory/SKILL.md) | Memory systems with `aiMemory()`, multi-tenant isolation, choosing memory types |
 | [bx-ai-rag](./bx-ai-rag/SKILL.md) | RAG systems, `aiDocuments()`, `aiEmbed()`, vector stores, document ingestion |
@@ -21,6 +22,7 @@ For complex tasks, load multiple skills together:
 
 - **Conversational AI app** → `bx-ai-chatting` + `bx-ai-memory`
 - **Autonomous agent** → `bx-ai-agents` + `bx-ai-tools` + `bx-ai-memory`
+- **Agent that uses MCP servers or a browser** → `bx-ai-agents` + `bx-ai-mcp`
 - **RAG system** → `bx-ai-rag` + `bx-ai-agents`
 - **AI pipeline** → `bx-ai-pipelines` + `bx-ai-models`
 - **Voice agent or speech app** → `bx-ai-audio` + `bx-ai-models` (add `bx-ai-agents` for an agent that speaks)

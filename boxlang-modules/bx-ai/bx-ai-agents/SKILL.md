@@ -26,7 +26,7 @@ aiAgent(
     middleware      = [],             // IAiMiddleware, struct of closures, or array of either
     checkpointer    ,                 // IAiMemory used to save state when a run suspends
     checkpointTTL   = 30,             // checkpoint TTL in minutes
-    mcpServers      = [],             // MCP server URLs / config structs / MCPClient instances
+    mcpServers      = [],             // MCP server URLs / HTTP or stdio config structs / IMCPClient instances
     register        = false,          // register in aiAgentRegistry()
     module          = ""              // registry key suffix when register is true
 )
@@ -129,19 +129,28 @@ agent.run( "What is my name?" )  // "Your name is Alice."
 
 ## Agent with MCP Servers
 
-Each entry is a URL string, a config struct, or an `MCPClient`. All tools discovered on the server are loaded.
+Each entry is a URL string, an HTTP config struct (`url`), a stdio config struct (`command`), or an `IMCPClient` built with `MCP()`. The tools the server lists are loaded, all of them unless `toolFilter` is set. See `bx-ai-mcp` for the full MCP client guide.
 
 ```javascript
 agent = aiAgent(
     name      : "ResearchAgent",
     mcpServers: [
         "http://localhost:3000/mcp",
-        { url: "https://api.example.com/mcp", token: server.system.environment.MCP_TOKEN, timeout: 5000 }
+        { url: "https://api.example.com/mcp", token: server.system.environment.MCP_TOKEN, timeout: 5000 },
+        // A program the agent launches as a child process (stdin/stdout)
+        { command: [ "bxplaywright", "mcp" ], env: { HEADLESS: "true" }, prefix: "browser" }
     ]
 )
+
+agent.run( "Open boxlang.io and read the title" )
+
+// Shut the stdio child processes down (clients the agent built itself)
+agent.closeMCPServers()
 ```
 
-Struct keys: `url`, `token` (bearer), `timeout`, `headers`, `user` + `password` (basic auth).
+HTTP struct keys: `url`, `token` (bearer), `timeout`, `headers`, `user` + `password` (basic auth), `urlGuard`, `redirects`, `maxResponseBytes`, `handshake`, `httpVersion`.
+Stdio struct keys: `command` (array, required), `env`, `cwd`, `inheritEnv`, `maxRestarts`, `commandGuard`, `timeout`.
+Both: `prefix` (tools become `prefix__name`) and `toolFilter` (only these tools). Also available as `withMCPServer( server, config )` and `withMCPServers( servers )`.
 
 ## Fluent Configuration
 
@@ -363,6 +372,9 @@ agent.run( "Answer using this context: #context#" )
 - `aiMemory( "windowed" )` throws `InvalidMemoryType`: the type is `"window"`
 - `agent.stream()` takes the callback first, then the input
 - `mcpServers` entries have no `toolNames` or `apiKey` key: use `token`
+- A stdio entry takes `command` (an array), not `url`. HTTP-only keys (`token`, `headers`, `urlGuard`, ...) on a stdio entry throw `InvalidArgument`
+- Call `agent.closeMCPServers()` when done with stdio servers, otherwise the child processes live until the module unloads
+- A stdio server that cannot start is logged and skipped (the agent runs without its tools); a command refused by `mcp.stdio.allowedCommands` or `commandGuard` throws `MCPCommandRefused`
 - A suspended `run()` returns an `AiMiddlewareResult`, not a string: check `isSuspended()`
 - A HITL gateway or `mode: "web"` without an agent `checkpointer` throws at attach time
 - Always give agents clear, specific `instructions` and sub-agents a clear `description`
