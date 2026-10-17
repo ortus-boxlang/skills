@@ -57,6 +57,19 @@ browser.close()
 ## MCP and Codegen
 
 - `bxplaywright mcp` starts Playwright's MCP server for MCP clients (Claude, Cursor, ...).
+- A bx-ai agent can launch it as a child process over stdio (needs the `bx-ai` module, see its `bx-ai-mcp` skill). The agent gets the tools the server lists, and `closeMCPServers()` stops the process:
+
+```js
+agent = aiAgent(
+    name      : "BrowserAgent",
+    model     : aiModel( provider: "openai" ),
+    mcpServers: [ { command : [ "bxplaywright", "mcp" ], prefix : "browser" } ]
+)
+agent.run( "Open https://boxlang.io and tell me the page title" )
+agent.closeMCPServers()
+```
+
+  Use `aiTools()` (above) when the agent should call bx-playwright directly in the same JVM, and the MCP route when you want Playwright's own MCP tool set or a separate process.
 - `bxplaywright codegen http://localhost:8080 --output=flow.bxs` records a session and writes bx-playwright code (`page.byRole( "button", { name : "Save" } ).click()` style). Untranslatable lines are kept as `// TODO translate:` comments.
 
 ## Self Description
