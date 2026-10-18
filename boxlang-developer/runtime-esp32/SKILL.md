@@ -16,15 +16,20 @@ MatchBox can compile and deploy BoxLang scripts directly to **ESP32 microcontrol
 ## Prerequisites
 
 ```bash
-# Install the ESP-IDF prerequisites (see espressif.com/getting-started)
-
-# Install the Rust ESP32 toolchain
+# Rust ESP32 toolchain
 cargo install espup
 espup install
 
-# Install espflash (requires 3.3.0+)
-cargo install espflash@3.3.0
+# Flashing and linking
+cargo install espflash   # 3.3.0 or newer
+cargo install ldproxy
+
+# Activate a real ESP-IDF checkout (needs C build tools, Python, CMake, Ninja)
+source /path/to/esp-idf/export.sh
+export RUSTUP_TOOLCHAIN=esp
 ```
+
+Run MatchBox from that same shell. Run `matchbox esp32-doctor` to check the prerequisites and print fixes. On WSL, attach the USB device with `usbipd-win` first.
 
 ---
 
@@ -77,7 +82,6 @@ matchbox app.bxs --target esp32 --chip esp32s3 --flash --watch
 | ESP32-S3 | `--chip esp32s3` |
 | ESP32-C3 | `--chip esp32c3` |
 | ESP32 (original) | `--chip esp32` |
-| ESP32-S2 | `--chip esp32s2` |
 
 ---
 
@@ -120,25 +124,23 @@ if ( arch == "xtensa" ) {
 ## Example Script
 
 ```js
-// blink.bxs — Blink an LED on GPIO pin 2
-var ledPin = 2
+// hello_esp32.bxs
+println( "[BoxLang] Hello from ESP32!" )
+println( "[BoxLang] Current Chip Architecture: " & server.os.arch )
 
-// Initialize GPIO
-gpioSetMode( ledPin, "OUTPUT" )
-
-// Blink loop
-while ( true ) {
-    gpioWrite( ledPin, 1 )  // LED on
-    delay( 500 )
-    gpioWrite( ledPin, 0 )  // LED off
-    delay( 500 )
+for ( i = 1; i <= 10; i++ ) {
+    println( "[BoxLang] Loop iteration: #i#" )
+    sleep( 1000 )
 }
 ```
 
 ```bash
-# Deploy and run
-matchbox blink.bxs --target esp32 --chip esp32s3 --flash
+matchbox hello_esp32.bxs --target esp32 --chip esp32s3 --flash
 ```
+
+`println` goes to the serial console. There are no built-in GPIO, I2C or WiFi BIFs. For hardware access use Native Fusion or a module that provides hardware wrappers.
+
+Web apps: `web.server()` works as a lean subset when you add `--esp32-web` (routes, middleware, `event.renderJson()` and `event.renderHtml()`). `app.listen()`, views and templates, static file middleware, webhooks, cookies and sessions fail at compile time.
 
 ---
 
@@ -183,7 +185,7 @@ The `--flash` flag targets only `0x110000` — no firmware reinstall.
 
 ## Checklist
 
-- [ ] Install `espup` and `espflash` (3.3.0+) before first use
+- [ ] Install `espup`, `espflash` (3.3.0+) and `ldproxy`, activate ESP-IDF, set `RUSTUP_TOOLCHAIN=esp`, and run `matchbox esp32-doctor`
 - [ ] Use `--full-flash` once per device to install firmware
 - [ ] Use `--flash` (not `--full-flash`) for all subsequent code updates (~1 second)
 - [ ] Use `--watch` during development for immediate recompile + redeploy cycles
