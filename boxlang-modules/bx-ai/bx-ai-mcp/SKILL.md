@@ -10,7 +10,7 @@ description: "Use this skill when consuming or exposing MCP (Model Context Proto
 ## `MCP()` BIF: the Client
 
 ```javascript
-MCP( server )
+MCP( mcpServer )
 ```
 
 The argument picks the transport. Both clients implement `IMCPClient`, have the same methods and return the same `MCPResponse`.
