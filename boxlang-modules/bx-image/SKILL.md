@@ -1,6 +1,6 @@
 ---
 name: bx-image
-description: "Use this skill for image manipulation in BoxLang with the bx-image module: ImageNew, ImageRead, ImageWrite, ImageResize, ImageScaleToFit, ImageCrop, ImageRotate, ImageFlip, ImageGrayScale, ImageBlur, ImageSharpen, imageAddBorder, imageDrawText, the fluent BoxImage builder API, and the bx:image component."
+description: "Use this skill for image manipulation in BoxLang with the bx-image module: ImageNew, ImageRead, ImageWrite, ImageResize, ImageScaleToFit, ImageCrop, ImageRotate, ImageFlip, ImageGrayScale, ImageBlur, ImageSharpen, imageAddBorder, imageDrawText, hex colors, linear gradients (ImageSetDrawingGradient), text measurement (ImageMeasureText) and word wrapping, custom TTF/OTF fonts (ImageRegisterFont), the fluent BoxImage builder API, and the bx:image component."
 ---
 
 # bx-image: Image Manipulation
@@ -84,9 +84,89 @@ ImageSharpen( img )
 // Add border
 imageAddBorder( img, 5, "black" )
 
-// Draw text on image
-imageDrawText( img, "Copyright 2025", 10, 590, { font: "Arial", size: 14, color: "white" } )
+// Draw text on image (text color is the drawing color, not a key in the struct)
+ImageSetDrawingColor( img, "white" )
+imageDrawText( img, "Copyright 2025", 10, 590, { font: "Arial", size: 14 } )
 ```
+
+### Colors
+
+Every color argument (`ImageNew`, `ImageSetDrawingColor`, `ImageSetBackgroundColor`, `ImageAddBorder`, gradient colors, `<bx:image action="border">`) takes a name or hex.
+
+- Names: `black blue cyan darkgray gray green lightgray magenta orange pink red white yellow`
+- Hex: `#RGB`, `#RRGGBB`, `#RRGGBBAA` (alpha **last**), with or without the `#`
+- An unparseable color **throws**; it no longer silently draws black
+- In a BoxLang string or template write `##` for a literal `#`
+
+```javascript
+img = ImageNew( "", 1200, 630, "rgb", "##0b161b" )
+ImageSetDrawingColor( img, "##ff6a00" )
+ImageSetDrawingColor( img, "##ff6a0080" )   // 50% alpha
+ImageSetDrawingColor( img, "0b161b" )       // no # needed
+```
+
+### Linear Gradients
+
+`ImageSetDrawingGradient( img, x1, y1, x2, y2, colors [, fractions] )` sets the paint for subsequent fills, strokes, lines and text. `ImageSetDrawingColor` goes back to a solid color.
+
+```javascript
+img.setDrawingGradient( 0, 0, 1200, 0, [ "##ff6a00", "##ee0979" ] )
+img.drawRect( 0, 600, 1200, 30, true )          // gradient bar
+
+img.setDrawingStroke( { width: 8 } )
+img.drawOval( 900, 100, 200, 200, false )       // gradient ring
+
+img.setDrawingGradient( 0, 0, 0, 630, [ "white", "##3366ff", "black" ], [ 0, 0.3, 1 ] )
+img.drawText( "Title", 80, 300, { size: 96, style: "bold" } )  // gradient text
+
+img.setDrawingColor( "white" )                  // back to solid
+```
+
+Throws for fewer than 2 colors, a bad color, identical start and end points, or fractions that are not one per color, within 0 to 1, strictly increasing. Gradient coordinates are in image pixels.
+
+### Measuring Text (word wrap and shrink to fit)
+
+`ImageMeasureText( img, str [, fontStruct] )` / `img.measureText( str, fontStruct )` returns `{ width, height, ascent, descent, leading }` in pixels using the same font struct and font resolution as `drawText`. `y` in `drawText` is the **baseline**. There is no built-in `wrapText`; build it on `measureText` (single line only, split on newlines yourself).
+
+```javascript
+function wrapLines( img, text, attrs, maxWidth ) {
+    var lines = []
+    var line  = ""
+    for ( var word in text.listToArray( " " ) ) {
+        var candidate = line.len() ? line & " " & word : word
+        if ( line.len() && img.measureText( candidate, attrs ).width > maxWidth ) {
+            lines.append( line )
+            line = word
+        } else {
+            line = candidate
+        }
+    }
+    if ( line.len() ) lines.append( line )
+    return lines
+}
+
+attrs = { font: "SansSerif", size: 72, style: "bold" }
+lines = wrapLines( img, title, attrs, 1000 )
+while ( lines.len() > 3 && attrs.size > 24 ) {
+    attrs.size -= 4
+    lines = wrapLines( img, title, attrs, 1000 )
+}
+```
+
+Do not name your function `wrap`; it collides with the `wrap` BIF.
+
+### Custom Fonts
+
+Use a bundled `.ttf` or `.otf` with the `file` key, or register it once and use the family name.
+
+```javascript
+img.drawText( "Brand", 50, 100, { file: "/app/fonts/Brand-Bold.ttf", size: 48 } )
+
+family = ImageRegisterFont( "/app/fonts/Brand-Bold.ttf" )   // returns the family name
+img.drawText( "Brand", 50, 100, { font: family, size: 48 } )
+```
+
+`file` is used instead of `font`; `size` defaults to 12. `measureText` accepts the same `file` key, so measuring and drawing agree. A missing, empty or invalid font file throws. Paths are not expanded: pass `expandPath()` for app-relative locations. Bold/italic on a single file font is synthetic; point `file` at the bold file for a real bold.
 
 ### Copy & Paste
 
@@ -174,12 +254,13 @@ function processUpload( uploadPath, baseName ) {
 function addWatermark( imagePath, outputPath ) {
     var img = ImageRead( imagePath )
     var info = ImageInfo( img )
+    ImageSetDrawingColor( img, "white" )
     imageDrawText(
         img,
         "© My Company",
         info.width - 200,
         info.height - 30,
-        { font: "Arial", size: 16, color: "white", style: "bold" }
+        { font: "Arial", size: 16, style: "bold" }
     )
     ImageWrite( img, outputPath, 0.9 )
 }
@@ -192,4 +273,7 @@ function addWatermark( imagePath, outputPath ) {
 - ✅ JPG quality is `0.0–1.0` (`1.0` = best quality, largest file)
 - ❌ PNG doesn't support quality parameter (lossless format)
 - ✅ Use `ImageNew("")` to create a blank canvas, then use draw functions
+- ❌ A bare `"#FF0000"` in a BoxLang string or template is an interpolation; write `"##FF0000"`
+- ❌ `drawText` has no `color` key; set the color (or a gradient) with `ImageSetDrawingColor` / `ImageSetDrawingGradient` first
+- ✅ Measure with `measureText` before drawing wrapped or centered text; do not guess widths
 - ❌ Operating on very large images without resizing first will cause memory issues
