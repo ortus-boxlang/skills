@@ -10,7 +10,7 @@ description: "Use this skill when consuming or exposing MCP (Model Context Proto
 ## `MCP()` BIF: the Client
 
 ```javascript
-MCP( server )
+MCP( mcpServer )
 ```
 
 The argument picks the transport. Both clients implement `IMCPClient`, have the same methods and return the same `MCPResponse`.
@@ -100,7 +100,7 @@ client = MCP( {
 | `command` | required | Array: executable then arguments. Never a shell string. No shell is ever used |
 | `env` | `{}` | Added to the child environment |
 | `cwd` | current dir | |
-| `inheritEnv` | `true` | `false` starts with only `env` (then pass `PATH` or a full executable path) |
+| `inheritEnv` | `true` | `false` starts with only `env`. Then pass `PATH` (and often `HOME`) in `env`: `npx` fails with `'node': No such file or directory` without it |
 | `maxRestarts` | `2` | Consecutive relaunches of a dead server before giving up. Resets after an answer |
 | `commandGuard` | none | `( command ) => boolean`, called before every launch |
 | `timeout` | `30000` | Milliseconds, per request and for the handshake |
@@ -110,15 +110,17 @@ Extra methods on the stdio client: `isRunning()`, `getProtocolVersion()`, `getSt
 **Lifecycle**
 - Started on the first call (not at construction), one process per client, then the MCP handshake (`initialize`, `notifications/initialized`; versions `2025-06-18`, `2025-03-26`, `2024-11-05`)
 - One reader thread matches answers to callers by JSON-RPC id, so threads can share a client
+- The first call also waits for the launch and the handshake, inside `timeout`. A program that downloads itself on its first run (`npx -y pkg`) needs a larger one, for example `timeout: 120000`
 - A request that gets no answer in `timeout` fails and a `notifications/cancelled` is sent. The client keeps working
 - If the process dies, the call in flight fails (it is never repeated, a tool call could run twice). The next call starts the server again, up to `maxRestarts` times in a row. A restarted server starts empty
 - stderr goes to the `ai` log (debug), never into the protocol. Lines on stdout that are not JSON-RPC are skipped
-- `close()` closes stdin, waits 2s, terminates, waits 2s, kills. Live clients are also closed on module unload and JVM exit
+- `close()` closes stdin, waits 2s, terminates the process and the processes it started, waits 2s, kills. It does not wait for a write stuck on a server that does not read. Live clients are also closed on module unload and JVM exit, but a client you never close keeps its process until then
 
 **Security**: a stdio client runs a program. Never build `command` from user input.
-- Module setting `mcp.stdio.allowedCommands` (executable names, case-insensitive, `npx.cmd` counts as `npx`). Empty allows any
-- `commandGuard` for rules a list cannot say
-- A refused command throws `MCPCommandRefused`, also from `withMCPServer` and `aiAgent()`. A bad config throws `InvalidArgument`
+- Module setting `mcp.stdio.allowedCommands`. Empty allows any. A command without a directory (`npx`, `npx.cmd`) is matched by name, case-insensitive. A command with a directory (`/usr/bin/npx`, `./npx`) must be listed with that exact path. The list limits the program, not its arguments (an allowed `node` can still run any code), and an unreadable setting refuses the command
+- `commandGuard` for rules a list cannot say. It sees only the command array, not `env` or `cwd`, so validate those yourself
+- A refused command throws `MCPCommandRefused`, also from `withMCPServer` and `aiAgent()`. A bad config throws `InvalidArgument`, and so does any option a stdio server does not have, such as the typo `commandGaurd`
+- On Windows a `.cmd` or `.bat` file (`npx.cmd`) runs through `cmd.exe`: never pass untrusted text as its arguments
 - `inheritEnv: false` stops secrets in your environment reaching the server
 
 ## Giving MCP Tools to Agents and Models
@@ -199,6 +201,7 @@ Rules: only protocol messages on stdout (use `systemOutput( text, true, true )` 
 - The failure check is `hasError()`, there is no `isError()`
 - The BIF is `MCP( ... )`; there is no `startStdio()`, the server entry is `MCPRequestProcessor::processStdio()`
 - `command` is an array. `MCP( { command: "bxplaywright mcp" } )` throws `InvalidArgument`
+- `withMCPServer( { command: [...], prefix: "x" } )` is fine: `prefix` and `toolFilter` can sit in the struct. `MCP( { command: [...], prefix: "x" } )` throws, they only mean something to agents and models
 - Remember `close()` / `agent.closeMCPServers()` for stdio clients, otherwise the child process lives until module unload
 - `aiAgent()` takes `name` and `model` (an `aiModel()`), not `agentName` or `aiModel: "openai"`. BoxLang ignores unknown named arguments, so a wrong name fails silently
 - `withTimeout( ms )` is in milliseconds
