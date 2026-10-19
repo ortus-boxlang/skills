@@ -162,6 +162,19 @@ aiToolRegistry().scanClass( new FileSystemTools( allowedPaths: [ "/data" ] ), "b
 
 With no `allowedPaths`, all paths are allowed. Use with caution.
 
+### Tools registered by other modules
+
+Any module can register tools, under its own `name@module` keys. Registering only makes a tool available: an agent gets it only when its `tools` list names it. `getByModule( module )` returns every tool of a module and `getKeys()` lists all keys (there is no `keys()` method).
+
+```javascript
+aiToolRegistry().getKeys()                       // [ "now@bxai", "audioTrim@bxaudio", ... ]
+agent = aiAgent( name: "studio", tools: aiToolRegistry().getByModule( "bxaudio" ) )
+```
+
+`bx-audio` registers 26 audio tools (`audioInfo@bxaudio`, `audioTrim@bxaudio`, `audioMaster@bxaudio`, `audioSpeak@bxaudio`, ...) when both modules are installed. They work on files, write new files and never overwrite, and stay inside the `ai.allowedPaths` setting of bx-audio. See the `bx-audio` skill.
+
+A module that offers optional tools registers them from its `ModuleConfig` in `onLoad()` and `afterModuleActivations()`, inside a `try` around `aiToolRegistry()` so it still loads without bx-ai, and removes them in `onUnload()` with `aiToolRegistry().unregisterByModule( "mymodule" )`. Do not use `this.dependencies` for this, it makes bx-ai mandatory.
+
 ## Tools from MCP Servers
 
 Tools do not have to be written by hand. An MCP server (a URL, or a program launched as a child process) lists its tools and bx-ai wraps each one as an `ITool` (`MCPTool`) that forwards the call to the server. Give the server to an agent or a model:
