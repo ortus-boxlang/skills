@@ -23,6 +23,7 @@ Skills for working with official BoxLang modules. Each module has its own subdir
 | [bx-csrf](./bx-csrf/) | CSRF protection: `CSRFGenerateToken()`, `CSRFVerifyToken()`, `CSRFHiddenField()` | 1 skill |
 | [bx-esapi](./bx-esapi/) | OWASP ESAPI encoding (HTML, JS, URL, SQL, LDAP) and HTML sanitization | 1 skill |
 | [bx-password-encrypt](./bx-password-encrypt/) | Secure password hashing: BCrypt, Argon2, SCrypt, PBKDF2 | 1 skill |
+| [bx-audio](./bx-audio/) | Audio synthesis, editing, mixing, mastering, analysis and local text-to-speech, plus 26 tools that give BoxLang AI agents audio editing | 1 skill |
 | [bx-image](./bx-image/) | Image manipulation: resize, crop, rotate, filters, fluent builder, watermarks | 1 skill |
 | [bx-rss](./bx-rss/) | Parse and create RSS 2.0, Atom, and iTunes podcast feeds | 1 skill |
 | [bx-web-support](./bx-web-support/) | Mock HTTP requests for testing web-context handlers in CLI/TestBox | 1 skill |
@@ -52,5 +53,6 @@ npx skills add ortus-boxlang/skills/boxlang-modules/bx-compat-cfml
 npx skills add ortus-boxlang/skills/boxlang-modules/bx-esapi
 npx skills add ortus-boxlang/skills/boxlang-modules/bx-password-encrypt
 npx skills add ortus-boxlang/skills/boxlang-modules/bx-image
+npx skills add ortus-boxlang/skills/boxlang-modules/bx-audio
 npx skills add ortus-boxlang/skills/boxlang-modules/bx-web-support
 ```

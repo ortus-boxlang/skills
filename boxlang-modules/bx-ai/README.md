@@ -25,6 +25,7 @@ For complex tasks, load multiple skills together:
 - **Agent that uses MCP servers or a browser** → `bx-ai-agents` + `bx-ai-mcp`
 - **RAG system** → `bx-ai-rag` + `bx-ai-agents`
 - **AI pipeline** → `bx-ai-pipelines` + `bx-ai-models`
+- **Agent that edits audio files** → `bx-ai-agents` + `bx-ai-tools` + `bx-audio` (from `boxlang-modules/bx-audio`)
 - **Voice agent or speech app** → `bx-ai-audio` + `bx-ai-models` (add `bx-ai-agents` for an agent that speaks)
 - **Human approvals or chat platform gateways** → `bx-ai-agents`
 - **Full AI application** → all skills

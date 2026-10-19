@@ -7,6 +7,8 @@ description: "Use this skill when working with audio in bx-ai: text-to-speech wi
 
 > BoxLang is the AI-native software productivity platform for building, modernizing and running applications, with developers and AI agents working together.
 
+> To let an agent edit and measure audio files (trim, mix, master, analyze, local speech), install `bx-audio`: it registers tools such as `audioTrim@bxaudio` in the tool registry. See the `bx-audio` skill. `speak@bxai` uses a cloud provider, `audioSpeak@bxaudio` runs a local voice.
+
 ## Text to Speech: `aiSpeak()`
 
 ```java
