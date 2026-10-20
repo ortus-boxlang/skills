@@ -101,6 +101,7 @@ Common `this.*` settings in `Application.bx` include:
 - data and cache: `this.datasource`, `this.datasources`, `this.caches`
 - loading and resolution: `this.mappings`, `this.classPaths`, `this.javaSettings`
 - app async wiring: `this.schedulers`, `this.watchers`
+- your own values: `this.runtimeSettings` (deep merged over the global `runtimeSettings` in `boxlang.json`, app wins by key; `${env.X:default}` and `bxsecret:` are resolved every request; read with `getRuntimeSetting( "a.b", default )`; read-only)
 
 ## App-Scoped Schedulers and Watchers
 
