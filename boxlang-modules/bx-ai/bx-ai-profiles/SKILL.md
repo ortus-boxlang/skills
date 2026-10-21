@@ -18,6 +18,7 @@ A profile is a named combination of provider, model, params, options and API key
     "defaultParams": { "temperature": 0.7 },
     "profiles": {
       "fast": {
+        "description": "Cheap and quick, for small tasks",
         "provider": "openai",
         "model": "gpt-4.1-mini",
         "params": { "temperature": 0 },
@@ -37,6 +38,7 @@ A profile is a named combination of provider, model, params, options and API key
 
 | Key | Meaning |
 |-----|---------|
+| `description` | Free text for people and UIs, returned by `aiProfile()` and `aiProfiles()` |
 | `provider` | Provider key. Empty uses the top level `provider` |
 | `model` | Shorthand for `params.model` |
 | `params` | Request params for this profile |
@@ -83,7 +85,7 @@ agent.getProfile()   // "planner", empty when the agent was given a model direct
 ## List (for chat UIs and remote control)
 
 ```javascript
-aiProfiles()          // [ { name, provider, model, params, options, apiKeyEnv, hasApiKey, isDefault } ]
+aiProfiles()          // [ { name, description, provider, model, params, options, apiKeyEnv, hasApiKey, isDefault } ]
 aiProfile( "fast" )   // one profile, "" or no argument is the default profile
 aiProviders()         // [ { name, isDefault, hasApiKey } ]
 ```
