@@ -16,6 +16,8 @@ aiModel( provider, apiKey, tools=[], params={}, options={}, middleware=[], skill
 
 `mcpServers` takes URLs, HTTP or stdio (`{ command: [ ... ] }`) config structs, or `MCP()` clients, same as `aiAgent()`. The model also has `withMCPServer()`, `withMCPServers()` and `closeMCPServers()`. See `bx-ai-mcp`.
 
+`aiModel()` and `aiService()` also take `profile: "fast"` to use a named, pre-configured combination of provider, model, params and key. See `bx-ai-profiles`.
+
 Returns a reusable model runnable used in pipelines, agents, and direct calls. Always use named arguments beyond the first.
 
 ```javascript
