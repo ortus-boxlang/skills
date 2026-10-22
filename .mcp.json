@@ -1,20 +1,44 @@
 {
   "mcpServers": {
     "boxlang-docs": {
-      "type": "sse",
+      "type": "http",
       "url": "https://boxlang.ortusbooks.com/~gitbook/mcp"
     },
     "boxlang-ide-docs": {
-      "type": "sse",
+      "type": "http",
       "url": "https://boxlang-ide.ortusbooks.com/~gitbook/mcp"
     },
     "boxlang-ai-docs": {
-      "type": "sse",
+      "type": "http",
       "url": "https://ai.ortusbooks.com/~gitbook/mcp"
     },
     "bxorm-docs": {
-      "type": "sse",
+      "type": "http",
       "url": "https://bxorm.ortusbooks.com/~gitbook/mcp"
+    },
+    "testbox-docs": {
+      "type": "http",
+      "url": "https://testbox.ortusbooks.com/~gitbook/mcp"
+    },
+    "coldbox-docs": {
+      "type": "http",
+      "url": "https://coldbox.ortusbooks.com/~gitbook/mcp"
+    },
+    "commandbox-docs": {
+      "type": "http",
+      "url": "https://commandbox.ortusbooks.com/~gitbook/mcp"
+    },
+    "wirebox-docs": {
+      "type": "http",
+      "url": "https://wirebox.ortusbooks.com/~gitbook/mcp"
+    },
+    "cachebox-docs": {
+      "type": "http",
+      "url": "https://cachebox.ortusbooks.com/~gitbook/mcp"
+    },
+    "logbox-docs": {
+      "type": "http",
+      "url": "https://logbox.ortusbooks.com/~gitbook/mcp"
     }
   }
 }

@@ -38,18 +38,42 @@ That's it. Your AI agent now has BoxLang and CommandBox expertise.
 
 ## Claude Plugin Install
 
-Install this repository as a Claude plugin:
+Add this repository as a plugin marketplace, then install the plugin:
 
 ```bash
-claude plugin install https://github.com/ortus-boxlang/skills
+claude plugin marketplace add ortus-boxlang/skills
+claude plugin install boxlang-agent-skills@boxlang-agent-skills
 ```
 
-If you use plugin marketplace commands:
+Inside a session, `/plugin marketplace add ortus-boxlang/skills` and `/plugin install boxlang-agent-skills@boxlang-agent-skills` do the same.
+
+The plugin also connects the Ortus documentation MCP servers: BoxLang, BoxLang IDE, BoxLang AI, BoxLang ORM, TestBox, ColdBox, CommandBox, WireBox, CacheBox and LogBox.
+
+## Codex Plugin Install
+
+The same marketplace works in [Codex](https://developers.openai.com/codex/plugins/build/), with the same skills and documentation MCP servers:
 
 ```bash
-/plugin marketplace add ortus-boxlang/skills
-/plugin install boxlang-agent-skills@ortus-boxlang
+codex plugin marketplace add ortus-boxlang/skills
+codex plugin add boxlang-agent-skills@boxlang-agent-skills
 ```
+
+## bx-playwright Add-on (opt-in)
+
+The `bx-playwright` plugin gives the agent a real browser through [Playwright's MCP server](https://github.com/microsoft/playwright-mcp), started by `bxplaywright mcp --headless`. It needs the [bx-playwright](https://bxplaywright.boxlang.io/) module, so it is a separate install:
+
+```bash
+install-bx-module bx-playwright
+bxplaywright install
+
+# Claude Code
+claude plugin install bx-playwright@boxlang-agent-skills
+
+# Codex
+codex plugin add bx-playwright@boxlang-agent-skills
+```
+
+In Claude Code it also adds two commands: `/bx-playwright:doctor` (check the installation and fix what is missing) and `/bx-playwright:new-browser-spec` (scaffold a TestBox `@browser` spec). The bx-playwright skills ship in `boxlang-agent-skills`.
 
 ## Cursor Marketplace Install
 
@@ -357,5 +381,7 @@ Contributions are welcome! To add or improve a skill:
 2. Create or edit the relevant `SKILL.md` file
 3. Verify the frontmatter has a `name` and `description`
 4. Submit a pull request
+
+Plugins are released by bumping one version across every manifest (Claude, Cursor, Grok, Codex and the bx-playwright add-on). Run `scripts/sync-version.sh <version>`; CI fails when the manifests disagree (`scripts/sync-version.sh --check`).
 
 Skills should contain accurate, working code examples verified against the [BoxLang documentation](https://boxlang.ortusbooks.com/).
