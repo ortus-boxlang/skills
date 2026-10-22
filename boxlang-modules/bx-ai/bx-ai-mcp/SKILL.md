@@ -1,6 +1,6 @@
 ---
 name: bx-ai-mcp
-description: "Use this skill when consuming or exposing MCP (Model Context Protocol) servers with bx-ai: the MCP() BIF for HTTP URLs and stdio child processes (MCP( { command: [ ... ] } )), MCPResponse, discovery and tool calls, giving MCP tools to agents and models (mcpServers, withMCPServer, withMCPServers, prefix, toolFilter, closeMCPServers), stdio lifecycle, restarts, timeouts and security (allowedCommands, commandGuard), client events and stats, and creating MCP servers with MCPServer()."
+description: "Use this skill when consuming or exposing MCP (Model Context Protocol) servers with bx-ai: the MCP() BIF for HTTP URLs and stdio child processes (MCP( { command: [ ... ] } )), MCPResponse, discovery and tool calls, giving MCP tools to agents and models (mcpServers, withMCPServer, withMCPServers, prefix, toolFilter, closeMCPServers), stdio lifecycle, restarts, timeouts and security (allowedCommands, commandGuard), client events and stats, creating MCP servers with MCPServer(), and securing them (withRateLimit, withTrustedProxies, withAllowedIPs, withApiKeyProvider, withBasicAuth)."
 ---
 
 # bx-ai: MCP Clients and Servers
@@ -194,7 +194,33 @@ MCPRequestProcessor::processStdio( "default" )      // stops when stdin closes
 
 Rules: only protocol messages on stdout (use `systemOutput( text, true, true )` for human messages, `println()` writes to stdout); exit when stdin closes.
 
+## Rate Limiting and Trusted Proxies (servers)
+
+Off by default. Checked before authentication, after the IP allowlist and CORS preflight (a preflight is never counted).
+
+```javascript
+mcpServer( "myApp" )
+    .withTrustedProxies( [ "10.0.0.0/8" ] )
+    .withRateLimit( { limit: 100, window: 60, key: "ip", store: "cache", cacheName: "mcpLimits", failOpen: true } )
+
+mcpServer( "myApp" ).withRateLimit( 100 )     // 100 per 60 s, per IP
+mcpServer( "myApp" ).withRateLimit( false )   // opt out (also of the module default)
+```
+
+- `key`: `"ip"` (default), `"apiKey"` (needs `withApiKeyProvider()` first; only a key the provider accepts is a bucket, others fall back to the IP), `"global"` (one bucket, not `"server"`), or a lambda `( requestData ) => string` (an empty result means not limited)
+- `store`: `"cache"` (default, use a dedicated `cacheName`), `"memory"`, a class path, or an instance of a class that implements `bxModules.bxai.models.mcp.ratelimit.IRateLimitStore` (`increment( key, ttlSeconds, amount )`, `get( key )`, `remove( key )`)
+- `failOpen`: true (default) lets requests through when the store fails, false answers 503
+- Blocked: HTTP 429, JSON-RPC `-32002`, `Retry-After` and `X-RateLimit-Limit/Remaining/Reset` (the `X-RateLimit-*` also on allowed responses)
+- Logging never follows traffic: at most 10 warnings per minute per server and one summary line, not a setting. The `onMCPRateLimitHit` event (data: `mcpServer`, `serverName`, `key`, `keyType`, `limit`, `window`, `retryAfter`, `requestData`) shares that budget. Exact numbers are in `server.getStats().security.rateLimitFailures` and `server.getStats().rateLimit`
+- `server.hasRateLimit()`, `server.getRateLimiter().status( "ip:1.2.3.4" )` and `.reset( "ip:1.2.3.4" )`
+- Module defaults: `mcp.server.rateLimit` (`enabled` false, `limit` 60, `window` 60, `key`, `store`, `cacheName`, `failOpen`) and `mcp.server.trustedProxies`
+- `withTrustedProxies( [ ips or CIDRs ] )`: forwarded headers (`X-Forwarded-For`...) only count from those proxies, read from the right. Empty or `[ "*" ]` trusts them from anyone (the old behavior), only safe when clients can reach the server only through your proxy. The IP allowlist and the `ip` limit both use it
+- The cache store is exact inside one JVM only, approximate across nodes
+
 ## Common Pitfalls
+
+- Set `withTrustedProxies()` in production, otherwise a client can forge `X-Forwarded-For` to dodge an `ip` limit or an IP allowlist
+- `server` is a BoxLang scope: the shared rate limit key is `"global"`
 
 - `client.callTool()` and `client.getResource()` do not exist: use `send()` and `readResource()`
 - `listTools()` returns an `MCPResponse`, not an array: use `.getData().tools`
