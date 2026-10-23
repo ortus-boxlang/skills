@@ -37,7 +37,7 @@ Everything lives in `~/.boxlang/playwright` (setting `home` or `BX_PLAYWRIGHT_HO
 | `doctor`, `version`, `devices`, `profiles [name]`, `clean` | Inspect and maintain |
 | `codegen [url] [--output=file.bxs]` | Record actions as BoxLang code (`--target=java` etc. for other languages) |
 | `open [url]`, `screenshot <url> <file>`, `pdf <url> <file>`, `show-trace [zip]`, `mcp`, `run <args>` | Playwright CLI tools |
-| `help [verb] [--json]`, `completions` | Help and bash completions |
+| `help [verb] [--json]`, `completions [bash\|zsh\|fish\|powershell]` | Help and tab completions (bash is installed with the module) |
 
 ## Settings (`boxlang.json`)
 

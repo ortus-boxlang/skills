@@ -1,0 +1,34 @@
+name: Plugins
+
+on:
+  pull_request:
+    paths:
+      - ".claude-plugin/**"
+      - ".cursor-plugin/**"
+      - ".grok-plugin/**"
+      - ".codex-plugin/**"
+      - ".agents/plugins/**"
+      - ".mcp.json"
+      - "plugins/**"
+      - "scripts/sync-version.sh"
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check plugin manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Valid JSON
+        run: |
+          for file in .claude-plugin/*.json .cursor-plugin/*.json .grok-plugin/*.json .codex-plugin/*.json .agents/plugins/*.json .mcp.json $( find plugins -name '*.json' ); do
+            jq empty "$file" || { echo "Invalid JSON: $file"; exit 1; }
+          done
+
+      - name: Versions in sync
+        run: scripts/sync-version.sh --check
