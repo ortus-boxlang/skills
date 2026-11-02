@@ -1,6 +1,6 @@
 ---
 name: bx-orm-relationships
-description: "Use this skill when defining relationships between ORM entities: one-to-one, one-to-many, many-to-one, many-to-many, lazy loading, cascade options, foreign keys, link tables, singular names, and inverse relationships."
+description: "Use this skill when defining relationships between BoxLang ORM entities (bx-orm 2.x, Hibernate 7.4): one-to-one, one-to-many, many-to-one, many-to-many, fkcolumn, linktable, inversejoincolumn, inverse and mappedBy, lazy and fetch, cascade options, singularName and the generated has/add/remove methods, orderBy and where on collections, struct-keyed collections, value collections (fieldtype=collection), batch size and collection caching."
 ---
 
 # bx-orm: Entity Relationships
@@ -10,207 +10,222 @@ description: "Use this skill when defining relationships between ORM entities: o
 ## Relationship Overview
 
 | Type | Use Case | Example |
-|------|----------|---------|
+| --- | --- | --- |
 | `one-to-one` | Single associated record | User → Address |
 | `one-to-many` | Parent with collection | User → Posts |
 | `many-to-one` | Child pointing to parent | Post → Author |
-| `many-to-many` | Bidirectional multi | Author ↔ Book |
+| `many-to-many` | Multi on both sides | Author ↔ Book |
 
-Every relationship property uses `fieldtype` to declare its kind.
+Every relationship property uses `fieldtype` plus `class` (alias `cfc`): an
+entity name, class name or class path on the same datasource.
+
+## One-to-Many and Many-to-One (Bidirectional)
+
+```javascript
+// User.bx: the collection side is the inverse side
+class persistent="true" entityName="User" {
+    property name="id" fieldtype="id" generator="native";
+    property name="posts"
+        fieldtype    = "one-to-many"
+        class        = "Post"
+        fkcolumn     = "author_id"   // FK column in the posts table
+        inverse      = "true"        // Post.author owns the FK
+        singularName = "post"
+        cascade      = "all-delete-orphan";
+}
+
+// Post.bx: the owning side holds the FK column
+class persistent="true" entityName="Post" {
+    property name="id" fieldtype="id" generator="native";
+    property name="author" fieldtype="many-to-one" class="User"
+        fkcolumn="author_id";
+}
+```
+
+Instead of `inverse="true"`, `mappedBy="author"` on the collection names the
+owning property. Both tell Hibernate the collection does not write the FK.
+
+```javascript
+user  = entityLoadByPK( "User", 1 );
+posts = user.getPosts();      // array of Post entities
+user.hasPost();               // true if the collection has any items
+user.hasPost( somePost );     // true if somePost is in the collection
+user.addPost( newPost );      // returns the entity, for chaining
+user.removePost( oldPost );
+newPost.setAuthor( user );    // set the owning side too
+```
+
+## Generated Relationship Methods
+
+| Method | Generated for |
+| --- | --- |
+| `has<Name>( [entity] )` | All relationships (no argument on to-one) |
+| `add<Name>( entity )` | `one-to-many`, `many-to-many` |
+| `remove<Name>( entity )` | `one-to-many`, `many-to-many` |
+
+`<Name>` is the property name, or `singularName` when set (`posts` with
+`singularName="post"` gives `hasPost()`, `addPost()`, `removePost()`).
+Getters and setters (`getPosts()`, `setPosts()`) always use the property
+name. Methods you write yourself are never replaced. In 2.x a to-many
+`getX()` returns a snapshot, so `getPosts().each( p => removePost( p ) )`
+is safe.
 
 ## One-to-One
 
 ```javascript
-// Contact.bx — has one Address
-class persistent="true" entityName="Contact" {
+// Shared primary key: no fkcolumn, both rows have the same id
+property name="profile" fieldtype="one-to-one" class="Profile" cascade="all";
 
-    property name="id"      fieldtype="id" generator="native";
-    property name="name"    type="string";
+// Profile.bx: its id comes from the owner; constrained adds the PK FK
+property name="id" fieldtype="id" generator="foreign"
+    params="{ property = 'user' }";
+property name="user" fieldtype="one-to-one" class="User" constrained="true";
 
-    // One-to-one: each Contact has exactly one Address
-    property name="address"
-        fieldtype = "one-to-one"
-        class     = "Address";
-
-}
-```
-
-Set `lazy="false"` to eagerly load the related entity:
-
-```javascript
-property name="address"
-    fieldtype = "one-to-one"
-    class     = "Address"
-    lazy      = "false";
-```
-
-## One-to-Many
-
-```javascript
-// User.bx — has many Posts
-class persistent="true" entityName="User" {
-
-    property name="id"    fieldtype="id" generator="native";
-    property name="email" type="string";
-
-    // One-to-many: a User has many Posts
-    property name="posts"
-        fieldtype   = "one-to-many"
-        class       = "Post"
-        fkcolumn    = "author_id"   // FK column in the posts table
-        lazy        = "true"
-        singularName= "post";       // enables addPost(), removePost()
-
-}
-```
-
-Accessing the collection:
-
-```javascript
-user = entityLoadByPK( "User", 1 )
-posts = user.getPosts()       // returns array of Post entities
-user.addPost( newPost )       // uses singularName
-user.removePost( oldPost )    // uses singularName
-user.hasPosts()               // boolean
-```
-
-## Many-to-One
-
-```javascript
-// Post.bx — belongs to one Author (User)
-class persistent="true" entityName="Post" {
-
-    property name="id"    fieldtype="id" generator="native";
-    property name="title" type="string";
-
-    // Many-to-one: many Posts share one Author
-    property name="author"
-        fieldtype = "many-to-one"
-        class     = "User"
-        fkcolumn  = "author_id";
-
-}
-```
-
-```javascript
-post   = entityLoadByPK( "Post", 42 )
-author = post.getAuthor()     // returns User entity
+// Foreign-key one-to-one: with fkcolumn it is mapped as a many-to-one
+property name="address" fieldtype="one-to-one" class="Address"
+    fkcolumn="address_id";
 ```
 
 ## Many-to-Many
 
 ```javascript
-// Author.bx — can write many Books; Books can have many Authors
-class persistent="true" entityName="Author" {
+// Author.bx: owning side writes the link rows
+property name="books"
+    fieldtype         = "many-to-many"
+    class             = "Book"
+    linktable         = "author_books"
+    fkcolumn          = "author_id"    // this entity's FK in the link table
+    inversejoincolumn = "book_id"      // the other entity's FK
+    singularName      = "book";
 
-    property name="id"   fieldtype="id" generator="native";
-    property name="name" type="string";
-
-    property name="books"
-        fieldtype   = "many-to-many"
-        class       = "Book"
-        linktable   = "author_books"   // join table
-        fkcolumn    = "author_id"      // this entity's FK in join table
-        inversejoin = "book_id"        // other entity's FK in join table
-        singularName= "book";
-
-}
+// Book.bx: inverse side, same link table, columns swapped
+property name="authors"
+    fieldtype         = "many-to-many"
+    class             = "Author"
+    linktable         = "author_books"
+    fkcolumn          = "book_id"
+    inversejoincolumn = "author_id"
+    inverse           = "true"
+    singularName      = "author";
 ```
 
-```javascript
-// Book.bx — inverse side
-class persistent="true" entityName="Book" {
+`linkschema` and `linkcatalog` place the link table. A `one-to-many` with a
+`linktable` is mapped as a unique many-to-many through that table.
 
-    property name="id"      fieldtype="id" generator="native";
-    property name="title"   type="string";
-
-    property name="authors"
-        fieldtype   = "many-to-many"
-        class       = "Author"
-        linktable   = "author_books"
-        fkcolumn    = "book_id"
-        inversejoin = "author_id"
-        singularName= "author";
-
-}
-```
-
-## Relationship Property Annotations
+## Relationship Annotations
 
 | Annotation | Description |
-|------------|-------------|
-| `fieldtype` | Relationship type: `one-to-one`, `one-to-many`, `many-to-one`, `many-to-many` |
-| `class` | FULLY qualified path or entity name of the related class |
-| `fkcolumn` | Foreign key column name |
-| `linktable` | Join table name (many-to-many only) |
-| `inversejoin` | FK column for the other entity in the join table |
-| `lazy` | `"true"` (default) or `"false"` for eager loading |
-| `cascade` | `"all"`, `"save-update"`, `"delete"`, `"none"` |
-| `singularName` | Singular form — enables `addX()`, `removeX()`, `hasX()` methods |
-| `orderBy` | Default sort column(s) for collections |
-| `where` | SQL WHERE clause to filter the collection |
-| `fetch` | `"select"` or `"join"` fetching strategy |
+| --- | --- |
+| `fieldtype` | `one-to-one`, `one-to-many`, `many-to-one`, `many-to-many` |
+| `class` / `cfc` | Related entity (required) |
+| `fkcolumn` | FK column (comma list for multi-column keys) |
+| `linktable` | Join table; requires `fkcolumn` |
+| `inversejoincolumn` | The other entity's FK column in the link table |
+| `linkschema` / `linkcatalog` | Schema / catalog of the link table |
+| `inverse` | `true`: this side does not write the FK |
+| `mappedBy` | Owning property on the other entity |
+| `lazy` | `true`, `false`, `proxy`, `no-proxy`, `extra` |
+| `fetch` | To-one only: `select` (default) or `join` |
+| `cascade` | Comma list, see below (default `none`) |
+| `singularName` | Name used by the has/add/remove methods |
+| `orderBy` | Raw SQL `ORDER BY` for a to-many collection |
+| `where` | Raw SQL filter on a to-many collection |
+| `type` | Collection type: `array` (default) or `struct` |
+| `batchSize` | Collections fetched per round trip |
+| `constrained` | `one-to-one` only: PK is also an FK to the target |
+| `missingRowIgnored` | `many-to-one`: a dangling FK loads as null |
+| `notnull` | Required to-one association |
+| `cacheUse` / `cacheName` | Cache a to-many collection (2.x) |
+
+`orderBy` and `where` use column names, not property names.
 
 ## Cascade Options
 
-```javascript
-// Cascade save/delete to child records
-property name="posts"
-    fieldtype = "one-to-many"
-    class     = "Post"
-    fkcolumn  = "user_id"
-    cascade   = "all";         // save, update, and delete cascade
+| Value | Behavior (2.x) |
+| --- | --- |
+| `none` | No cascade (default) |
+| `save-update` | `entitySave()` persists new and merges detached children |
+| `persist` / `create` | Persist new children only |
+| `merge` | Merge children with the owner |
+| `delete` / `remove` | Delete children with the owner |
+| `delete-orphan` | Delete, plus delete children removed from the collection |
+| `all` | All operations |
+| `all-delete-orphan` | `all` plus orphan removal |
+| `refresh`, `evict`, `lock`, `replicate` | Cascade that operation |
 
-// Cascade save only (not delete)
-property name="address"
-    fieldtype = "one-to-one"
-    class     = "Address"
-    cascade   = "save-update";
-```
-
-| Cascade Value | Behavior |
-|--------------|----------|
-| `none` | No cascade |
-| `save-update` | Cascade save and update operations |
-| `delete` | Cascade delete only |
-| `all` | Cascade save, update, and delete |
-| `all-delete-orphan` | `all` + delete orphaned records |
+Combine values with commas: `cascade="save-update,delete"`. Hibernate 7
+removed the `save-update` style, so 2.x maps it to persist plus merge (1.x
+used Hibernate 5's own `save-update`, and `persist` was its alias).
+Unknown values are ignored silently.
+Orphan removal applies to to-many collections only.
 
 ## Lazy vs Eager Loading
 
 ```javascript
-// Lazy (default) — related entity loaded only when accessed
-property name="posts" fieldtype="one-to-many" class="Post" lazy="true";
+// Lazy (default): loaded on first access
+property name="posts" fieldtype="one-to-many" class="Post"
+    fkcolumn="author_id" lazy="true";
 
-// Eager — loads related entity in the same SQL query
+// Eager to-one
 property name="address" fieldtype="one-to-one" class="Address" lazy="false";
+
+// Eager to-one, fetched with a SQL join (no `lazy` attribute)
+property name="manufacturer" fieldtype="many-to-one" class="Manufacturer"
+    fkcolumn="FK_manufacturer" fetch="join";
 ```
 
-**Recommendation**: Use `lazy="true"` (default) for collections (one-to-many, many-to-many) and consider `lazy="false"` only for single-record relationships (one-to-one) where you always need the related data.
+Associations are lazy unless `lazy="false"`, including to-one ones.
 
-## N+1 Problem Prevention
+- In 2.x every lazy to-one (`true`, `proxy`, `no-proxy`) is a lazy proxy, and
+  the `proxyLazyLoading` setting has no effect. In 1.x `proxyLazyLoading`
+  decided whether `lazy="true"` became `proxy`.
+- `lazy="extra"` works like `true` in 2.x (Hibernate 7 has no extra-lazy
+  collections, so `size()` loads the collection). In 1.x it was extra-lazy.
+- `fetch="join"` makes a to-one eager only when `lazy` is not set (`lazy`
+  wins). bx-orm 2.x ignores `fetch` on to-many collections; use `lazy`.
 
-Use `batchSize` to batch-load related entities:
+## Struct and Value Collections
 
 ```javascript
-// Entity-level batchSize
-class persistent="true" entityName="Post" batchSize="20" {
-    // ...
-}
+// Entity collection keyed by a column (struct instead of array)
+property name="itemsByCode" fieldtype="one-to-many" class="Item"
+    fkcolumn="shelfId" type="struct" structKeyColumn="itemCode"
+    structKeyType="string";
 
-// Relationship-level batchSize
-property name="comments"
-    fieldtype = "one-to-many"
-    class     = "Comment"
-    fkcolumn  = "post_id"
-    batchSize = "20";
+// Value collection (2.x): plain values in their own table
+property name="tags" fieldtype="collection" type="array"
+    table="article_tags" fkcolumn="article_id"
+    elementColumn="tag" elementType="string";
 ```
+
+`structKeyColumn` is required for `type="struct"`. `structKeyFormula` can
+compute the key with SQL. A value collection with `type="struct"` also takes
+`structKeyColumn`/`structKeyType`.
+
+## N+1 Prevention
+
+```javascript
+class persistent="true" entityName="Post" batchSize="20" {}  // entity level
+
+property name="comments" fieldtype="one-to-many" class="Comment"
+    fkcolumn="post_id" batchSize="50";                          // collection
+```
+
+Without a collection `batchSize`, the `defaultBatchSize` ORM setting (16)
+applies.
 
 ## Common Pitfalls
 
-- ❌ Do NOT forget `fkcolumn` on one-to-many and many-to-one — Hibernate cannot infer it
-- ❌ Do NOT use `lazy="false"` on large collections — will load thousands of records
-- ❌ Do NOT forget `linktable` on many-to-many — it is required
-- ✅ Always set `singularName` on collection relationships for clean `addX()` / `removeX()` API
-- ✅ Use `cascade="all-delete-orphan"` on owned one-to-many collections (e.g., order → line items)
-- ✅ Define both sides of many-to-many relationships with matching `linktable` values
+- ❌ Do NOT write `inversejoin`: the annotation is `inversejoincolumn`
+  (unknown annotations are ignored)
+- ❌ Do NOT use `linktable` without `fkcolumn`: the ORM fails to start
+- ❌ Do NOT leave both sides of a bidirectional pair owning: mark the
+  collection (or one many-to-many side) `inverse="true"` or use `mappedBy`
+- ❌ Do NOT use `lazy="false"` on large collections: every load pulls them
+- ❌ Do NOT expect `lazy="extra"` to count without loading in 2.x
+- ✅ Declare `fkcolumn` explicitly; an owning one-to-many without it borrows
+  the target's back-reference FK, or falls back to a join table with a warning
+- ✅ Set `singularName` on collections for `addPost()` / `removePost()`
+- ✅ Use `cascade="all-delete-orphan"` on owned children (order → line items)
+- ✅ Set both sides in memory (`addPost()` and `setAuthor()`) on
+  bidirectional pairs

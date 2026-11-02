@@ -8,7 +8,7 @@ Skills for working with official BoxLang modules. Each module has its own subdir
 |--------|-------------|--------|
 | [bx-ai](./bx-ai/) | BoxLang AI: multi-provider AI, agents, MCP, RAG, memory, pipelines | 9 skills |
 | [bx-playwright](./bx-playwright/) | Browser automation and testing with Playwright: fluent DSL, assertions, TestBox `@browser` specs and ColdBox `BaseTestCase` browser tests, network, PDF/screenshots, AI tools | 7 skills |
-| [bx-orm](./bx-orm/) | BoxLang ORM: Hibernate-backed Object-Relational Mapping | 6 skills |
+| [bx-orm](./bx-orm/) | BoxLang ORM: Hibernate-backed Object-Relational Mapping | 7 skills |
 | [bx-ftp](./bx-ftp/) | FTP/SFTP/FTPS file transfer with `bx:ftp` component | 1 skill |
 | [bx-jdbc](./bx-jdbc/) | JDBC driver modules: MySQL, PostgreSQL, MSSQL, Oracle, SQLite, Derby, etc. | 1 skill |
 | [bx-markdown](./bx-markdown/) | Markdown-to-HTML and HTML-to-Markdown conversion BIFs | 1 skill |
