@@ -136,7 +136,7 @@ agent = aiAgent(
     name      : "ResearchAgent",
     mcpServers: [
         "http://localhost:3000/mcp",
-        { url: "https://api.example.com/mcp", token: server.system.environment.MCP_TOKEN, timeout: 5000 },
+        { url: "https://api.example.com/mcp", token: getSystemSetting( "MCP_TOKEN" ), timeout: 5000 },
         // A program the agent launches as a child process (stdin/stdout)
         { command: [ "bxplaywright", "mcp" ], env: { HEADLESS: "true" }, prefix: "browser" }
     ]
@@ -150,7 +150,7 @@ agent.closeMCPServers()
 
 HTTP struct keys: `url`, `token` (bearer), `timeout`, `headers`, `user` + `password` (basic auth), `urlGuard`, `redirects`, `maxResponseBytes`, `handshake`, `httpVersion`.
 Stdio struct keys: `command` (array, required), `env`, `cwd`, `inheritEnv`, `maxRestarts`, `commandGuard`, `timeout`.
-Both: `prefix` (tools become `prefix__name`) and `toolFilter` (only these tools). Also available as `withMCPServer( server, config )` and `withMCPServers( servers )`.
+Both: `prefix` (tools become `prefix__name`) and `toolFilter` (only these tools). An HTTP entry also takes `oauth: { redirectUri, subject, store, scopes, ... }` to sign each person in to a protected server (3.8.0, see `bx-ai-mcp`). Also available as `withMCPServer( server, config )` and `withMCPServers( servers )`.
 
 ## Fluent Configuration
 
@@ -371,7 +371,8 @@ agent.run( "Answer using this context: #context#" )
 - Do NOT call `.withMemory()`: pass `memory:` in the constructor or use `.addMemory()` / `.setMemory()`
 - `aiMemory( "windowed" )` throws `InvalidMemoryType`: the type is `"window"`
 - `agent.stream()` takes the callback first, then the input
-- `mcpServers` entries have no `toolNames` or `apiKey` key: use `token`
+- `mcpServers` entries have no `toolNames` or `apiKey` key: use `token`, or `oauth` when the server asks people to sign in
+- With `oauth`, an agent whose person has not signed in yet starts without that server's tools (logged, no throw). Sign in, then `agent.withMCPServer( signedInClient )`
 - A stdio entry takes `command` (an array), not `url`. HTTP-only keys (`token`, `headers`, `urlGuard`, ...) on a stdio entry throw `InvalidArgument`
 - Call `agent.closeMCPServers()` when done with stdio servers, otherwise the child processes live until the module unloads
 - A stdio server that cannot start is logged and skipped (the agent runs without its tools); a command refused by `mcp.stdio.allowedCommands` or `commandGuard` throws `MCPCommandRefused`
