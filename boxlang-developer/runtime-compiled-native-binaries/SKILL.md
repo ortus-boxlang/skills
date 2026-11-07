@@ -1,6 +1,6 @@
 ---
 name: boxlang-runtime-compiled-native-binaries
-description: "Use this skill when compiling BoxLang scripts to standalone native executables using MatchBox's --target native flag, cross-compiling for multiple platforms, optimizing binary size, and using Native Fusion to expose Rust functions as BoxLang built-in functions."
+description: "Use this skill when compiling BoxLang scripts to standalone native executables with MatchBox's --target native flag, shipping them (containers, GitHub release builds), understanding binary size and what a native build includes, and when to reach for Native Fusion Rust interop."
 ---
 
 # BoxLang Compiled Native Binaries
@@ -9,164 +9,103 @@ description: "Use this skill when compiling BoxLang scripts to standalone native
 
 ## Overview
 
-MatchBox can compile BoxLang source code to standalone native executables using `--target native`. The resulting binary embeds a small Rust runner stub (~500 KB) with the compiled BoxLang bytecode appended, requiring no JVM or MatchBox installation on the target machine.
+`matchbox --target native` compiles BoxLang to bytecode and appends it to a small pre-built **runner stub** (about 500 KB, VM core only). At startup the stub finds the bytecode at the end of its own file and runs it. The result is one file with no JVM and no MatchBox install needed on the destination.
+
+Install MatchBox with MVM first: see [`matchbox-mvm`](../matchbox-mvm/SKILL.md).
 
 ---
 
-## Building a Native Binary
+## Build and Run
 
 ```bash
-# Compile script to a native executable (same OS/arch as build machine)
-matchbox --target native app.bxs
-# Output: ./app  (or app.exe on Windows)
-
-# Run it
-./app --config=prod.json --debug
+matchbox app.bxs                    # test first, interpreted (JIT on in the native CLI)
+matchbox --target native app.bxs    # produces ./app  (app.exe on Windows)
+./app
 ```
 
-The binary accepts the same CLI argument format as the `matchbox` runner.
+Useful options (`matchbox --help` lists all of them for your version):
+
+| Option | Effect |
+|--------|--------|
+| `--output <path>` | Set the output file path |
+| `--strip-source` | Remove embedded source text. Errors still report file and line, and native binaries read snippets from disk |
+| `--no-shaking`, `--keep <bifs>`, `--no-std-lib` | Control tree-shaking of the prelude BIFs |
+
+Native binaries are platform specific. The JIT is **not** included in the runner stub, so a deployed binary runs on the interpreter.
 
 ---
 
-## Cross-Compilation
+## Cross-Platform Builds
 
-Build for multiple platforms using GitHub Actions (recommended) or the `cross` Rust tool:
-
-### GitHub Actions (5 targets in parallel)
+The released `matchbox` CLI embeds runner stubs for several platforms. For release artifacts, build on a runner per platform (GitHub Actions matrix) and verify each binary on its own OS. Check `matchbox --help` for the platform options available in your installed version rather than assuming flags.
 
 ```yaml
-# .github/workflows/release.yml
-name: Build Native Binaries
-
-on:
-  push:
-    tags: ["v*"]
-
+# .github/workflows/release.yml (shape only, one job per OS)
 jobs:
   build:
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            artifact: app-linux-x64
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            artifact: app-linux-arm64
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            artifact: app-macos-x64
-          - os: macos-latest
-            target: aarch64-apple-darwin
-            artifact: app-macos-arm64
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact: app-windows-x64.exe
-
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install MatchBox
-        run: curl -sSL https://raw.githubusercontent.com/ortus-boxlang/matchbox/master/install/install.sh | bash
-
-      - name: Compile
-        run: matchbox --target native --arch ${{ matrix.target }} app.bxs -o ${{ matrix.artifact }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+      - name: Install MVM and MatchBox
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ortus-boxlang/matchbox-quick-installer/main/install/install.sh | bash
+          # MVM adds itself to PATH through shell init. Open a new shell, or source the init script it prints.
+          mvm install latest && mvm use latest
+      - name: Build
+        run: matchbox --target native app.bxs
 ```
 
-### Cross-compilation with `cargo cross`
-
-```bash
-cargo install cross
-
-# Linux ARM64 from macOS or Linux x64
-cross build --release --target aarch64-unknown-linux-gnu
-```
+Windows runners use `install.ps1` instead of the shell script. Confirm the PATH handling on your runner image before relying on it.
 
 ---
 
-## Binary Size Optimizations
+## Native Fusion (Rust interop)
 
-The default release binary is ~500 KB. You can reduce further with these Rust profile settings in `Cargo.toml`:
-
-```toml
-[profile.release]
-opt-level = "z"     # Optimize for size (not speed)
-lto = true          # Link-time optimization
-codegen-units = 1   # Single codegen unit (better LTO)
-strip = true        # Strip debug symbols from binary
-```
-
----
-
-## Native Fusion — Rust BIFs
-
-Native Fusion lets you write Rust functions and expose them as BoxLang BIFs inside a native binary. This is for performance-critical operations that can't be done efficiently in BoxLang:
+Put Rust files in a `native/` directory next to `app.bxs` and the same `matchbox --target native app.bxs` command compiles them together with the VM into one binary. Native Fusion is native-only (not WASM or ESP32), and these builds go through cargo, so they are larger and slower to build than the plain stub. Full reference: [`matchbox-native-fusion`](../matchbox-native-fusion/SKILL.md).
 
 ```rust
-// src/main.rs
-use matchbox_sdk::prelude::*;
+// native/math.rs
+use matchbox_vm::{matchbox_fn, types::BxNativeFunction};
+use std::collections::HashMap;
 
-fn fast_hash(value: &str) -> String {
-    // your Rust implementation
-    format!("{:x}", md5::compute(value))
-}
+#[matchbox_fn]
+pub fn add( a: f64, b: f64 ) -> f64 { a + b }
 
-fn main() {
-    let engine = MatchBoxEngine::new()
-        .register_bifs(vec![
-            bif!("FastHash", fast_hash)
-        ])
-        .run_file("app.bxs");
+pub fn register_bifs() -> HashMap<String, BxNativeFunction> {
+	let mut map = HashMap::new();
+	map.insert( "add".to_string(), add_wrapper as BxNativeFunction );
+	map
 }
 ```
 
 ```js
-// app.bxs — calls the Rust BIF
-var hash = FastHash( "hello world" )
-println( hash )
-```
-
-Build as a combined Rust + BoxLang executable:
-
-```bash
-cargo build --release
-# Output: target/release/myapp
+// app.bxs
+println( add( 10, 20 ) ); // 30
 ```
 
 ---
 
 ## Distribution Patterns
 
-### Single self-contained binary
-
-```bash
-matchbox --target native app.bxs -o myapp
-# Distribute: just the `myapp` file, no dependencies needed
-```
-
-### Docker with minimal image
-
 ```dockerfile
-FROM scratch
-COPY myapp /myapp
-ENTRYPOINT ["/myapp"]
+# Static-friendly binaries can ship in a minimal image. Verify the binary's libc needs first.
+FROM debian:stable-slim
+COPY app /app
+ENTRYPOINT ["/app"]
 ```
 
-Results in an image with only the executable — < 1MB total.
+A `FROM scratch` image only works if the binary has no dynamic library needs. Test it. When in doubt, use a slim base image.
 
 ---
 
 ## Checklist
 
-- [ ] Test with `matchbox app.bxs` (interpreted) before compiling to native
-- [ ] Use GitHub Actions matrix to build all 5 platform targets
-- [ ] Apply `opt-level="z"`, `lto=true`, `strip=true` for minimal binary size
-- [ ] Use Native Fusion for computationally intensive operations (hashing, encoding, parsing)
-- [ ] Distribute as `FROM scratch` Docker images for microservice deployments
-- [ ] Validate cross-compiled binaries on each target platform before release
+- [ ] Test with `matchbox app.bxs` before `--target native`
+- [ ] Remember the runner stub has no JIT
+- [ ] Build each platform on its own runner and test the artifact there
+- [ ] Use `--strip-source` if you do not want source text in the binary
+- [ ] Use Native Fusion only for hot paths or Rust crates, in native builds
+- [ ] Never claim Java interop in native builds is stable. It is experimental and needs a JDK

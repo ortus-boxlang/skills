@@ -102,19 +102,25 @@ public class StringTitleCase extends BIF {
      * @param arguments Function arguments scope
      */
     @Override
+    private static final Key delimitersKey = Key.of( "delimiters" );
+
     public Object invoke( IBoxContext context, ArgumentsScope arguments ) {
-        String str        = arguments.getAsString( Key.of( "str" ) );
-        String delimiters = arguments.getAsString( Key.of( "delimiters" ) );
+        String str        = arguments.getAsString( Key.string );
+        String delimiters = arguments.getAsString( delimitersKey );
 
         if ( str == null || str.isEmpty() ) return "";
 
-        String[] words = str.split( "[" + delimiters + "]" );
-        StringBuilder sb = new StringBuilder();
-        for ( int i = 0; i < words.length; i++ ) {
-            if ( i > 0 ) sb.append( delimiters.charAt( 0 ) );
-            if ( !words[i].isEmpty() ) {
-                sb.append( Character.toUpperCase( words[i].charAt(0) ) );
-                sb.append( words[i].substring(1).toLowerCase() );
+        // Single pass: no split() regex, no substring() allocations
+        StringBuilder sb         = new StringBuilder( str.length() );
+        boolean       capitalize = true;
+        for ( int i = 0; i < str.length(); i++ ) {
+            char c = str.charAt( i );
+            if ( delimiters.indexOf( c ) >= 0 ) {
+                sb.append( c );
+                capitalize = true;
+            } else {
+                sb.append( capitalize ? Character.toUpperCase( c ) : Character.toLowerCase( c ) );
+                capitalize = false;
             }
         }
         return sb.toString();
@@ -255,6 +261,12 @@ new Argument( required, type, key, defaultValue )
 //        "query", "date", "function", "closure", "lambda", "class"
 ```
 
+## BIF Performance
+
+BIFs often run in tight loops. Avoid `Key.of()` per call (use `Key` constants or
+`static final` keys), avoid `substring()` when you only compare or search, and
+precompile regex patterns. See the `performance` skill for the full list.
+
 ## Testing Your BIF
 
 ```boxlang
@@ -301,6 +313,7 @@ if ( structKeyExists( getFunctionList(), "greet" ) ) {
 
 ## References
 
+- Performance patterns: see the `performance` skill
 - [BoxLang Source — Core BIFs](https://github.com/ortus-boxlang/BoxLang/tree/development/src/main/java/ortus/boxlang/runtime/bifs)
 - [BIF Base Class](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/bifs/BIF.java)
 - [BoxBIF Annotation](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/bifs/BoxBIF.java)

@@ -1,6 +1,6 @@
 ---
 name: boxlang-testing
-description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning failures with --failed, and running tests via the BoxLang CLI runner. For browser tests (BrowserSpec, BrowserTestCase) also load bx-playwright-testing."
+description: "Use this skill when writing, running, or debugging tests for BoxLang applications using TestBox: BDD-style describe/it specs, xUnit-style test classes, expectations (expect/toBe matchers), assertions ($assert), life-cycle methods (beforeAll/afterAll/beforeEach/afterEach/aroundEach), MockBox mocking (createMock/prepareMock/$()/$results()), mock data generation (mockData()), async testing, exception testing, focused/skipped specs, attaching files to specs (attach()), spec retries (it retries argument, retries annotation, --retries), rerunning only failures (--failed, the Run Failed button of the HTML reports, TestResult.getFailedTargets()), choosing reporters (HTML reporters with Run Failed and Ask AI, the Agent reporter for AI agents), and running tests via the BoxLang CLI runner. For browser tests (the @browser annotation, ColdBox BaseTestCase with @browser) also load bx-playwright-testing."
 ---
 
 # BoxLang Testing with TestBox
@@ -11,8 +11,8 @@ description: "Use this skill when writing, running, or debugging tests for BoxLa
 
 TestBox is the standard testing framework for BoxLang. It supports two styles:
 
-- **BDD** (Behavior-Driven Development) — `describe()`, `it()`, `feature()`, `story()`, `given()/when()/then()`
-- **xUnit** — class-based, `test*()` methods, `setup()`/`tearDown()`
+- **BDD** (Behavior-Driven Development): `describe()`, `it()`, `feature()`, `story()`, `given()/when()/then()`
+- **xUnit**: class-based, `test*()` methods, `setup()`/`tearDown()`
 
 Both styles use the same assertions/expectations library and MockBox for mocking.
 
@@ -116,7 +116,7 @@ it( "does something", () => {
     expect( true ).toBeTrue()
 } )
 
-// then() is an alias for it() — title arg is "then" instead of "title"
+// then() is an alias for it(): title arg is "then" instead of "title"
 then( "something should happen", () => {
     expect( result ).notToBeNull()
 } )
@@ -429,20 +429,20 @@ assertIsNull( value )
 Prefix any suite/spec function with `x` OR use the `skip` argument:
 
 ```boxlang
-// Prefix approach — skip entire suite
+// Prefix approach: skip entire suite
 xdescribe( "Slow integration tests", () => { ... } )
 
-// Prefix approach — skip single spec
+// Prefix approach: skip single spec
 xit( "is temporarily disabled", () => { ... } )
 
-// skip argument — boolean or closure
+// skip argument: boolean or closure
 it( title="runs only on production", skip=!isProduction(), body=() => { ... } )
 
 describe( title="Lucee only", skip=() => !structKeyExists( server, "lucee" ), body=() => {
     it( "uses Lucee ORM", () => { ... } )
 } )
 
-// skip() method inside spec — programmatic
+// skip() method inside spec: programmatic
 it( "can run on multiple engines", () => {
     if ( !server.keyExists( "boxlang" ) ) {
         skip( "BoxLang-only feature" )
@@ -453,7 +453,7 @@ it( "can run on multiple engines", () => {
 
 ### Focus Specs/Suites
 
-Prefix with `f` or use `focused=true` — ONLY focused specs/suites run:
+Prefix with `f` or use `focused=true`: ONLY focused specs/suites run:
 
 ```boxlang
 // Focus a single spec
@@ -468,7 +468,7 @@ fdescribe( "Critical path", () => {
 } )
 ```
 
-> **Warning**: Never commit focused tests — CI will only run those specs.
+> **Warning**: Never commit focused tests: CI will only run those specs.
 
 ---
 
@@ -482,7 +482,7 @@ MockBox is built into TestBox. Helper methods are available in every bundle.
 // Create a mock of a class (real methods unless overridden)
 var mockService = createMock( "services.UserService" )
 
-// Create an empty mock (ALL methods removed — you mock everything)
+// Create an empty mock (ALL methods removed: you mock everything)
 var mockRepo = createEmptyMock( "repositories.UserRepository" )
 
 // Decorate an existing instance with mocking capabilities
@@ -762,7 +762,19 @@ function testFlaky() { ... }
 
 Skipped specs are never retried. Use retries for genuinely flaky I/O (browsers, networks), not to hide bugs.
 
-### Rerun Only Failures: `--failed`
+### Rerun Only Failures
+
+`results.getFailedTargets()` returns what failed in a run, on every engine: `{ bundles, specs, bundleErrors }` (bundle paths, spec ids, and bundles that failed outside of a spec). Run only those with the existing filters:
+
+```js
+var failed = results.getFailedTargets()
+new testbox.system.TestBox( bundles = failed.bundles ).runRaw( testBundles = failed.bundles, testSpecs = failed.specs )
+```
+
+- **HTML reports** (Simple, Min, Dot, Doc): a **Run Failed (N)** button next to **Run All**, shown only when something failed. Its link (`?testBundles=...&testSpecs=...`) is built from the report itself, so web runners keep no state; past 2000 characters it reruns the failed bundles whole.
+- **BoxLang CLI** `--failed`: see below.
+
+#### `--failed`
 
 Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bundles and specs that failed or errored. `./testbox/run --failed` reruns only those; when the file is missing or empty it prints a message and runs nothing. A bundle that failed outside of a spec (`beforeAll()`, `afterAll()`) is broken, not flaky: it goes to `bundleErrors` in the file and is listed, never rerun. The other bundles still rerun only their failed specs.
 
@@ -772,7 +784,7 @@ Every BoxLang runner run writes `{reportpath}/.testbox-failed.json` with the bun
 
 ### Browser Tests
 
-For browser tests extend `testbox.system.BrowserSpec` (or `coldbox.system.testing.BrowserTestCase` in ColdBox apps) and use `browse()`, the browser matchers (`expect( page ).toSee( "Welcome" )`) and the `--web-server` runner option. Load the **bx-playwright-testing** skill for the full API.
+For browser tests annotate the spec with `@browser` (or `@browserProfile( "ci" )` / `@baseURL( "http://..." )`) above `class extends="testbox.system.BaseSpec"` (in ColdBox apps, `coldbox.system.testing.BaseTestCase`) and use `browse()`, the browser matchers (`expect( page ).toSee( "Welcome" )`) and the `--web-server` runner option. Load the **bx-playwright-testing** skill for the full API.
 
 ---
 
@@ -824,7 +836,7 @@ For browser tests extend `testbox.system.BrowserSpec` (or `coldbox.system.testin
 | `--retries` | `0` | Extra runs for failing or erroring specs (spec and bundle values win) |
 | `--failed` | `false` | Run only the bundles and specs that failed or errored in the last run |
 | `--web-server` | | Shell command that starts a web server before the tests, stopped after them |
-| `--web-server-url` | `http://localhost:8080` | URL polled until the server answers; default `baseURL` of `BrowserSpec` bundles |
+| `--web-server-url` | `http://localhost:8080` | URL polled until the server answers; default `baseURL` of browser-enabled (`@browser`) bundles |
 | `--web-server-timeout` | `60` | Seconds to wait for the server, exits with code 1 when it does not answer |
 
 ### CommandBox Runner
@@ -836,6 +848,44 @@ box testbox run --verbose
 ```
 
 ---
+
+## Reporters
+
+Pick one with `reporter=` in the runner URL, `--reporter=` on the BoxLang CLI runner, or `reporter = { type : "...", options : {} }` in code.
+
+| Reporter | Output |
+|----------|--------|
+| `Simple` | The complete HTML report: failures first, then every bundle, with Ask AI and editor links |
+| `Min` / `Dot` / `Doc` | HTML: only what needs attention / one dot per spec with a details drawer / documentation style |
+| `Text`, `MinText`, `Console` | Plain text |
+| `JSON`, `Raw`, `XML` | Full results as data |
+| `JUnit`, `ANTJunit` | JUnit XML for CI (attachments as `[[ATTACHMENT\|path]]` lines in `<system-out>`) |
+| `Agent` | Compact JSON for AI agents: totals plus only the failures |
+
+### HTML reporters (Simple, Min, Dot, Doc)
+
+- A verdict banner first (counts, proportion bar, status filters), light, dark and system themes, `F` jumps to the next failure, `/` searches.
+- **Run** links on every bundle, suite and spec, **Run All**, and **Run Failed (N)** when something failed (built from the report, no state, see Rerun Only Failures).
+- `?editor=vscode` (default) and other editors turn failures and stack frames into open-in-editor links.
+- **Ask AI** on every failure: copy or preview a prompt, open it in ChatGPT or Claude, or copy it as Agent JSON. Nothing leaves the page until a provider is clicked.
+
+```js
+reporter = {
+    type    : "testbox.system.reports.SimpleReporter",
+    options : {
+        aiAssist       : true,   // false (or ?aiAssist=false) removes Ask AI
+        aiContextLines : 5,      // code lines around the failing line
+        aiStackFrames  : 8,
+        aiProviders    : [ { id : "acme", name : "Acme AI", url : "https://ai.acme.test/?p={prompt}" } ],
+        aiPrompt       : "{intro} {spec} ({status}) {message} {code} {stack} Rerun: {rerun}",
+        urlParams      : { editor : "idea" }   // request params for reports produced from code (no url scope)
+    }
+}
+```
+
+### Agent reporter (`reporter=agent`)
+
+One minified JSON line: `{"ok":false,"totals":{"pass","fail","error","skipped","specs","ms"},"failures":[{"bundle","spec","status","message","at"}],"truncated":0}`. Branch on `ok`; the exit code is not changed. Options: `detail` (`summary`, `failures`, `all`), `maxFailures` (20), `maxMessageLength` (300), `includeStack` (false), `stackDepth` (3), `includeSkipped`, `includeDebug`. Prefer it when an agent runs the tests: `./testbox/run --reporter=agent`.
 
 ## Test Harness Layout
 

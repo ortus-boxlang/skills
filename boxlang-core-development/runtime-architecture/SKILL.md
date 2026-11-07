@@ -533,6 +533,7 @@ svc.doSomething( "hello" );
 
 ## References
 
+- Performance patterns for core code: see the `performance` skill
 - [BoxLang Source](https://github.com/ortus-boxlang/BoxLang)
 - [BoxRuntime.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/BoxRuntime.java)
 - [IBoxContext](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/context/IBoxContext.java)

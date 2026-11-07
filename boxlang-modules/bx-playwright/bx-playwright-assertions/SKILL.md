@@ -65,7 +65,7 @@ pw.newPage( { timeouts : { assertion : 10000, action : 15000 } } )
 | `Playwright.ActionFailed` | Playwright refused an action |
 | `Playwright.InvalidOption` | Bad option, value, method, device or selector; `detail` lists valid values |
 | `Playwright.InvalidProfile` | Unknown profile or `extends` loop |
-| `Playwright.NotInstalled` | Driver, Node.js, browser or bx-ai missing (`bxPlaywright install`) |
+| `Playwright.NotInstalled` | Driver, Node.js, browser or bx-ai missing (`bxplaywright install`) |
 
 ```js
 try {

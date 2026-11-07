@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Production-ready Claude Code skills for BoxLang and CommandBox — language fundamentals, OOP, async programming, web, database, caching, Java integration, modules (AI, ORM, Playwright browser testing and more), deployment, runtime extension, CLI, package management, embedded server, and task runners",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "plugins": [
     {
@@ -16,7 +16,7 @@
         "repo": "ortus-boxlang/skills"
       },
       "description": "BoxLang and CommandBox skills for Claude Code — language fundamentals, OOP, async, web, DB, caching, Java integration, modules (AI, ORM, Playwright browser testing and more), deployment, runtime extension, CLI, package management, embedded server, and task runners",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": {
         "name": "Ortus Solutions",
         "email": "info@ortussolutions.com"
@@ -34,6 +34,21 @@
       ],
       "commands": "./commands/",
       "mcpServers": "./.mcp.json"
+    },
+    {
+      "name": "bx-playwright",
+      "source": "./plugins/bx-playwright",
+      "description": "Opt-in add-on: Playwright's browser MCP server (bxplaywright mcp) and bx-playwright commands. Needs the bx-playwright module installed. The bx-playwright skills ship in boxlang-agent-skills.",
+      "version": "1.3.0",
+      "author": {
+        "name": "Ortus Solutions",
+        "email": "info@ortussolutions.com"
+      },
+      "homepage": "https://bxplaywright.boxlang.io/",
+      "repository": "https://github.com/ortus-boxlang/skills",
+      "license": "Apache-2.0",
+      "keywords": ["boxlang", "playwright", "browser", "mcp", "e2e", "testing", "testbox", "coldbox"],
+      "category": "testing"
     }
   ]
 }

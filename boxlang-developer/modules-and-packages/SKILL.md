@@ -284,6 +284,21 @@ for ( var person in result ) {
 }
 ```
 
+### `bx-audio` — Audio
+
+```boxlang
+// Make a tone, fade it, save it, inspect it
+tone = audioOsc( "sine", 440, 1 )
+tone = audioFade( audio=tone, fadeIn=0.01, fadeOut=0.2, curve="smooth" )
+audioSave( tone, "tone.wav" )
+println( audioInfo( "tone.wav" ) )
+
+// Master a recording to the podcast loudness standard
+audioSave( audioMaster( audio=audioLoad( "episode.wav" ), target="podcast" ), "episode-mastered.wav" )
+```
+
+With `bx-ai` installed, bx-audio also registers agent tools (`audioTrim@bxaudio` and 25 more). See the `bx-audio` skill.
+
 ### `bx-image` — Image Manipulation
 
 ```boxlang

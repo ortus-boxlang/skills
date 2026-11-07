@@ -372,6 +372,29 @@ Configure the built-in `WatcherService` for filesystem monitoring. Watchers reac
 
 ---
 
+## Runtime Settings
+
+User-defined global named settings. BoxLang does not interpret them. Values can be any type (strings, numbers, booleans, structs, arrays) and keys are unique.
+
+```json5
+{
+    "runtimeSettings": {
+        "apiUrl":    "${env.API_URL:http://localhost}",
+        "stripeKey": "bxsecret:AbC123...",
+        "features":  { "beta": true, "regions": [ "us", "eu" ] }
+    }
+}
+```
+
+- `${env.VAR}`, `${env.VAR:default}`, the path variables and `bxsecret:` values resolve at any depth, including inside arrays. Interpolated values are strings. An unresolved placeholder with no default stays literal.
+- Read with the `getRuntimeSetting( key, default )` BIF: dotted paths (`features.beta`), 1-based array indexes (`features.regions.1`), no args returns the whole merged struct, a missing key without a default throws.
+- Values are deeply read-only.
+- `this.runtimeSettings` in `Application.bx` (or `bx:application runtimeSettings={...}`) **deep merges** over the global struct, app wins by key. Arrays and scalars are replaced, not merged.
+- Global values resolve once at runtime config load. The `Application.bx` layer re-resolves `${...}` and `bxsecret:` on **every request** when the descriptor is re-read, then is cached for that request. Only `runtimeSettings` is `${...}` interpolated at the app layer.
+- This is different from `getSystemSetting()`, which reads Java system properties and environment variables.
+
+---
+
 ## Experimental
 
 Feature flags for in-progress BoxLang capabilities. These settings may change or be removed.

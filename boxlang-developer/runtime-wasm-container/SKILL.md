@@ -17,6 +17,8 @@ MatchBox can compile BoxLang source to **WebAssembly (WASM)** for server-side ex
 
 ## Compiling to WASM
 
+`matchbox --help` also lists `--target wasi` (a standalone WASI container binary) and `--target wasi-http` (a WASI HTTP component built from `--webroot`). The examples below use `--target wasm`; confirm which your MatchBox version expects for WASI hosts.
+
 ```bash
 # Compile to .wasm
 matchbox --target wasm my_service.bxs
@@ -133,9 +135,9 @@ wrangler deploy --compatibility-flags=nodejs_compat
 
 | Scenario | Why WASM |
 |----------|---------|
-| Serverless/FaaS | Near-zero cold start, no JVM |
+| Serverless/FaaS | Small artifact, fast start, no JVM |
 | Edge computing | Runs close to users, sandboxed |
-| Microservices | `FROM scratch` images < 1MB |
+| Microservices | Very small `FROM scratch` images |
 | Multi-tenant SaaS | Strong WASM sandboxing per tenant |
 | Plugin systems | Load and unload WASM modules at runtime |
 
@@ -147,7 +149,6 @@ wrangler deploy --compatibility-flags=nodejs_compat
 |---|---|---|
 | Portable | ✅ Any WASM runtime | ❌ Single platform |
 | Sandboxed | ✅ WASI sandbox | ❌ Full OS access |
-| Cold start | < 10ms | < 5ms |
 | File/network | Explicit grants | Full OS |
 | Edge platforms | ✅ Fastly, CF Workers | ❌ |
 | Docker image | `FROM scratch` + runtime shim | `FROM scratch` only |

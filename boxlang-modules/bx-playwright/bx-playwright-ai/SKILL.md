@@ -1,6 +1,6 @@
 ---
 name: bx-playwright-ai
-description: "Use this skill when connecting AI agents to a browser with bx-playwright: accessibility snapshots in ai mode with element refs (page.snapshot, ref=e12 selectors), playwright().aiTools() for bx-ai agents, aiToolDefinitions() and models.AiBrowser for other frameworks, the Playwright MCP server (bxPlaywright mcp), recording BoxLang code with bxPlaywright codegen, and API self-description with help()."
+description: "Use this skill when connecting AI agents to a browser with bx-playwright: accessibility snapshots in ai mode with element refs (page.snapshot, ref=e12 selectors), playwright().aiTools() for bx-ai agents, aiToolDefinitions() and models.AiBrowser for other frameworks, the Playwright MCP server (bxplaywright mcp), recording BoxLang code with bxplaywright codegen, and API self-description with help()."
 ---
 
 # bx-playwright: AI Agents
@@ -48,7 +48,7 @@ Each action returns `URL`, `Title` and the ai snapshot. Errors come back as text
 Other frameworks: `playwright().aiToolDefinitions()` returns `[ { name, description, arguments : { name : description }, handler } ]`. Direct use:
 
 ```js
-browser = new models.AiBrowser@playwright( playwright() )
+browser = new models.AiBrowser@bxplaywright( playwright() )
 state   = browser.visit( "https://boxlang.io" )
 state   = browser.click( "Docs" )
 browser.close()
@@ -56,11 +56,24 @@ browser.close()
 
 ## MCP and Codegen
 
-- `bxPlaywright mcp` starts Playwright's MCP server for MCP clients (Claude, Cursor, ...).
-- `bxPlaywright codegen http://localhost:8080 --output=flow.bxs` records a session and writes bx-playwright code (`page.byRole( "button", { name : "Save" } ).click()` style). Untranslatable lines are kept as `// TODO translate:` comments.
+- `bxplaywright mcp` starts Playwright's MCP server for MCP clients (Claude, Cursor, ...).
+- A bx-ai agent can launch it as a child process over stdio (needs the `bx-ai` module, see its `bx-ai-mcp` skill). The agent gets the tools the server lists, and `closeMCPServers()` stops the process:
+
+```js
+agent = aiAgent(
+    name      : "BrowserAgent",
+    model     : aiModel( provider: "openai" ),
+    mcpServers: [ { command : [ "bxplaywright", "mcp" ], prefix : "browser" } ]
+)
+agent.run( "Open https://boxlang.io and tell me the page title" )
+agent.closeMCPServers()
+```
+
+  Use `aiTools()` (above) when the agent should call bx-playwright directly in the same JVM, and the MCP route when you want Playwright's own MCP tool set or a separate process.
+- `bxplaywright codegen http://localhost:8080 --output=flow.bxs` records a session and writes bx-playwright code (`page.byRole( "button", { name : "Save" } ).click()` style). Untranslatable lines are kept as `// TODO translate:` comments.
 
 ## Self Description
 
 - `page.help()`, `page.help( "fill" )`, `playwright().help()`: methods, arguments and descriptions from the docblocks.
-- `bxPlaywright help --json`, `bxPlaywright doctor --json`, `bxPlaywright devices --json`.
+- `bxplaywright help --json`, `bxplaywright doctor --json`, `bxplaywright devices --json`.
 - Every error has a `type` and a `detail` with the fix.

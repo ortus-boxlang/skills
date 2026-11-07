@@ -3,7 +3,7 @@
 Skills for developers extending the BoxLang runtime: building modules, creating
 custom built-in functions (BIFs), writing interceptors, developing custom
 components/tags, understanding the runtime architecture, async/scheduled tasks,
-and logging.
+logging, and performance.
 
 Install all core development skills:
 
@@ -19,6 +19,7 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 | `interceptors` | Observer/Intercepting Filter patterns, 3 interceptor pools, BoxLang/Java/lambda interceptors, registration, interception points, custom events | `npx skills add ortus-boxlang/skills/boxlang-core-development/interceptors` |
 | `logging` | `LoggingService`, `BoxLangLogger` (trace/debug/info/warn/error), pre-configured loggers, named loggers, parameterized messages, `boxlang.json` logging config | `npx skills add ortus-boxlang/skills/boxlang-core-development/logging` |
 | `module-development` | `ModuleConfig.bx` lifecycle (`configure`/`onLoad`/`onUnload`), settings, registering interceptors and BIFs, Gradle build, ForgeBox publishing | `npx skills add ortus-boxlang/skills/boxlang-core-development/module-development` |
+| `performance` | `substring()` allocation costs, `startsWith`/`regionMatches` alternatives, regex precompiling, `Key` allocation, `StringBuilder`, boxing, virtual-thread pinning, JMH/profiling, hot-path review checklist | `npx skills add ortus-boxlang/skills/boxlang-core-development/performance` |
 | `runtime-architecture` | `BoxRuntime` services, `IBoxContext` hierarchy, scope chain, `DynamicObject`, type system, parsing pipeline (source → AST → bytecode), virtual threads | `npx skills add ortus-boxlang/skills/boxlang-core-development/runtime-architecture` |
 
 ## Useful Resources

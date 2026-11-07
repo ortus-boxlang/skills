@@ -32,7 +32,7 @@ aiMemory( memory, key=createUUID(), userId="", conversationId="", config={} )
 | `jdbc` (`database`, `db`) | Multi-server production use | Database |
 | `hybrid` | Recent messages plus semantic search | Window + vector store |
 | `boxvector` | Dev/test semantic search | In-memory |
-| `chroma`, `milvus`, `mysql`, `typesense`, `postgres` (`pgvector`), `pinecone`, `qdrant`, `opensearch`, `weaviate` | Semantic search (vector) | The named store |
+| `chroma`, `milvus`, `mysql`, `mariadb`, `typesense`, `postgres` (`pgvector`), `pinecone`, `qdrant`, `opensearch`, `weaviate` | Semantic search (vector) | The named store |
 
 A full class path is also accepted as the type. An unknown type throws `InvalidMemoryType`.
 
