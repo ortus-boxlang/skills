@@ -1,6 +1,6 @@
 ---
 name: bx-ai-mcp
-description: "Use this skill when consuming or exposing MCP (Model Context Protocol) servers with bx-ai: the MCP() BIF for HTTP URLs and stdio child processes (MCP( { command: [ ... ] } )), MCPResponse, discovery and tool calls, giving MCP tools to agents and models (mcpServers, withMCPServer, withMCPServers, prefix, toolFilter, closeMCPServers), stdio lifecycle, restarts, timeouts and security (allowedCommands, commandGuard), client events and stats, creating MCP servers with MCPServer(), and securing them (withRateLimit, withTrustedProxies, withAllowedIPs, withApiKeyProvider, withBasicAuth)."
+description: "Use this skill when consuming or exposing MCP (Model Context Protocol) servers with bx-ai: the MCP() BIF for HTTP URLs and stdio child processes (MCP( { command: [ ... ] } )), MCPResponse, discovery and tool calls, signing in to OAuth protected MCP servers (withOAuth, startAuthorization, completeAuthorization, per person tokens with subject, token stores, onMCPAuthorizationRequired), giving MCP tools to agents and models (mcpServers, withMCPServer, withMCPServers, prefix, toolFilter, closeMCPServers), stdio lifecycle, restarts, timeouts and security (allowedCommands, commandGuard), client events and stats, creating MCP servers with MCPServer(), and securing them (withRateLimit, withTrustedProxies, withAllowedIPs, withApiKeyProvider, withBasicAuth)."
 ---
 
 # bx-ai: MCP Clients and Servers
@@ -24,14 +24,14 @@ Never create the client classes with `new`. `MCPClient` was renamed to `MCPHttpC
 
 ```javascript
 // HTTP
-client = MCP( "http://localhost:3000" ).withTimeout( 5000 ).withBearerToken( "secret" )
+mcpClient = MCP( "http://localhost:3000" ).withTimeout( 5000 ).withBearerToken( "secret" )
 
 // Stdio: a child process
-client = MCP( { command: [ "bxplaywright", "mcp" ], env: { HEADLESS: "true" } } )
+mcpClient = MCP( { command: [ "bxplaywright", "mcp" ], env: { HEADLESS: "true" } } )
 
-tools  = client.listTools()
-result = client.send( "searchDocs", { query: "BoxLang" } )
-client.close()
+tools  = mcpClient.listTools()
+result = mcpClient.send( "searchDocs", { query: "BoxLang" } )
+mcpClient.close()
 ```
 
 ## Methods (both transports)
@@ -39,7 +39,7 @@ client.close()
 | Method | Purpose |
 |--------|---------|
 | `listTools( cursor="" )` | Tools. Pass the `nextCursor` of a previous answer for the next page |
-| `send( tool, args={} )` | Call a tool |
+| `send( tool, args={}, context={} )` | Call a tool. `context` is read by OAuth `subject` (see below), `{ chatRequest }` when an agent calls |
 | `listResources()`, `readResource( uri )` | Resources |
 | `listPrompts()`, `getPrompt( name, args={} )` | Prompts |
 | `getCapabilities()` | What the server answered to `initialize` |
@@ -61,7 +61,7 @@ Every call returns one. **Nothing throws from a call**, a failure is a response.
 | `getHeaders()` | HTTP headers, empty for stdio |
 
 ```javascript
-response = client.send( "search", { query: "BoxLang" } )
+response = mcpClient.send( "search", { query: "BoxLang" } )
 if ( response.isSuccess() ) {
     println( response.getData() )
 } else {
@@ -84,7 +84,7 @@ if ( response.isSuccess() ) {
 ## Stdio Servers (Child Processes)
 
 ```javascript
-client = MCP( {
+mcpClient = MCP( {
     command     : [ "npx", "-y", "@modelcontextprotocol/server-github" ],
     env         : { GITHUB_PERSONAL_ACCESS_TOKEN: token },
     cwd         : "/srv/work",
@@ -123,6 +123,53 @@ Extra methods on the stdio client: `isRunning()`, `getProtocolVersion()`, `getSt
 - On Windows a `.cmd` or `.bat` file (`npx.cmd`) runs through `cmd.exe`: never pass untrusted text as its arguments
 - `inheritEnv: false` stops secrets in your environment reaching the server
 
+## OAuth Sign In (HTTP only, 3.8.0)
+
+For servers that ask each person to sign in (mail, calendars, trackers). `withOAuth()` follows the MCP authorization spec: Protected Resource Metadata (RFC 9728), authorization server metadata (RFC 8414 / OIDC), a client id (given `clientId`, then a Client ID Metadata Document, then Dynamic Client Registration), PKCE `S256`, the `resource` parameter (RFC 8707), the `iss` check (RFC 9207). Tokens refresh on their own, one refresh at a time per person, and a `401` refreshes and retries once.
+
+```javascript
+mcpClient = MCP( "https://mail.example.com/mcp" ).withOAuth( {
+    redirectUri : "https://app.example.com/oauth/callback"
+} )
+
+started = mcpClient.startAuthorization( "default" )     // returns { authorizationUrl, ... }
+location( started.authorizationUrl )
+
+// at the callback route you own
+signedIn = mcpClient.completeAuthorization( url.code, url.state, url.iss ?: "" )
+
+tools    = mcpClient.listTools()                        // now carries the token
+response = mcpClient.send( "inbox", {} )
+mcpClient.isAuthorized( "default" )
+```
+
+| Option | Default | Notes |
+|--------|---------|-------|
+| `redirectUri` | | Your callback route. Needed to sign in |
+| `store` | `"cache"` | `"cache"`, `"file"`, `"jdbc"`, a class path, or an `IMCPTokenStore` instance |
+| `storeOptions` | `{}` | `{ cacheName }`, `{ path }` (required for file), `{ datasource, table }` |
+| `subject` | `"default"` | Whose tokens a call uses: a name or `( context ) => string` |
+| `scopes` | | Left out: the scope from the `401`, else everything the server supports |
+| `clientId`, `clientSecret` | | A client you registered yourself |
+| `clientMetadataUrl` | | HTTPS address of your Client ID Metadata Document |
+| `clientName` | `"bx-ai"` | Name shown at sign in when the client registers itself |
+
+**Per person**: one client serves many people. `subject: ( context ) => context.chatRequest.getUserId()` uses the person talking to the agent (`MCPTool` passes `{ chatRequest }` to `send()`). A call with no context, such as `listTools()` at agent start, uses `"default"`. With `withHandshake( true )` each person also gets their own MCP session.
+
+**Stores**: `cache` (default, in memory with the default cache), `file` (one JSON file per record, owner-only permissions), `jdbc` (table created when missing). They keep tokens as plain text, so protect the folder or table. To encrypt, implement `bxModules.bxai.models.mcp.oauth.IMCPTokenStore`: `get( key )` (empty struct when none or expired), `set( key, value, ttlSeconds=0 )`, `remove( key )`, then pass the class as `store` with `storeOptions`, or an instance.
+
+**Agents**: `mcpServers: [ { url: "https://mail.example.com/mcp", oauth: { redirectUri: "...", subject: ( context ) => context.chatRequest.getUserId() } } ]`. The agent lists tools when it starts; if nobody has signed in the listing fails, is logged, and the agent starts without that server's tools. After sign in, hand the signed-in client over again with `agent.withMCPServer( mcpClient )`.
+
+**Sign in needed**: a call with no usable tokens returns a failed `MCPResponse` (nothing is sent) and fires `onMCPAuthorizationRequired` with `client`, `baseURL`, `subject`, `reason`, `challenge`, `scope`. `reason` is `no_token`, `unauthorized` or `insufficient_scope` (403: add `event.scope` to `scopes` and sign in again).
+
+```javascript
+BoxRegisterInterceptor( ( event ) => {
+    link = event.client.startAuthorization( event.subject ).authorizationUrl
+}, "onMCPAuthorizationRequired" )
+```
+
+Errors thrown by the methods you call: `MCPOAuthNotEnabled`, `MCPOAuthMissingRedirectUri`, `MCPOAuthDiscoveryFailed`, `MCPOAuthNoClient`, `MCPOAuthRegistrationFailed`, `MCPOAuthInvalidState` (unknown, used or older than ten minutes), `MCPOAuthIssuerMismatch`, `MCPOAuthTokenError`, `MCPOAuthInsecureUrl` (https only, plain http only for `localhost` and `127.0.0.1`). Inside a call `MCPAuthorizationRequired` and `MCPOAuthRefreshFailed` become a failed response.
+
 ## Giving MCP Tools to Agents and Models
 
 `aiAgent()` and `aiModel()` take `mcpServers`, and both have `withMCPServer( server, config )` and `withMCPServers( servers )`. The tools the server lists are wrapped and added.
@@ -159,7 +206,7 @@ HTTP structs also take `token`, `user` + `password`, `headers`, `urlGuard`, `red
 
 ## Events and Stats
 
-`onMCPClientRequest`, `onMCPClientResponse`, `onMCPClientError`. The data has `client`, `baseURL` (`stdio:<executable>` for stdio), `transport` (`http` or `stdio`), `operation` (`tool`, `resource`, `prompt`, `discovery`), `name`, and `executionTime`, `response` or `error`. The stdio handshake fires no events and is not counted.
+`onMCPClientRequest`, `onMCPClientResponse`, `onMCPClientError`, and `onMCPAuthorizationRequired` (see OAuth). The data has `client`, `baseURL` (`stdio:<executable>` for stdio), `transport` (`http` or `stdio`), `operation` (`tool`, `resource`, `prompt`, `discovery`), `name`, and `executionTime`, `response` or `error`. The stdio handshake fires no events and is not counted.
 
 ```javascript
 BoxRegisterInterceptor( ( event ) => {
@@ -167,7 +214,7 @@ BoxRegisterInterceptor( ( event ) => {
 }, "onMCPClientResponse" )
 ```
 
-`client.getSummary()` returns `totalCalls`, `successRate`, `avgResponseTime`, `totalToolCalls`, `totalErrors` and more.
+`mcpClient.getSummary()` returns `totalCalls`, `successRate`, `avgResponseTime`, `totalToolCalls`, `totalErrors` and more.
 
 ## `MCPServer()`: Exposing Tools
 
@@ -211,12 +258,12 @@ mcpServer( "myApp" ).withRateLimit( false )   // opt out (also of the module def
 - `store`: `"cache"` (default, use a dedicated `cacheName`), `"memory"`, a class path, or an instance of a class that implements `bxModules.bxai.models.mcp.ratelimit.IRateLimitStore` (`increment( key, ttlSeconds, amount )`, `get( key )`, `remove( key )`)
 - `failOpen`: true (default) lets requests through when the store fails, false answers 503
 - Blocked: HTTP 429, JSON-RPC `-32002`, `Retry-After` and `X-RateLimit-Limit/Remaining/Reset` (the `X-RateLimit-*` also on allowed responses)
-- Logging never follows traffic: at most 10 warnings per minute per server and one summary line, not a setting. The `onMCPRateLimitHit` event (data: `mcpServer`, `serverName`, `key`, `keyType`, `limit`, `window`, `retryAfter`, `requestData`) shares that budget. Exact numbers are in `server.getStats().security.rateLimitFailures` and `server.getStats().rateLimit`
+- Logging never follows traffic: at most 10 warnings per minute per server and one summary line, not a setting. The `onMCPRateLimitHit` event (data: `mcpServer`, `serverName`, `key`, `keyType`, `limit`, `window`, `retryAfter`, `requestData`) shares that budget. Exact numbers are in `mcpSrv.getStats().security.rateLimitFailures` and `mcpSrv.getStats().rateLimit`
 - `limits: [ { limit: 60, window: 60 }, { limit: 1000, window: 3600 } ]` gives several limits (minute and hour). A request must pass all, the others get the request back on a refusal, `Retry-After` is the longest wait. Windows must be different. `limits` replaces `limit` and `window`
-- `server.disableRateLimit()` / `enableRateLimit()` / `isRateLimitEnabled()` switch checking and keep setup, counters and history (`withRateLimit( false )` removes it, `hasRateLimit()` means configured). `enableRateLimit()` with nothing configured uses the module defaults
-- `server.resetRateLimit()` deletes all counters (needs a store with `IClearableRateLimitStore`, the cache and memory stores have it, returns false otherwise), `server.resetRateLimitStats()` clears stats and history
-- History per client and UTC day in the cache: `retention` days (module `mcp.server.rateLimit.retentionDays`, default 7, 0 none, max 365), `historyFlushSeconds` (30, min 5), `historyMaxClients` (500, 50 to 5000, the smallest fold into `(other)`, totals stay exact). `server.getRateLimitReport( { days: 7, top: 20 } )` returns `{ since, days: [ { day, requests, blocked } ], topConsumers: [ { client, type, requests, blocked, peakPerMinute, pctOfLimit, lastBlockedAt } ], nodes, retentionDays }`. IPs are plain, other keys a short hash. `getStats().rateLimit` has `enabled`, `limits`, `topBlocked` (today only)
-- `server.hasRateLimit()`, `server.getRateLimiter().status( "ip:1.2.3.4" )` and `.reset( "ip:1.2.3.4" )`
+- `mcpSrv.disableRateLimit()` / `enableRateLimit()` / `isRateLimitEnabled()` switch checking and keep setup, counters and history (`withRateLimit( false )` removes it, `hasRateLimit()` means configured). `enableRateLimit()` with nothing configured uses the module defaults
+- `mcpSrv.resetRateLimit()` deletes all counters (needs a store with `IClearableRateLimitStore`, the cache and memory stores have it, returns false otherwise), `mcpSrv.resetRateLimitStats()` clears stats and history
+- History per client and UTC day in the cache: `retention` days (module `mcp.server.rateLimit.retentionDays`, default 7, 0 none, max 365), `historyFlushSeconds` (30, min 5), `historyMaxClients` (500, 50 to 5000, the smallest fold into `(other)`, totals stay exact). `mcpSrv.getRateLimitReport( { days: 7, top: 20 } )` returns `{ since, days: [ { day, requests, blocked } ], topConsumers: [ { client, type, requests, blocked, peakPerMinute, pctOfLimit, lastBlockedAt } ], nodes, retentionDays }`. IPs are plain, other keys a short hash. `getStats().rateLimit` has `enabled`, `limits`, `topBlocked` (today only)
+- `mcpSrv.hasRateLimit()`, `mcpSrv.getRateLimiter().status( "ip:1.2.3.4" )` and `.reset( "ip:1.2.3.4" )`
 - Module defaults: `mcp.server.rateLimit` (`enabled` false, `limit` 60, `window` 60, `key`, `store`, `cacheName`, `failOpen`) and `mcp.server.trustedProxies`
 - `withTrustedProxies( [ ips or CIDRs ] )`: forwarded headers (`X-Forwarded-For`...) only count from those proxies, read from the right. Empty or `[ "*" ]` trusts them from anyone (the old behavior), only safe when clients can reach the server only through your proxy. The IP allowlist and the `ip` limit both use it
 - The cache store is exact inside one JVM only, approximate across nodes
@@ -224,9 +271,9 @@ mcpServer( "myApp" ).withRateLimit( false )   // opt out (also of the module def
 ## Common Pitfalls
 
 - Set `withTrustedProxies()` in production, otherwise a client can forge `X-Forwarded-For` to dodge an `ip` limit or an IP allowlist
-- `server` is a BoxLang scope: the shared rate limit key is `"global"`
+- `server` is a BoxLang scope, so name the variable `mcpSrv`. The shared rate limit key is `"global"`
 
-- `client.callTool()` and `client.getResource()` do not exist: use `send()` and `readResource()`
+- `mcpClient.callTool()` and `mcpClient.getResource()` do not exist: use `send()` and `readResource()`
 - `listTools()` returns an `MCPResponse`, not an array: use `.getData().tools`
 - The failure check is `hasError()`, there is no `isError()`
 - The BIF is `MCP( ... )`; there is no `startStdio()`, the server entry is `MCPRequestProcessor::processStdio()`
@@ -235,4 +282,8 @@ mcpServer( "myApp" ).withRateLimit( false )   // opt out (also of the module def
 - Remember `close()` / `agent.closeMCPServers()` for stdio clients, otherwise the child process lives until module unload
 - `aiAgent()` takes `name` and `model` (an `aiModel()`), not `agentName` or `aiModel: "openai"`. BoxLang ignores unknown named arguments, so a wrong name fails silently
 - `withTimeout( ms )` is in milliseconds
+- `withOAuth()` is for the HTTP client only. A stdio server gets its credentials from `env`
+- The default `cache` token store is in memory: people sign in again after a restart. Use `file`, `jdbc`, a durable cache or your own store
+- `client` and `server` are reserved in BoxLang: never use them as variable names (`mcpClient`, `mcpSrv`). The event data key `client` is a key, not a variable
+- `startAuthorization()` without a `redirectUri` throws `MCPOAuthMissingRedirectUri`
 - Do not retry a tool call that changes something unless the tool is safe to repeat
