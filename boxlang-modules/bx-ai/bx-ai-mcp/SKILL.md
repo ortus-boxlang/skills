@@ -149,12 +149,13 @@ mcpClient.isAuthorized( "default" )
 | `store` | `"cache"` | `"cache"`, `"file"`, `"jdbc"`, a class path, or an `IMCPTokenStore` instance |
 | `storeOptions` | `{}` | `{ cacheName }`, `{ path }` (required for file), `{ datasource, table }` |
 | `subject` | `"default"` | Whose tokens a call uses: a name or `( context ) => string` |
+| `discoverySubject` | `"default"` | Whose tokens a call with no context uses, such as listing the tools when an agent starts: a name, or a function with no arguments |
 | `scopes` | | Left out: the scope from the `401`, else everything the server supports |
 | `clientId`, `clientSecret` | | A client you registered yourself |
 | `clientMetadataUrl` | | HTTPS address of your Client ID Metadata Document |
 | `clientName` | `"bx-ai"` | Name shown at sign in when the client registers itself |
 
-**Per person**: one client serves many people. `subject: ( context ) => context.chatRequest.getUserId()` uses the person talking to the agent (`MCPTool` passes `{ chatRequest }` to `send()`). A call with no context, such as `listTools()` at agent start, uses `"default"`. With `withHandshake( true )` each person also gets their own MCP session.
+**Per person**: one client serves many people. `subject: ( context ) => context.chatRequest.getUserId()` uses the person talking to the agent (`MCPTool` passes `{ chatRequest }` to `send()`). A call with no context, such as `listTools()` at agent start, uses `discoverySubject` (`"default"` when none): the list of tools is the server's and the same for everyone, so one signed in person is enough. With `withHandshake( true )` each person also gets their own MCP session.
 
 **Stores**: `cache` (default, in memory with the default cache), `file` (one JSON file per record, owner-only permissions), `jdbc` (table created when missing). They keep tokens as plain text, so protect the folder or table. To encrypt, implement `bxModules.bxai.models.mcp.oauth.IMCPTokenStore`: `get( key )` (empty struct when none or expired), `set( key, value, ttlSeconds=0 )`, `remove( key )`, then pass the class as `store` with `storeOptions`, or an instance.
 
@@ -284,6 +285,6 @@ mcpServer( "myApp" ).withRateLimit( false )   // opt out (also of the module def
 - `withTimeout( ms )` is in milliseconds
 - `withOAuth()` is for the HTTP client only. A stdio server gets its credentials from `env`
 - The default `cache` token store is in memory: people sign in again after a restart. Use `file`, `jdbc`, a durable cache or your own store
-- `client` and `server` are reserved in BoxLang: never use them as variable names (`mcpClient`, `mcpSrv`). The event data key `client` is a key, not a variable
+- `client`, `server`, `form`, `url`, `request` and `local` are reserved scopes in BoxLang: never use them as variable or argument names (`mcpClient`, `mcpSrv`, `fields`). In a web server a reserved name silently reads the real scope, so code that works in a script fails when served. The event data key `client` is a key, not a variable
 - `startAuthorization()` without a `redirectUri` throws `MCPOAuthMissingRedirectUri`
 - Do not retry a tool call that changes something unless the tool is safe to repeat
