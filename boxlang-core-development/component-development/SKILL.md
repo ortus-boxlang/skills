@@ -372,7 +372,7 @@ BoxLang components map to CFML custom tags (`<cf_myTag>`) when the
 
 ## References
 
-- [Components](https://boxlang.ortusbooks.com/boxlang-language/components)
-- [Custom Tags / CFML Compat](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-compat-cfml)
+- [Components](https://boxlang.ortusbooks.com/boxlang-language/reference/components)
+- [Custom Tags / CFML Compat](https://boxlang.ortusbooks.com/boxlang-framework/modularity/compat-cfml)
 - [Module Development](https://boxlang.ortusbooks.com/boxlang-framework/modularity)
 - [Module Template](https://github.com/ortus-boxlang/boxlang-module-template)

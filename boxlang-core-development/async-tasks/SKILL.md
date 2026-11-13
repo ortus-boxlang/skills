@@ -352,4 +352,4 @@ class extends="testbox.system.BaseSpec" {
 - [BoxFuture.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/async/BoxFuture.java)
 - [BaseScheduler.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/async/tasks/BaseScheduler.java)
 - [ScheduledTask.java](https://github.com/ortus-boxlang/BoxLang/blob/development/src/main/java/ortus/boxlang/runtime/async/tasks/ScheduledTask.java)
-- [BoxLang Async Docs](https://boxlang.ortusbooks.com/boxlang-framework/async-programming)
+- [BoxLang Async Docs](https://boxlang.ortusbooks.com/boxlang-framework/asynchronous-programming)

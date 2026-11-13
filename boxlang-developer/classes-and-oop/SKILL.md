@@ -361,6 +361,6 @@ class {
 ## References
 
 - [BoxLang Classes](https://boxlang.ortusbooks.com/boxlang-language/classes)
-- [OOP Concepts](https://boxlang.ortusbooks.com/boxlang-language/object-oriented-programming)
-- [Interfaces](https://boxlang.ortusbooks.com/boxlang-language/interfaces)
-- [Annotations](https://boxlang.ortusbooks.com/boxlang-language/annotations)
+- [OOP Concepts](https://boxlang.ortusbooks.com/boxlang-language/classes)
+- [Interfaces](https://boxlang.ortusbooks.com/boxlang-language/classes/interfaces)
+- [Annotations](https://boxlang.ortusbooks.com/boxlang-language/classes/annotations)

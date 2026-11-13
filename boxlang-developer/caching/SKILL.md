@@ -373,5 +373,5 @@ class ExpensiveService {
 
 - [Caching Framework](https://boxlang.ortusbooks.com/boxlang-framework/caching)
 - [Cache BIFs](https://boxlang.ortusbooks.com/boxlang-language/reference/built-in-functions/cache)
-- [bx-redis Module](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-redis)
-- [bx-couchbase Module](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-couchbase)
+- [bx-redis Module](https://boxlang.ortusbooks.com/boxlang-+-++/modules/bx-redis)
+- [bx-couchbase Module](https://boxlang.ortusbooks.com/boxlang-+-++/modules/bx-couchbase)

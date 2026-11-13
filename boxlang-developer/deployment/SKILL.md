@@ -236,7 +236,7 @@ serves `/products`); `./gradlew generateManifest` regenerates the routing
 
 ```bash
 # Install BVM
-curl -fsSl https://downloads.ortussolutions.com/bvm/install.sh | bash
+curl -fsSl https://install-bvm.boxlang.io | bash
 
 # List available versions
 bvm list
@@ -254,7 +254,7 @@ bvm default 1.12.0
 bvm current
 
 # Quick installer (one-line)
-curl -fsSl https://downloads.ortussolutions.com/boxlang/install.sh | bash
+curl -fsSl https://install.boxlang.io | bash
 ```
 
 ---
@@ -437,5 +437,5 @@ boxlang-miniserver
 - [Google Cloud Functions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/google-cloud-functions)
 - [Azure Functions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/azure-functions)
 - [GitHub Actions](https://boxlang.ortusbooks.com/getting-started/running-boxlang/github-actions)
-- [BVM](https://boxlang.ortusbooks.com/getting-started/installation/bvm)
+- [BVM](https://boxlang.ortusbooks.com/getting-started/installation/boxlang-version-manager-bvm)
 - [boxlang.json](https://boxlang.ortusbooks.com/getting-started/configuration)

@@ -479,7 +479,7 @@ writeOutput( "Is shutdown:      #executor.isShutdown()#" )
 
 ## References
 
-- [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/async-programming)
-- [Scheduling](https://boxlang.ortusbooks.com/boxlang-framework/scheduled-tasks)
+- [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/asynchronous-programming)
+- [Scheduling](https://boxlang.ortusbooks.com/boxlang-framework/asynchronous-programming/scheduled-tasks)
 - [Threading](https://boxlang.ortusbooks.com/boxlang-language/threading)
 - [Locking](https://boxlang.ortusbooks.com/boxlang-language/locking)

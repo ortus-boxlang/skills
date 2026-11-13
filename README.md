@@ -368,7 +368,6 @@ For manual placement and Claude Project support files, see **Direct / Manual Ins
 | Module Template | https://github.com/ortus-boxlang/boxlang-module-template |
 | ForgeBox (packages) | https://forgebox.io |
 | Ortus Community | https://community.ortussolutions.com/ |
-| BoxLang Slack | https://boxlang.io/slack |
 | skills.sh | https://skills.sh |
 
 ---

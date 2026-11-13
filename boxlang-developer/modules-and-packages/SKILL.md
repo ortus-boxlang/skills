@@ -344,8 +344,8 @@ if ( isModuleLoaded( "bx-redis" ) ) {
 
 - [Modularity](https://boxlang.ortusbooks.com/boxlang-framework/modularity)
 - [Module Configuration](https://boxlang.ortusbooks.com/getting-started/configuration#modules)
-- [BoxLang+ Modules](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus)
+- [BoxLang+ Modules](https://boxlang.ortusbooks.com/boxlang-+-++/boxlang-plus)
 - [ForgeBox Package Manager](https://forgebox.io)
-- [bx-pdf](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-pdf)
-- [bx-csv](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-csv)
-- [bx-spreadsheet](https://boxlang.ortusbooks.com/boxlang-framework/boxlang-plus/modules/bx-spreadsheet)
+- [bx-pdf](https://boxlang.ortusbooks.com/boxlang-+-++/modules/bx-plus-pdf)
+- [bx-csv](https://boxlang.ortusbooks.com/boxlang-+-++/modules/bx-csv)
+- [bx-spreadsheet](https://boxlang.ortusbooks.com/boxlang-+-++/modules/bx-spreadsheet)
