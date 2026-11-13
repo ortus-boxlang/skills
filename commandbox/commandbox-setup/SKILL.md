@@ -54,11 +54,6 @@ sudo apt install libappindicator-dev     # Older Ubuntu/Debian
 curl -fsSl https://downloads.ortussolutions.com/debs/gpg | sudo apt-key add -
 echo "deb https://downloads.ortussolutions.com/debs/noarch /" | sudo tee /etc/apt/sources.list.d/commandbox.list
 sudo apt-get update && sudo apt-get install commandbox
-
-# RPM / yum
-curl -fsSl https://downloads.ortussolutions.com/KEYS | sudo rpm --import -
-echo -e "[commandbox]\nname=CommandBox\nbaseurl=https://downloads.ortussolutions.com/rpms/noarch\nenabled=1\ngpgcheck=1\ngpgkey=https://downloads.ortussolutions.com/KEYS" | sudo tee /etc/yum.repos.d/commandbox.repo
-sudo yum install commandbox
 ```
 
 ### Windows

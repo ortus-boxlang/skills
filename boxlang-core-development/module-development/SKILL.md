@@ -179,7 +179,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url "https://downloads.ortussolutions.com/maven" }
 }
 
 dependencies {

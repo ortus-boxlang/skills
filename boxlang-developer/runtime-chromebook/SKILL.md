@@ -71,9 +71,9 @@ java -version
 # Download Temurin JDK 21 (works on both x86_64 and aarch64/ARM)
 ARCH=$(dpkg --print-architecture)
 if [ "$ARCH" = "arm64" ]; then
-    JDK_URL="https://github.com/adoptium/temurin21-binaries/releases/latest/download/OpenJDK21U-jdk_aarch64_linux_hotspot_21_latest.tar.gz"
+    JDK_URL="https://api.adoptium.net/v3/binary/latest/21/ga/linux/aarch64/jdk/hotspot/normal/eclipse"
 else
-    JDK_URL="https://github.com/adoptium/temurin21-binaries/releases/latest/download/OpenJDK21U-jdk_x64_linux_hotspot_21_latest.tar.gz"
+    JDK_URL="https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse"
 fi
 
 wget -O /tmp/jdk21.tar.gz "$JDK_URL"
@@ -92,13 +92,13 @@ java -version
 
 ```bash
 # Download the BoxLang installer script
-curl -fsSL https://downloads.ortussolutions.com/boxlang/install-boxlang.sh | bash
+curl -fsSL https://install.boxlang.io | bash
 
 # Verify installation
 boxlang --version
 
 # Or use BoxLang Version Manager (BVM) for version management
-curl -fsSL https://downloads.ortussolutions.com/bvm/install.sh | bash
+curl -fsSL https://install-bvm.boxlang.io | bash
 source ~/.bashrc
 bvm install latest
 bvm use latest

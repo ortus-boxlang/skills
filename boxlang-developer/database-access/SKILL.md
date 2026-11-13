@@ -410,7 +410,7 @@ var filtered = queryExecute(
 
 ## References
 
-- [Database / JDBC](https://boxlang.ortusbooks.com/boxlang-framework/database)
-- [QueryExecute](https://boxlang.ortusbooks.com/boxlang-language/reference/built-in-functions/query/queryexecute)
+- [Database / JDBC](https://boxlang.ortusbooks.com/boxlang-language/reference/built-in-functions/jdbc)
+- [QueryExecute](https://boxlang.ortusbooks.com/boxlang-language/reference/built-in-functions/jdbc/queryexecute)
 - [Datasource Configuration](https://boxlang.ortusbooks.com/getting-started/configuration#datasources)
 - [SQL Injection Prevention](https://owasp.org/www-community/attacks/SQL_Injection)

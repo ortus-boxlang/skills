@@ -29,4 +29,4 @@ npx skills add ortus-boxlang/skills/boxlang-core-development
 - [BoxLang Docs](https://boxlang.ortusbooks.com/)
 - [Interceptors](https://boxlang.ortusbooks.com/boxlang-framework/interceptors)
 - [Modularity](https://boxlang.ortusbooks.com/boxlang-framework/modularity)
-- [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/async-programming)
+- [Async Programming](https://boxlang.ortusbooks.com/boxlang-framework/asynchronous-programming)

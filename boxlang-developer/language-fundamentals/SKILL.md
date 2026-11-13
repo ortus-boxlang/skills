@@ -421,5 +421,5 @@ Both styles are equivalent. Prefer the concise style inside classes; use the
 - [BoxLang Syntax Docs](https://boxlang.ortusbooks.com/boxlang-language/syntax)
 - [Variables & Scopes](https://boxlang.ortusbooks.com/boxlang-language/variables)
 - [Operators](https://boxlang.ortusbooks.com/boxlang-language/operators)
-- [Control Flow](https://boxlang.ortusbooks.com/boxlang-language/control-flow)
-- [Exception Handling](https://boxlang.ortusbooks.com/boxlang-language/exception-handling)
+- [Control Flow](https://boxlang.ortusbooks.com/boxlang-language/syntax)
+- [Exception Handling](https://boxlang.ortusbooks.com/boxlang-language/syntax/exception-management)

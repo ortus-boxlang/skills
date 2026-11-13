@@ -521,8 +521,8 @@ try {
 
 ## References
 
-- [Application.bx](https://boxlang.ortusbooks.com/boxlang-framework/applications)
-- [HTTP Module](https://boxlang.ortusbooks.com/boxlang-framework/http)
-- [Sessions](https://boxlang.ortusbooks.com/boxlang-framework/sessions)
+- [Application.bx](https://boxlang.ortusbooks.com/boxlang-framework/applicationbx)
+- [HTTP Module](https://boxlang.ortusbooks.com/boxlang-framework/http-calls)
+- [Sessions](https://boxlang.ortusbooks.com/boxlang-framework/applicationbx)
 - [CommandBox](https://boxlang.ortusbooks.com/getting-started/running-boxlang/commandbox)
 - [MiniServer](https://boxlang.ortusbooks.com/getting-started/running-boxlang/miniserver)

@@ -445,7 +445,7 @@ var results = largeDataset
 
 ## References
 
-- [Closures & Lambdas](https://boxlang.ortusbooks.com/boxlang-language/closures-lambdas)
+- [Closures & Lambdas](https://boxlang.ortusbooks.com/boxlang-language/syntax/closures)
 - [Arrays](https://boxlang.ortusbooks.com/boxlang-language/arrays)
 - [Structures](https://boxlang.ortusbooks.com/boxlang-language/structures)
-- [Functions](https://boxlang.ortusbooks.com/boxlang-language/functions)
+- [Functions](https://boxlang.ortusbooks.com/boxlang-language/classes/functions)

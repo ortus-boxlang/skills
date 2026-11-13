@@ -1,0 +1,19 @@
+name: Link Check
+
+on:
+  pull_request:
+    paths: ["**/*.md", "scripts/check-links.sh"]
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check URLs
+        run: ./scripts/check-links.sh

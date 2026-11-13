@@ -31,11 +31,8 @@ description: "Use this skill when deploying BoxLang as an enterprise Java servle
 brew install commandbox
 
 # Linux (Debian/Ubuntu)
-curl -fsSl https://downloads.ortussolutions.com/KEYS | sudo apt-key add -
+curl -fsSl https://downloads.ortussolutions.com/debs/gpg | sudo apt-key add -
 sudo apt-get install commandbox
-
-# All platforms
-curl -fsSl https://downloads.ortussolutions.com/commandbox-cli-install | bash
 ```
 
 ### Install the BoxLang Module (CommandBox < 6.1)
