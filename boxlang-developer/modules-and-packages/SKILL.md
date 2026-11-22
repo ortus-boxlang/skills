@@ -90,7 +90,11 @@ box list
 ### `bx-compat-cfml` — CFML Compatibility
 
 Enables CFML syntax parsing and CFML-specific functions/components for migrating
-legacy ColdFusion or Lucee applications:
+legacy ColdFusion or Lucee applications.
+
+To find every module a CFML app needs, run `boxlang featureaudit --source ./ --missing`: rows with `Missing=true`
+name the module that provides the feature, and a trailing `+` marks a BoxLang+ module. The BoxLang Migration Assistant
+runs this audit and adds the modules to `server.json` for you.
 
 ```json
 {

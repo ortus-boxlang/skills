@@ -101,6 +101,17 @@ isDouble( data.count )    // true
 
 ## Migration Workflow
 
+### Step 0: Assess the App
+
+Before installing anything, find out what compiles and what is missing:
+
+```bash
+boxlang check --source ./ --format json
+boxlang featureaudit --source ./ --missing
+```
+
+The [BoxLang Migration Assistant](https://boxlang.ortusbooks.com/getting-started/overview/running-coldfusion-cfml-apps) desktop app runs both, adds `bx-compat-cfml` and every module the audit names to `server.json`, and writes a `MIGRATION.md` checklist. If the app has one, work from it (see the CFML migration skill).
+
 ### Step 1: Install and Configure
 
 ```bash
