@@ -137,7 +137,7 @@ npx skills add ortus-boxlang/skills/boxlang-developer
 | [`boxlang-dev-boxlang-database-access`](./boxlang-developer/database-access/SKILL.md) | `queryExecute`, `bx:query`, datasource config, parameterized queries, transactions, stored procedures, SQL injection prevention |
 | [`boxlang-dev-boxlang-deployment`](./boxlang-developer/deployment/SKILL.md) | CommandBox, Docker, AWS Lambda, GitHub Actions CI/CD, BVM, `boxlang.json` runtime config, environment variable overrides |
 | [`boxlang-dev-boxlang-docbox`](./boxlang-developer/docbox/SKILL.md) | API documentation generation: CLI, HTML/JSON/UML/CommandBox strategies, themes, multiple sources, custom strategies |
-| [`boxlang-dev-boxlang-file-handling`](./boxlang-developer/file-handling/SKILL.md) | `fileRead`/`fileWrite`/`fileCopy`/`fileMove`, directory operations, streaming large files, file uploads, CSV/JSON from disk |
+| [`boxlang-dev-boxlang-file-handling`](./boxlang-developer/file-handling/SKILL.md) | `fileRead`/`fileWrite`/`fileCopy`/`fileMove`, directory operations, symbolic links, streaming large files, file uploads, CSV/JSON from disk |
 | [`boxlang-dev-boxlang-functional-programming`](./boxlang-developer/functional-programming/SKILL.md) | Closures (`=>`) vs lambdas (`->`), higher-order functions, `map`/`filter`/`reduce`/`flatMap`/`groupBy`, destructuring, spread |
 | [`boxlang-dev-boxlang-interceptors`](./boxlang-developer/interceptors/SKILL.md) | Interceptor/event system, `announce()`/`announceAsync()`, pre/post hooks, security guards, `BoxRegisterInterceptor()` |
 | [`boxlang-dev-boxlang-java-integration`](./boxlang-developer/java-integration/SKILL.md) | `createObject`, static method calls, type conversion, closures as functional interfaces, JARs, JSR-223 scripting |
