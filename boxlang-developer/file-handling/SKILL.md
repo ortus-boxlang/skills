@@ -1,6 +1,6 @@
 ---
 name: boxlang-file-handling
-description: "Use this skill when reading, writing, copying, moving, or deleting files and directories in BoxLang: fileRead, fileWrite, fileCopy, fileMove, directoryList, directoryCreate, fileUpload, streaming large files, or processing CSV/JSON files from disk."
+description: "Use this skill when reading, writing, copying, moving, or deleting files and directories in BoxLang: fileRead, fileWrite, fileCopy, fileMove, directoryList, directoryCreate, symbolic links (fileCreateSymlink, fileIsSymlink, fileReadSymlink, followLinks), fileUpload, streaming large files, or processing CSV/JSON files from disk."
 ---
 
 # BoxLang File Handling
@@ -106,20 +106,25 @@ var result = directoryList(
 
 // Create (including nested)
 if ( !directoryExists( "/path/to/dir" ) ) {
-    directoryCreate( "/path/to/dir", createPath: true )
+    directoryCreate( path: "/path/to/dir", createPath: true )
 }
 
 // Copy directory
-directoryCopy( "/source/dir", "/dest/dir", recurse: true )
+directoryCopy( source: "/source/dir", destination: "/dest/dir", recurse: true )
 
 // Move / rename
 directoryRename( "/old/path", "/new/path" )
 
-// Delete recursively
+// Delete recursively (the argument is "recursive", not "recurse")
 if ( directoryExists( "/path/to/dir" ) ) {
-    directoryDelete( "/path/to/dir", recurse: true )
+    directoryDelete( path: "/path/to/dir", recursive: true )
 }
 ```
+
+`directoryList`, `directoryCopy` and `directoryDelete` take a `followLinks` argument that defaults to `false`.
+Symbolic links are never followed unless you ask. See [Symbolic Links](#symbolic-links).
+
+A call is either all positional or all named. BoxLang does not allow `directoryDelete( "/dir", recursive: true )`, so name every argument or none.
 
 ## File Information and Paths
 
@@ -128,6 +133,7 @@ if ( directoryExists( "/path/to/dir" ) ) {
 if ( fileExists( "/path/to/file.txt" ) ) {
     var info = getFileInfo( "/path/to/file.txt" )
     // info.name, info.size, info.lastModified, info.mode, info.type
+    // info.isLink, info.linkTarget (empty string when the path is not a link)
 }
 
 // Path utilities
@@ -136,6 +142,36 @@ var dir      = getDirectoryFromPath( "/path/to/file.txt" )  // /path/to/
 var name     = getFileFromPath( "/path/to/file.txt" )       // file.txt
 var ext      = listLast( name, "." )                        // txt
 ```
+
+## Symbolic Links
+
+```boxlang
+// Create a link. The target is stored exactly as given, so a relative target
+// is relative to the folder that holds the link.
+fileCreateSymlink( "/app/current", "/app/releases/v2" )
+fileCreateSymlink( link: "/app/current", target: "/app/releases/v3", overwrite: true )  // replace a file or link
+
+fileIsSymlink( "/app/current" )                       // true, also true for a dangling link
+fileReadSymlink( "/app/current" )                     // the stored target
+fileReadSymlink( path: "/app/rel", resolve: true )   // absolute, normalized target
+
+// Link details are also in fileInfo() / getFileInfo() and in the directoryList query
+var info = fileInfo( "/app/current" )                 // info.isLink, info.linkTarget
+var q    = directoryList( "/app", false, "query" )    // q.isLink, q.linkTarget
+
+// List only the links
+var links = directoryList( path: "/app", listInfo: "name", filter: ( path ) => fileIsSymlink( path ) )
+```
+
+Rules to remember:
+
+- `fileCreateSymlink()` throws if the path already exists (unless `overwrite: true`, which never replaces a folder) or if the operating system will not create the link.
+- `directoryDelete( path: dir, recursive: true )` removes links as links and never empties the folder a link points to. A link given as the path is only removed as a link, even with `followLinks`.
+- `directoryDelete( path: dir, recursive: true, followLinks: true )` also deletes the contents of the folders that links inside `path` point to. A link that leads back into the tree, or to a folder above it, is still removed as a link.
+- `directoryCopy()` copies links as links. `followLinks: true` copies what they point to instead. A shallow copy takes files and links but not real sub folders.
+- `directoryList( recurse: true )` lists a link but does not descend into it. Use `followLinks: true` to descend. A link given as the path is always resolved.
+- `type: "dir"` still counts a link to a folder as a directory. Use `fileIsSymlink()` in a `filter` to find links.
+- `directoryDelete()` used to follow links and empty their targets. Code that relied on that now needs `followLinks: true`.
 
 ## File Upload
 
@@ -147,7 +183,7 @@ function uploadFile( fileField, destination ) {
 
     try {
         if ( !directoryExists( destination ) ) {
-            directoryCreate( destination, createPath: true )
+            directoryCreate( path: destination, createPath: true )
         }
 
         var upload = fileUpload(
@@ -207,6 +243,7 @@ function readCSV( filePath ) {
 - For path traversal safety, sanitize file names with `getFileFromPath()` before building destination paths
 - Specify encoding (`"UTF-8"`) explicitly when text content matters
 - Clean up temporary files in a `finally` block
+- Leave `followLinks` at its default of `false` for any folder you did not create yourself. `followLinks: true` on `directoryDelete()` deletes outside the folder you named
 
 ## Security Patterns
 
