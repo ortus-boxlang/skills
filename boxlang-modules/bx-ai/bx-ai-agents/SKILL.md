@@ -184,6 +184,8 @@ Chunks are OpenAI-shaped structs. Reasoning-capable models also surface `choices
 
 `subAgents` are registered as tools named `delegate_to_<agent-name-slug>`, described from each sub-agent's `name` and `description`. Give sub-agents a clear `description`.
 
+A sub-agent runs for the same `userId` and `conversationId` as its parent (3.8.0), so a sub-agent with its own memory keeps each user's conversation apart.
+
 ```javascript
 coder    = aiAgent( name: "Coder",    description: "Writes clean BoxLang code", instructions: "Write clean BoxLang code" )
 tester   = aiAgent( name: "Tester",   description: "Writes TestBox tests",      instructions: "Write TestBox test cases" )
@@ -327,6 +329,8 @@ A gateway connects an agent to a channel (CLI, HTTP, chat platforms). Core gatew
 | `aiGatewaySession( agent, gateways, policy = "queue", maxQueueDepth = 50, checkpointer )` | Wires one agent to one or more gateways. Call `.start()` / `.stop()` |
 
 `gateways` takes instances or names (`[ "cli" ]`). The `policy` decides what happens when a message arrives on a thread that already has a turn running:
+
+Every gateway turn runs with a `conversationId` (the chat namespaced by its gateway, such as `telegram:42`, plus the platform thread when there is one) and, when the platform names the sender, a `userId` (3.8.0), so each chat has its own memory. `threadId` still names the run. Override the public `resolveConversationId( message, sourceGateway )` or `turnOptions( message, sourceGateway, threadId )` of `GatewaySession` to change the keys.
 
 | Policy | Behavior |
 |--------|----------|
