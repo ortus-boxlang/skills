@@ -86,6 +86,13 @@ memory = aiMemory( "window",
 )
 ```
 
+Since 3.8.0 every memory type honors the `userId` and `conversationId` of a call (`add()`, `getAll()`, `clear()`, `trim()`, `summarize()`, and the `options: { userId, conversationId }` of an agent run). Before, `window`, `summary` and `jdbc` memory ignored them and every user of one memory shared one list.
+
+- A call that names another user or conversation reads and writes a list of its own. A call with no ids, or the ids the memory was built with, uses the memory's own list.
+- `window` and `summary` keep those lists in the process: lost on a restart, not shared between servers. Use `cache` or `jdbc` for that. `config.maxConversations` (default `1000`, `0` for no limit) caps how many other lists one memory keeps, least recently used dropped first.
+- `jdbc` stores a row per scope: `memory_key` is `<key>::<userId>::<conversationId>`, with `user_id` and `conversation_id` filled. No table change. `JdbcMemory.summarize()` works for another scope, and concurrent adds to one conversation are locked.
+- Summaries stay with their conversation (read from that conversation's own `isSummary` message), and `window` and `summary` memory keep the summary when they trim.
+
 ## Using Memory with an Agent
 
 ```javascript
@@ -187,5 +194,6 @@ memory.getRelevant( "what did we decide about pricing?", 5 )
 - ❌ Do NOT store API keys or secrets in memory
 - ❌ Do NOT set both `maxTokens` and `maxMessages` on `summary` memory (throws `InvalidConfiguration`)
 - ✅ Always set `userId` in multi-user applications to prevent data leakage
+- ✅ One memory instance can serve every user of an agent: pass `userId` and `conversationId` per run (`agent.run( input, {}, { userId, conversationId } )`) instead of building a memory per user
 - ✅ Use `summary` memory for customer support bots with long conversations
 - ✅ Reuse the same memory instance across multiple `agent.run()` calls for continuity

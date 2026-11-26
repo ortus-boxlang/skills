@@ -240,6 +240,8 @@ systemOutput( "starting", true, true )              // stderr, not stdout
 MCPRequestProcessor::processStdio( "default" )      // stops when stdin closes
 ```
 
+A message without an `id` (`notifications/initialized`, `notifications/cancelled`) is a notification and never gets a response: `handleRequest()` returns an empty struct, STDIO writes nothing, HTTP answers `202` with no body (3.8.0). `processStdio()` moves the console log appenders to stderr before it logs anything. Tools registered by `scan()` and `scanClass()` list the method's parameters (type, required, `@paramName` hint) in their `inputSchema` (3.8.0).
+
 Rules: only protocol messages on stdout (use `systemOutput( text, true, true )` for human messages, `println()` writes to stdout); exit when stdin closes.
 
 ## Rate Limiting and Trusted Proxies (servers)

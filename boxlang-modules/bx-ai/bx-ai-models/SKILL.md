@@ -114,6 +114,8 @@ Settings live under `modules.bxai.settings` in `boxlang.json`. Top-level keys in
 }
 ```
 
+Settings under `providers.<key>` are found by the id you pass to `aiService()` (`openai-compatible`, `docker`) and by the service name (`OpenAICompatible`, `DockerModelRunner`); the id wins when both exist (3.8.0, before only the service name was read, so those two providers ignored their settings). Options passed to `aiService()` or in a profile win over `providers.<key>.options`, which only fill the gaps.
+
 Merge order for params: `defaultParams`, then `providers.<key>.params`, then per-call `params`. Prefer env vars (`OPENAI_API_KEY`, ...) over hardcoding keys in settings.
 
 ```javascript
@@ -135,6 +137,8 @@ service.getName()
 service.getCapabilities()           // array of capability strings
 service.hasCapability( "stream" )   // boolean
 ```
+
+`model.getConfig()` (3.8.0) returns `provider` (the service display name, for example `DockerModelRunner`) and `providerId` (the id `aiService()` and `aiChat()` accept, for example `docker`). Pass `getConfig().providerId` back into the API, never `provider`: `aiService( "DockerModelRunner" )` and `aiService( "OpenAICompatible" )` throw `ProviderNotSupported`. A service also has `getProviderId()`.
 
 There is no `getProviders()`, `getProvider()` or `setDefaultProvider()`. To change the default provider set the `provider` module setting. Use `aiModel()` for pipelines and agents; use `aiService()` when you need the raw provider.
 
